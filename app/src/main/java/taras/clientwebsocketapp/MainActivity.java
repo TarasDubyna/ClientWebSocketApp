@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.InetAddress;
+import java.util.Observable;
 
 import taras.clientwebsocketapp.clientService.NotificationService;
 
@@ -132,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(NotificationService.TYPE, NotificationService.SEND_MESSAGE);
                 intent.putExtra("ip", etAddress.getText().toString());
                 intent.putExtra("message", etMessage.getText().toString());
+
                 /*
                 intent.putExtra("ip", etAddress.getText().toString());
                 intent.putExtra("port", etHost.getText().toString());
