@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.network;
 
+import java.util.function.Consumer;
+
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -7,6 +9,7 @@ import taras.clientwebsocketapp.model.ScannerPackage;
  */
 
 public interface ScanningInterface {
-    void successfulResponse(ScannerPackage scannerPackage);
+    void successfulResponse(String stringJson);
     void errorResponse(Throwable throwable);
+    void successfulResponse(ScannerPackage scannerPackage);
 }

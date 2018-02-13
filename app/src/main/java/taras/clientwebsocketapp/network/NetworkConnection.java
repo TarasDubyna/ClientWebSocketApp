@@ -9,7 +9,8 @@ public class NetworkConnection {
 
     public static ConnectionRepository getConnectionRepository(){
         if (sConnectionRepository == null){
-
+            sConnectionRepository = new NetworkDataRepository();
         }
+        return sConnectionRepository;
     }
 }

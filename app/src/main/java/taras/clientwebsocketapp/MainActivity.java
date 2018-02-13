@@ -26,7 +26,7 @@ import taras.clientwebsocketapp.clientService.NotificationService;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "myLogs";
+    private static final String LOG_TAG = "myLogs";
 
     private String SERVICE_NAME = "Client Device";
     private String SERVICE_TYPE = "_http._tcp.";
@@ -51,27 +51,21 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context arg0, Intent arg1) {
             // TODO Auto-generated method stub
 
-            int datapassed = arg1.getIntExtra("DATAPASSED", 0);
-            String orgData = arg1.getStringExtra("DATA_BACK");
+            String responseData = arg1.getStringExtra("string");
 
-            Toast.makeText(MainActivity.this,
-                    "Triggered by Service!\n"
-                            + "Data passed: " + String.valueOf(datapassed) + "\n"
-                            + "original Data: " + orgData,
-                    Toast.LENGTH_LONG).show();
-
+            Toast.makeText(MainActivity.this,"Message: " + responseData, Toast.LENGTH_SHORT).show();
         }
     }
 
     boolean bound = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "MainActivity onServiceConnected");
+            Log.d(LOG_TAG, "MainActivity onServiceConnected");
             bound = true;
         }
 
         public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "MainActivity onServiceDisconnected");
+            Log.d(LOG_TAG, "MainActivity onServiceDisconnected");
             bound = false;
         }
     };
@@ -82,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
+
+        Log.d(LOG_TAG, "Device OS: " + System.getProperty("os.name"));
 
 
         etMessage = findViewById(R.id.etMessage);
@@ -107,12 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, NotificationService.class);
                 intent.putExtra(NotificationService.TYPE, NotificationService.SCAN_NETWORK);
                 intent.putExtra("ip", etAddress.getText().toString());
-                /*
-                intent.putExtra("ip", etAddress.getText().toString());
-                intent.putExtra("port", etHost.getText().toString());
-                intent.putExtra("isStart", true);
-                */
-
                 startService(intent);
             }
         });
@@ -133,13 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(NotificationService.TYPE, NotificationService.SEND_MESSAGE);
                 intent.putExtra("ip", etAddress.getText().toString());
                 intent.putExtra("message", etMessage.getText().toString());
-
-                /*
-                intent.putExtra("ip", etAddress.getText().toString());
-                intent.putExtra("port", etHost.getText().toString());
-                intent.putExtra("isStart", true);
-                */
-
                 startService(intent);
             }
         });

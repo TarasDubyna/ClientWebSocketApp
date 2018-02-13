@@ -1,6 +1,8 @@
 package taras.clientwebsocketapp.network;
 
-import io.reactivex.Observable;
+import java.io.IOException;
+
+import io.reactivex.disposables.Disposable;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -8,6 +10,6 @@ import taras.clientwebsocketapp.model.ScannerPackage;
  */
 
 public interface ConnectionRepository {
-
-    Observable<ScannerPackage> scanNetwork(ScanningInterface scanningInterface, String networkIP);
+    void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException;
+    void sendMessage(ScanningInterface scanningInterface, String message, String ip) throws IOException;
 }

@@ -42,10 +42,6 @@ public class WatchSocket extends AsyncTask<WatchData, Integer, Integer> {
         super.onProgressUpdate(values);
     }
 
-    protected void onPostExecute(Integer result) {
-        // Это выполнится после завершения работы потока
-    }
-
     protected Integer doInBackground(WatchData... param) {
         InetAddress serverAddr;
 
@@ -106,26 +102,6 @@ public class WatchSocket extends AsyncTask<WatchData, Integer, Integer> {
                         }
                     });
                 }
-                /*
-                while(running.getStatus().equals(AsyncTask.Status.RUNNING) || state){
-                    if ((System.currentTimeMillis() - startTime) > timeout){
-                        Log.d(LOG_TAG, "WatchSocket: timeout end - " + ipAddress);
-                        state = false;
-                    }
-                    InputStreamReader inputStreamReader = new InputStreamReader(mSocket.getInputStream());
-                    final StringBuilder stringBuilder = new StringBuilder();
-                    char[] buffer = new char[4096];
-                    stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + ipAddress);
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(mContext, stringBuilder, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                */
 
                 // Если поток закончил принимать сообщения - это означает,
                 // что соединение разорвано (других причин нет).
