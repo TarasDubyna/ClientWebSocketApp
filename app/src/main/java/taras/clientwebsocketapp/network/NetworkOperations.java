@@ -1,9 +1,6 @@
 package taras.clientwebsocketapp.network;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,10 +10,9 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import io.reactivex.Observable;
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.Utils.Constants;
-import taras.clientwebsocketapp.Utils.GsonUtils;
+import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -38,7 +34,7 @@ public class NetworkOperations {
                 try {
                     Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(GsonUtils.createJsonScannerPackage(new ScannerPackage(new ScannerPackage.ClientData(AppApplication.deviceIp, AppApplication.deviceMac))));
+                    out.println(GsonUtils.createJsonScannerPackage(new ScannerPackage(new ScannerPackage.ClientData(AppApplication.deviceIp, AppApplication.deviceOs))));
                 } catch (Exception e) {}
 
                 // Следим за потоком, принимающим сообщения

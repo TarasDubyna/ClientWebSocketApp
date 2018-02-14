@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.Utils;
+package taras.clientwebsocketapp.utils;
 
 /**
  * Created by Taras on 08.02.2018.

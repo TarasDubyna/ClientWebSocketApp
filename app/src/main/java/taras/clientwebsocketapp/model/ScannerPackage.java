@@ -53,13 +53,13 @@ public class ScannerPackage {
         @SerializedName("myIp")
         @Expose
         private String myIp;
-        @SerializedName("myMac")
+        @SerializedName("myOs")
         @Expose
-        private String myMac;
+        private String myOs;
 
-        public ClientData(String myIp, String myMac) {
+        public ClientData(String myIp, String myOs) {
             this.myIp = myIp;
-            this.myMac = myMac;
+            this.myOs = myOs;
         }
     }
     public class ServerData{

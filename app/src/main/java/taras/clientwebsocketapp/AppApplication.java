@@ -9,9 +9,9 @@ import android.net.wifi.WifiManager;
 import android.text.format.Formatter;
 import android.util.Log;
 
-import taras.clientwebsocketapp.Utils.NetworkUtils;
+import com.orhanobut.hawk.Hawk;
 
-import static taras.clientwebsocketapp.Utils.NetworkUtils.getIpNetworkAddressString;
+import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
 
 /**
  * Created by Taras on 08.02.2018.
@@ -23,7 +23,7 @@ public class AppApplication extends Application{
 
     public static String deviceIp;
     public static String networkIp;
-    public static String deviceMac;
+    public static String deviceOs;
     public static String deviceType;
 
     public static Context appContext;
@@ -31,10 +31,12 @@ public class AppApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-
         appContext = getBaseContext();
-        getNetworkParams();
 
+        Hawk.init(getContext())
+                .build();
+
+        getNetworkParams();
     }
 
     private void getNetworkParams(){
@@ -43,20 +45,17 @@ public class AppApplication extends Application{
             public void run() {
                 Context context = AppApplication.appContext;
                 ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
                 WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
                 WifiInfo connectionInfo = wifiManager.getConnectionInfo();
                 int ipAddress = connectionInfo.getIpAddress();
-                String mac = wifiManager.getConnectionInfo().getMacAddress();
 
                 AppApplication.deviceIp = Formatter.formatIpAddress(ipAddress);
                 AppApplication.networkIp = getIpNetworkAddressString();
-                AppApplication.deviceMac = mac;
-
+                AppApplication.deviceOs = "Android";
 
                 Log.d(LOG_TAG,"Device IP: " + AppApplication.deviceIp);
                 Log.d(LOG_TAG,"Network IP: " + AppApplication.networkIp);
-                Log.d(LOG_TAG,"Device MAC: " + AppApplication.deviceMac);
+
             }
         }).start();
     }

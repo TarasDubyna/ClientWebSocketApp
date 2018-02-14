@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.Utils;
+package taras.clientwebsocketapp.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

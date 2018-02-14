@@ -1,18 +1,9 @@
 package taras.clientwebsocketapp.network;
 
-import android.util.Log;
-
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Observable;
-import taras.clientwebsocketapp.Utils.Constants;
-import taras.clientwebsocketapp.Utils.NetworkUtils;
+import taras.clientwebsocketapp.utils.NetworkUtils;
 
 /**
  * Created by Taras on 08.02.2018.

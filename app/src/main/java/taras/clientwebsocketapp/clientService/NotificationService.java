@@ -1,32 +1,14 @@
 package taras.clientwebsocketapp.clientService;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.net.wifi.WifiManager;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.text.format.Formatter;
 import android.util.Log;
-import android.widget.Toast;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.util.function.Consumer;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.NetworkScanner;
-import taras.clientwebsocketapp.Utils.Constants;
-import taras.clientwebsocketapp.Utils.NetworkUtils;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;

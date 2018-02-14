@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.Utils;
+package taras.clientwebsocketapp.utils;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -8,7 +8,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.functions.Consumer;
 import taras.clientwebsocketapp.AppApplication;
 
 import static android.content.Context.WIFI_SERVICE;

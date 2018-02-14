@@ -9,6 +9,9 @@ import android.content.ServiceConnection;
 import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -16,17 +19,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.util.Observable;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import taras.clientwebsocketapp.clientService.NotificationService;
+import taras.clientwebsocketapp.screens.MainFragment;
+import taras.clientwebsocketapp.screens.StartFragment;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "myLogs";
+    private static final String BACK_STACK_TAG = "BACK_STACK_TAG";
+
 
     private String SERVICE_NAME = "Client Device";
     private String SERVICE_TYPE = "_http._tcp.";
@@ -38,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private int hostPort;
     private NsdManager mNsdManager;
 
+    @BindView(R.id.activity_main_container)
+    FrameLayout containerLayout;
 
     EditText etAddress;
     EditText etHost;
@@ -75,11 +88,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_client);
+        setContentView(R.layout.activity_main);
+
+        ButterKnife.bind(this);
+
+        addFragmentToManager(selectStartFragment(),true);
+        //setContentView(R.layout.activity_client);
 
         Log.d(LOG_TAG, "Device OS: " + System.getProperty("os.name"));
 
 
+        /*
         etMessage = findViewById(R.id.etMessage);
         etMessage.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
 
@@ -126,6 +145,32 @@ public class MainActivity extends AppCompatActivity {
                 startService(intent);
             }
         });
+        */
+    }
+
+    public void addFragmentToManager(Fragment fragment, Boolean toBackstack){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.activity_main_container, fragment, BACK_STACK_TAG);
+        if (toBackstack){
+            fragmentTransaction.addToBackStack(BACK_STACK_TAG).commit();
+        } else {
+            fragmentTransaction.commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getFragments().size() < 2){
+            super.onBackPressed();
+        }
+    }
+
+    private Fragment selectStartFragment(){
+        if (PreferenceUtils.getDeviceName().equals("")){
+            return new StartFragment();
+        } else {
+            return new MainFragment();
+        }
     }
 
     @Override
