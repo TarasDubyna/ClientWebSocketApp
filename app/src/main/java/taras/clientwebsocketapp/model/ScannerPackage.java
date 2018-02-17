@@ -10,8 +10,8 @@ import com.google.gson.annotations.SerializedName;
 public class ScannerPackage {
 
     @SerializedName("type")
+    @Expose
     private String type;
-
     @SerializedName("clientData")
     @Expose
     private ClientData clientData;
@@ -20,11 +20,14 @@ public class ScannerPackage {
     private ServerData serverData;
 
 
-    public ScannerPackage(ClientData clientData) {
+
+    public ScannerPackage(String type, ClientData clientData) {
+        this.type = type;
         this.clientData = clientData;
     }
 
-    public ScannerPackage(ServerData serverData) {
+    public ScannerPackage(String type, ServerData serverData) {
+        this.type = type;
         this.serverData = serverData;
     }
 
@@ -62,17 +65,25 @@ public class ScannerPackage {
             this.myOs = myOs;
         }
     }
-    public class ServerData{
+    public static class ServerData{
+        @SerializedName("serverName")
+        @Expose
+        private String serverName;
         @SerializedName("serverIp")
         @Expose
         private String serverIp;
-        @SerializedName("serverMac")
-        @Expose
-        private String serverMac;
 
-        public ServerData(String serverIp, String serverMac) {
+        public String getServerName() {
+            return serverName;
+        }
+        public String getServerIp() {
+            return serverIp;
+        }
+
+
+        public ServerData(String serverIp, String serverName) {
             this.serverIp = serverIp;
-            this.serverMac = serverMac;
+            this.serverName = serverName;
         }
     }
 }

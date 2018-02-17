@@ -6,4 +6,11 @@ package taras.clientwebsocketapp.utils;
 
 public class Constants {
     public static final int SERVER_PORT = 20000;
+
+    public static final String PACKAGE_TYPE_SCANNING = "package_type_scanning";
+
+    public static final String START_SCANNING = "start_scanning";
+    public static final String SERVER_START = "start_server";
+    public static final String SERVER_STOP = "stop_server";
+
 }

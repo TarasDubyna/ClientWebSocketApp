@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.clientService;
+package taras.clientwebsocketapp.client;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 

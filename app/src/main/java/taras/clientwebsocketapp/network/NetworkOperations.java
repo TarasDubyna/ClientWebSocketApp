@@ -34,7 +34,7 @@ public class NetworkOperations {
                 try {
                     Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(GsonUtils.createJsonScannerPackage(new ScannerPackage(new ScannerPackage.ClientData(AppApplication.deviceIp, AppApplication.deviceOs))));
+                    out.println(GsonUtils.createJsonScannerPackage(new ScannerPackage(Constants.PACKAGE_TYPE_SCANNING, new ScannerPackage.ClientData(AppApplication.deviceIp, AppApplication.deviceOs))));
                 } catch (Exception e) {}
 
                 // Следим за потоком, принимающим сообщения
@@ -48,7 +48,7 @@ public class NetworkOperations {
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
                         Log.d(LOG_TAG, "WatchSocket: close response socket - " + ip);
-                        scanningInterface.successfulResponse(stringBuilder.toString());
+                        scanningInterface.successfulScanningResponse(GsonUtils.parseScannerPackage(stringBuilder.toString()));
                     }
                 }
             }

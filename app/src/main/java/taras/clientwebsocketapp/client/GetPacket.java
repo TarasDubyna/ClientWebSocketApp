@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.clientService;
+package taras.clientwebsocketapp.client;
 
 import android.content.Context;
 import android.os.AsyncTask;

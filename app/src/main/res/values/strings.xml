@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">ClientWebSocketApp</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <string name="server_on_visible">Your device is visible in the network!</string>
+    <string name="server_off_invisible">Your device is not visible in the network!</string>
+
+    <string name="network_manager">Network manager</string>
+    <string name="scanning_network">Scanning network</string>
+    <string name="found_devices">Found devices</string>
+
 </resources>

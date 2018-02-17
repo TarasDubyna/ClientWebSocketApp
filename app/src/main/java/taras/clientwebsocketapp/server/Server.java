@@ -1,5 +1,10 @@
 package taras.clientwebsocketapp.server;
 
+import android.util.Log;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -10,23 +15,43 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-/**
- * Created by Taras on 14.02.2018.
- */
+import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.GsonUtils;
 
 public class Server {
+    private static final String LOG_TAG = "myLogs";
 
-    ServerSocket serverSocket;
-    String message = "";
-    static final int socketServerPORT = 20000;
+    private ServerSocket serverSocket;
+    private Thread socketServerThread;
+    private boolean serverState = false;
+
+    private static Server server;
+
 
     public Server() {
-        Thread socketServerThread = new Thread(new SocketServerThread());
-        socketServerThread.start();
     }
 
-    public int getPort() {
-        return socketServerPORT;
+    public static Server getInstance(){
+        if (server == null){
+            server = new Server();
+        }
+        return server;
+    }
+
+    public void startServer(){
+        socketServerThread = new Thread(new SocketServerThread());
+        socketServerThread.start();
+        serverState = true;
+    }
+
+    public void stopServer(){
+        serverState = false;
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onDestroy() {
@@ -41,16 +66,13 @@ public class Server {
     }
 
     private class SocketServerThread extends Thread {
-
-        int count = 0;
-
         @Override
         public void run() {
             try {
                 // create ServerSocket using specified port
-                serverSocket = new ServerSocket(socketServerPORT);
+                serverSocket = new ServerSocket(Constants.SERVER_PORT);
 
-                while (true) {
+                while (serverState) {
                     // block the call until connection is created and return
                     // Socket object
 
@@ -66,10 +88,14 @@ public class Server {
                                 char[] buffer = new char[4096];
                                 stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
                                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+
+                                String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
+
                                 System.out.println("message from client: " + stringBuilder);
 
                                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-                                outputStreamWriter.write("Message from server 192.168.1.133");
+                                //outputStreamWriter.write("Message from server 192.168.1.133");
+                                outputStreamWriter.write(response);
                                 outputStreamWriter.flush();
                                 outputStreamWriter.close();
                             } catch (IOException e) {
@@ -86,32 +112,26 @@ public class Server {
         }
     }
 
-    public String getIpAddress() {
-        String ip = "";
-        try {
-            Enumeration<NetworkInterface> enumNetworkInterfaces = NetworkInterface
-                    .getNetworkInterfaces();
-            while (enumNetworkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = enumNetworkInterfaces
-                        .nextElement();
-                Enumeration<InetAddress> enumInetAddress = networkInterface
-                        .getInetAddresses();
-                while (enumInetAddress.hasMoreElements()) {
-                    InetAddress inetAddress = enumInetAddress
-                            .nextElement();
-
-                    if (inetAddress.isSiteLocalAddress()) {
-                        ip += "Server running at : "
-                                + inetAddress.getHostAddress();
-                    }
-                }
-            }
-
-        } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            ip += "Something Wrong! " + e.toString() + "\n";
+    private String parseRequestToServer(String jsonString, String type){
+        ServerResponse serverResponse = new ServerResponse();
+        switch (type){
+            case Constants.PACKAGE_TYPE_SCANNING:
+                return serverResponse.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
         }
-        return ip;
+        return null;
     }
+    private String checkPackageType (String stringRequest){
+        try {
+            JSONObject jsonObject = new JSONObject(stringRequest);
+            Log.d(LOG_TAG, "Server stringRequest: " + stringRequest);
+            String type = jsonObject.getString("type");
+            return type;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
 }

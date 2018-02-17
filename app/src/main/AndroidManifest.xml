@@ -2,22 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="taras.clientwebsocketapp">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.ACCESS_WIFI_STATE"/>
+        android:name="android.permission.ACCESS_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.CHANGE_WIFI_STATE"/>
+        android:name="android.permission.CHANGE_WIFI_STATE"
+        android:required="true" />
     <uses-permission
-        android:required="true"
-        android:name="android.permission.INTERNET"/>
-
-
+        android:name="android.permission.INTERNET"
+        android:required="true" />
 
     <application
         android:name=".AppApplication"
@@ -26,18 +23,22 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar">
+            android:name=".screens.StartActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <service android:name=".clientService.NotificationService"/>
 
+        <service android:name=".NotificationService" />
+
+        <activity
+            android:name=".screens.MainActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

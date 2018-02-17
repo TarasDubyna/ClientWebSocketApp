@@ -1,7 +1,6 @@
 package taras.clientwebsocketapp.screens;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +10,9 @@ import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnEditorAction;
 import butterknife.Unbinder;
-import taras.clientwebsocketapp.MainActivity;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
@@ -36,7 +34,7 @@ public class StartFragment extends Fragment {
         etName.setOnEditorActionListener((textView, i, keyEvent) -> {
             if(i == EditorInfo.IME_ACTION_DONE){
                 PreferenceUtils.saveDeviceName(textView.toString());
-                ((MainActivity)getActivity()).addFragmentToManager(new MainFragment(), true);
+                ((MainActivity)getActivity()).addFragmentToManager(new ScanNetworkFragment(), true);
                 return true;
             }
             return false;

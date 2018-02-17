@@ -28,6 +28,7 @@ public class AppApplication extends Application{
 
     public static Context appContext;
 
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,4 +67,6 @@ public class AppApplication extends Application{
     public void setContext(Context context) {
         this.appContext = context;
     }
+
+
 }
