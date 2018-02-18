@@ -44,11 +44,15 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvText.setText(directoryList.get(position));
+        if (position == 0){
+            holder.tvText.setText(" ");
+        } else {
+            holder.tvText.setText(returnLastDirectory(directoryList.get(position)));
+        }
         holder.cvItem.setOnClickListener(view -> {
             Log.d("myLogs", "directoryAdapter click on position: " + position);
             Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
-            fileManagerAdapterInterface.getFilePathPosition(directoryList.get(position), position);
+            fileManagerAdapterInterface.getFilePathPosition(position);
         });
     }
 
@@ -80,5 +84,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    private String returnLastDirectory(String path){
+        String[] array = path.split("/+");
+        return array[array.length - 1];
     }
 }

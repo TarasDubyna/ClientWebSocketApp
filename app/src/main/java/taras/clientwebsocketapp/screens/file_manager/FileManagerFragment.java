@@ -88,7 +88,6 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvDirectories.setAdapter(directoryAdapter);
 
-
         rvFiles.setHasFixedSize(true);
         rvFiles.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvFiles.setAdapter(fileManagerAdapter);
@@ -97,19 +96,24 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
 
     @Override
     public void getFilePathLast(String path) {
+        //splitPath(path);
+        Log.d(LOG_TAG, "getFilePathLast: " + path);
         directoryList.add(path);
+        //directoryList.add(returnLastDirectory(path));
+
 
         mCurrentFilesList = mFileManager.createCurrentFile(path).getAllFiles();
         fileManagerAdapter.addFileFolderList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
+        rvDirectories.smoothScrollToPosition(directoryAdapter.getItemCount());
     }
 
     @Override
-    public void getFilePathPosition(String path, int position) {
+    public void getFilePathPosition(int position) {
         Log.d(LOG_TAG, "directoryList, size: " + directoryList.size());
 
-        mCurrentFilesList = mFileManager.createCurrentFile(path).getAllFiles();
+        mCurrentFilesList = mFileManager.createCurrentFile(directoryList.get(position)).getAllFiles();
         removeListToPosition(directoryList, position);
         fileManagerAdapter.addFileFolderList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
@@ -127,5 +131,20 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
                 list.remove(i);
             }
         }
+    }
+
+    private void splitPath(String path){
+        String[] array = path.split("/+");
+        String startPath = "";
+        for (int i = 1; i <= 3; i++){
+            startPath +="/";
+            startPath += array[i];
+            Log.d(LOG_TAG, "Split Path: " + startPath);
+        }
+    }
+
+    private String returnLastDirectory(String path){
+        String[] array = path.split("/+");
+        return array[array.length - 1];
     }
 }

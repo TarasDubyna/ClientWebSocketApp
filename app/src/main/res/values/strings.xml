@@ -17,5 +17,6 @@
 
     <string name="scanning_network">Scanning network</string>
     <string name="found_devices">Found devices</string>
+    <string name="no_devices">No devices</string>
 
 </resources>

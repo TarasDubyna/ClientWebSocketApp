@@ -43,6 +43,5 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:textColor="@color/white"
-        android:text="No devices found"/>
-
+        android:text="@string/no_devices"/>
 </LinearLayout>

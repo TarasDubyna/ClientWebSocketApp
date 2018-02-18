@@ -92,6 +92,7 @@ public class ScanNetworkFragment extends Fragment {
 
     @OnClick(R.id.btnScannNetworkDevices)
     void scanningNetwork(){
+        tvNoDevices.setVisibility(View.VISIBLE);
         devicesRecyclerAdapter.clear();
         GlobalBus.getBus().post(Constants.START_SCANNING);
     }
@@ -101,12 +102,18 @@ public class ScanNetworkFragment extends Fragment {
     public void getScanningResultFromService(ScannerPackage scannerPackage){
         Log.d(LOG_TAG, "getScanningResultFromService, response: " + scannerPackage);
         devicesRecyclerAdapter.addDevice(scannerPackage);
+
+        tvNoDevices.setVisibility(View.GONE);
+        rvNetworkDevices.setVisibility(View.VISIBLE);
     }
 
     private void initScanningRecycler(){
         rvNetworkDevices.setHasFixedSize(true);
         rvNetworkDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvNetworkDevices.setAdapter(devicesRecyclerAdapter);
+
+        tvNoDevices.setVisibility(View.VISIBLE);
+        rvNetworkDevices.setVisibility(View.GONE);
     }
 
 }
