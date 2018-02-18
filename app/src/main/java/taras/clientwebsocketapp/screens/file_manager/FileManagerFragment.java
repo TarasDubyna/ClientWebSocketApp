@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,9 +21,6 @@ import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.file_manager.FileManager;
 import taras.clientwebsocketapp.model.FileFolder;
-import taras.clientwebsocketapp.screens.scann_network.DevicesRecyclerAdapter;
-
-import static taras.clientwebsocketapp.file_manager.FileManager.getExternalStorageDirectory;
 
 /**
  * Created by Taras on 17.02.2018.
@@ -30,7 +28,6 @@ import static taras.clientwebsocketapp.file_manager.FileManager.getExternalStora
 
 public class FileManagerFragment extends Fragment implements FileManagerInterface {
     private static final String LOG_TAG = "myLogs";
-
 
     @BindView(R.id.rvFiles)
     RecyclerView rvFiles;
@@ -41,9 +38,15 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     private FileManagerAdapter fileManagerAdapter;
     private DirectoryAdapter directoryAdapter;
 
-    private ArrayList<ArrayList<FileFolder>> allFilesDirectoryList;
+    //---------------------------------------------
 
+    private ArrayList<ArrayList<FileFolder>> allFilesDirectoryList;
     private ArrayList<String> directoryList;
+
+    //---------------------------------------------
+
+    private FileManager mFileManager;
+    private ArrayList<File> mCurrentFilesList;
 
 
     private static FileManagerFragment fileManagerFragment;
@@ -58,13 +61,18 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
-        directoryList = new ArrayList<>();
-        allFilesDirectoryList = new ArrayList<>();
 
-        getFilesOfDirectory("/");
+        directoryList = new ArrayList<>();
+        File file = Environment.getExternalStorageDirectory();
+        directoryList.add(file.getPath());
+
+        allFilesDirectoryList = new ArrayList<>();
+        mFileManager = new FileManager();
+
+        mCurrentFilesList = mFileManager.setCurrentFile(file).getAllFiles();
 
         directoryAdapter = new DirectoryAdapter(getContext(), this, directoryList);
-        fileManagerAdapter = new FileManagerAdapter(getContext(), this, allFilesDirectoryList.get(0));
+        fileManagerAdapter = new FileManagerAdapter(getContext(), this, mCurrentFilesList);
     }
 
     @Override
@@ -86,18 +94,13 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         rvFiles.setAdapter(fileManagerAdapter);
     }
 
-    private void getFilesOfDirectory(String path){
-        FileManager fileManager = new FileManager();
-        fileManager.getAllFiles(new File(path));
-        allFilesDirectoryList.add(fileManager.findFoldersInDirectory(path));
-
-        directoryList.add(path);
-    }
 
     @Override
     public void getFilePathLast(String path) {
-        getFilesOfDirectory(path);
-        fileManagerAdapter.addFileFolderList(allFilesDirectoryList.get(allFilesDirectoryList.size() - 1));
+        directoryList.add(path);
+
+        mCurrentFilesList = mFileManager.createCurrentFile(path).getAllFiles();
+        fileManagerAdapter.addFileFolderList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
     }
@@ -105,9 +108,10 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void getFilePathPosition(String path, int position) {
         Log.d(LOG_TAG, "directoryList, size: " + directoryList.size());
-        getFilesOfDirectory(path);
+
+        mCurrentFilesList = mFileManager.createCurrentFile(path).getAllFiles();
         removeListToPosition(directoryList, position);
-        fileManagerAdapter.addFileFolderList(allFilesDirectoryList.get(position));
+        fileManagerAdapter.addFileFolderList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
     }

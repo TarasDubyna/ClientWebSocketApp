@@ -48,32 +48,42 @@ public class FileManager {
         }
     }
 
-    public List<File> getAllFiles(File f){
-        File[] allFiles = f.listFiles();
+    public FileManager createCurrentFile(String direction){
+        this.mCurrentDir = new File(direction);
+        return this;
+    }
+    public  FileManager setCurrentFile(File file){
+        this.mCurrentDir = file;
+        return this;
+    }
+
+    public ArrayList<File> getAllFiles(){
+        File[] allFiles = mCurrentDir.listFiles();
 
         /* I want all directories to appear before files do, so I have separate lists for both that are merged into one later.*/
-        List<File> dirs = new ArrayList<>();
-        List<File> files = new ArrayList<>();
+        ArrayList<File> dirs = new ArrayList<>();
+        ArrayList<File> files = new ArrayList<>();
 
-        for (File file : allFiles) {
-            if (file.isDirectory()) {
-                dirs.add(file);
-            } else {
-                files.add(file);
+        if (allFiles != null){
+            for (File file : allFiles) {
+                if (file.isDirectory()) {
+                    dirs.add(file);
+                } else {
+                    files.add(file);
+                }
             }
-        }
-
-        Collections.sort(dirs);
-        Collections.sort(files);
+            Collections.sort(dirs);
+            Collections.sort(files);
 
         /*Both lists are sorted, so I can just add the files to the dirs list.
         This will give me a list of dirs on top and files on bottom. */
-        dirs.addAll(files);
+            dirs.addAll(files);
+        }
 
         return dirs;
     }
 
-    public String getTypeFile(Uri uri) {
+    public static String getTypeFile(Uri uri) {
         String mimeType = null;
 
         String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());

@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,11 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.file_manager.FileManager;
 import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.scann_network.DevicesRecyclerAdapter;
@@ -27,9 +30,9 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     private Context mContext;
     private FileManagerInterface fileManagerAdapterInterface;
-    private ArrayList<FileFolder> fileList;
+    private ArrayList<File> fileList;
 
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface, ArrayList<FileFolder> fileList) {
+    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface, ArrayList<File> fileList) {
         this.mContext = mContext;
         this.fileManagerAdapterInterface = fileManagerAdapterInterface;
         this.fileList = fileList;
@@ -45,23 +48,23 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        FileFolder fileFolder = fileList.get(position);
-        String type = fileFolder.getType();
-        switch (type){
-            case "folder":
-                holder.ivImage.setVisibility(View.VISIBLE);
-                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher_background));
-                holder.tvName.setText(fileFolder.getFolder().getFolderName());
-                break;
-            case "file":
-                holder.tvName.setText(fileFolder.getFile().getFileName());
-                holder.ivImage.setVisibility(View.GONE);
-                break;
+        File file = fileList.get(position);
+        String type = FileManager.getTypeFile(Uri.fromFile(file));
+        if (type == null){
+            //folder
+            holder.ivImage.setVisibility(View.GONE);
+            holder.tvName.setText(file.getName());
+        } else {
+            //file
+            holder.ivImage.setVisibility(View.VISIBLE);
+            holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher_background));
+            holder.tvName.setText(file.getName());
         }
+
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fileManagerAdapterInterface.getFilePathLast(fileFolder.getAbsolutePath());
+                fileManagerAdapterInterface.getFilePathLast(file.getAbsolutePath());
             }
         });
     }
@@ -77,7 +80,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         notifyDataSetChanged();
     }
 
-    public void addFileFolderList(ArrayList<FileFolder> fileList){
+    public void addFileFolderList(ArrayList<File> fileList){
         this.fileList = fileList;
         notifyDataSetChanged();
     }
