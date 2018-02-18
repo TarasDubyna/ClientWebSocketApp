@@ -1,0 +1,100 @@
+package taras.clientwebsocketapp.screens.file_manager;
+
+import android.content.Context;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.model.FileFolder;
+import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.screens.scann_network.DevicesRecyclerAdapter;
+
+/**
+ * Created by Taras on 18.02.2018.
+ */
+
+public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
+
+
+    private Context mContext;
+    private FileManagerInterface fileManagerAdapterInterface;
+    private ArrayList<FileFolder> fileList;
+
+    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface, ArrayList<FileFolder> fileList) {
+        this.mContext = mContext;
+        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
+        this.fileList = fileList;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View rootView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recycler_file_manager_item, parent, false);
+        return new ViewHolder(rootView);
+    }
+
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        FileFolder fileFolder = fileList.get(position);
+        String type = fileFolder.getType();
+        switch (type){
+            case "folder":
+                holder.ivImage.setVisibility(View.VISIBLE);
+                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher_background));
+                holder.tvName.setText(fileFolder.getFolder().getFolderName());
+                break;
+            case "file":
+                holder.tvName.setText(fileFolder.getFile().getFileName());
+                holder.ivImage.setVisibility(View.GONE);
+                break;
+        }
+        holder.cvItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fileManagerAdapterInterface.getFilePathLast(fileFolder.getAbsolutePath());
+            }
+        });
+    }
+
+
+    @Override
+    public int getItemCount() {
+        return fileList.size();
+    }
+
+    public void clear(){
+        this.fileList = new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    public void addFileFolderList(ArrayList<FileFolder> fileList){
+        this.fileList = fileList;
+        notifyDataSetChanged();
+    }
+
+
+    public class ViewHolder extends RecyclerView.ViewHolder{
+
+        @BindView(R.id.cvItem)
+        CardView cvItem;
+        @BindView(R.id.tvName)
+        TextView tvName;
+        @BindView(R.id.ivImage)
+        ImageView ivImage;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+}

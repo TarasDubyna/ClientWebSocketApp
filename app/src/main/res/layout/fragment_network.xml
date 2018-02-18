@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:textColor="@color/white"
-        android:text="@string/scanning_network"/>
+        android:text="@string/found_devices"/>
 
     <View
         android:layout_marginStart="10dp"

@@ -24,6 +24,7 @@ import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GlobalBus;
 
@@ -46,31 +47,46 @@ public class ScanNetworkFragment extends Fragment {
 
     private DevicesRecyclerAdapter devicesRecyclerAdapter;
 
+    private static ScanNetworkFragment scanNetworkFragment;
+    public static ScanNetworkFragment getFragment(){
+        if (scanNetworkFragment == null){
+            scanNetworkFragment = new ScanNetworkFragment();
+        }
+        return scanNetworkFragment;
+    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "ScanNetworkFragment, onCreate");
 
+        devicesRecyclerAdapter = new DevicesRecyclerAdapter(getContext(), new ArrayList<>());
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
         GlobalBus.getBus().register(this);
+
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network_manager));
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(LOG_TAG, "ScanNetworkFragment, onStop");
         GlobalBus.getBus().unregister(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "ScanNetworkFragment, onCreateView");
         rootView = inflater.inflate(R.layout.fragment_network, container, false);
         ButterKnife.bind(this, rootView);
         initScanningRecycler();
+
         return rootView;
     }
 
@@ -80,6 +96,7 @@ public class ScanNetworkFragment extends Fragment {
         GlobalBus.getBus().post(Constants.START_SCANNING);
     }
 
+    //response from server;
     @Subscribe
     public void getScanningResultFromService(ScannerPackage scannerPackage){
         Log.d(LOG_TAG, "getScanningResultFromService, response: " + scannerPackage);
@@ -87,7 +104,6 @@ public class ScanNetworkFragment extends Fragment {
     }
 
     private void initScanningRecycler(){
-        devicesRecyclerAdapter = new DevicesRecyclerAdapter(getContext(), new ArrayList<>());
         rvNetworkDevices.setHasFixedSize(true);
         rvNetworkDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvNetworkDevices.setAdapter(devicesRecyclerAdapter);
