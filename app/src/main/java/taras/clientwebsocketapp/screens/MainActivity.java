@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -45,24 +46,12 @@ public class MainActivity extends AppCompatActivity
     private static final String BACK_STACK_TAG = "BACK_STACK_TAG";
 
 
-    private String SERVICE_NAME = "Client Device";
-    private String SERVICE_TYPE = "_http._tcp.";
-
-    private static final String REQUEST_CONNECT_CLIENT = "request-connect-client";
-
-
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private Switch serverSwitch;
 
-
-    EditText etAddress;
-    EditText etHost;
-    EditText etMessage;
-    Button btnConnect;
-    Button btnScann;
 
     boolean bound = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -76,12 +65,7 @@ public class MainActivity extends AppCompatActivity
             bound = false;
         }
     };
-
     MyReceiver myReceiver;
-
-
-
-
     private class MyReceiver extends BroadcastReceiver {
 
         @Override
@@ -93,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private ScanNetworkFragment scanNetworkFragment;
+    private FileManagerFragment fileManagerFragment;
 
 
     @Override
@@ -202,10 +188,16 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.menu_network_manager) {
-            addFragmentToManager(ScanNetworkFragment.getFragment(), false);
+            if (scanNetworkFragment == null){
+                scanNetworkFragment = new ScanNetworkFragment();
+            }
+            addFragmentToManager(scanNetworkFragment, false);
             // Handle the camera action
         } else if (id == R.id.menu_file_manager) {
-            addFragmentToManager(FileManagerFragment.getFragment(), false);
+            if (fileManagerFragment == null){
+                fileManagerFragment = new FileManagerFragment();
+            }
+            addFragmentToManager(fileManagerFragment, false);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

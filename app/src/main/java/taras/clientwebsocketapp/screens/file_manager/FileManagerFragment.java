@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,6 +35,8 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     RecyclerView rvFiles;
     @BindView(R.id.rvDirectories)
     RecyclerView rvDirectories;
+    @BindView(R.id.tvEmptyFolder)
+    TextView tvEmptyFolder;
 
     private View rootView;
     private FileManagerAdapter fileManagerAdapter;
@@ -40,7 +44,6 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
 
     //---------------------------------------------
 
-    private ArrayList<ArrayList<FileFolder>> allFilesDirectoryList;
     private ArrayList<String> directoryList;
 
     //---------------------------------------------
@@ -66,21 +69,28 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         File file = Environment.getExternalStorageDirectory();
         directoryList.add(file.getPath());
 
-        allFilesDirectoryList = new ArrayList<>();
         mFileManager = new FileManager();
 
         mCurrentFilesList = mFileManager.setCurrentFile(file).getAllFiles();
-
         directoryAdapter = new DirectoryAdapter(getContext(), this, directoryList);
         fileManagerAdapter = new FileManagerAdapter(getContext(), this, mCurrentFilesList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "FileManagerFragment, onCreateView");
         rootView = inflater.inflate(R.layout.fragment_file_manager, container, false);
         ButterKnife.bind(this, rootView);
         initScanningRecycler();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "FileManagerFragment, onResume");
+        directoryAdapter.addDirectoryList(directoryList);
+        fileManagerAdapter.addFileList(mCurrentFilesList);
     }
 
     private void initScanningRecycler(){
@@ -94,28 +104,38 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     }
 
 
+
     @Override
-    public void getFilePathLast(String path) {
-        //splitPath(path);
-        Log.d(LOG_TAG, "getFilePathLast: " + path);
-        directoryList.add(path);
-        //directoryList.add(returnLastDirectory(path));
-
-
-        mCurrentFilesList = mFileManager.createCurrentFile(path).getAllFiles();
-        fileManagerAdapter.addFileFolderList(mCurrentFilesList);
+    public void getFolderWithFiles(String absolutePath) {
+        Log.d(LOG_TAG, "FolderWithFiles: " + absolutePath);
+        directoryList.add(absolutePath);
+        mCurrentFilesList = mFileManager.createCurrentFile(absolutePath).getAllFiles();
+        fileManagerAdapter.addFileList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
         rvDirectories.smoothScrollToPosition(directoryAdapter.getItemCount());
+        tvEmptyFolder.setVisibility(View.GONE);
+        rvFiles.setVisibility(View.VISIBLE);
     }
+
+    @Override
+    public void getFolderEmpty(String absolutePath) {
+        Log.d(LOG_TAG, "FolderEmpty: " + absolutePath);
+        directoryList.add(absolutePath);
+        tvEmptyFolder.setVisibility(View.VISIBLE);
+        rvFiles.setVisibility(View.GONE);
+    }
+
+
 
     @Override
     public void getFilePathPosition(int position) {
         Log.d(LOG_TAG, "directoryList, size: " + directoryList.size());
-
+        rvFiles.setVisibility(View.VISIBLE);
         mCurrentFilesList = mFileManager.createCurrentFile(directoryList.get(position)).getAllFiles();
+
         removeListToPosition(directoryList, position);
-        fileManagerAdapter.addFileFolderList(mCurrentFilesList);
+        fileManagerAdapter.addFileList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
     }
@@ -133,18 +153,4 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         }
     }
 
-    private void splitPath(String path){
-        String[] array = path.split("/+");
-        String startPath = "";
-        for (int i = 1; i <= 3; i++){
-            startPath +="/";
-            startPath += array[i];
-            Log.d(LOG_TAG, "Split Path: " + startPath);
-        }
-    }
-
-    private String returnLastDirectory(String path){
-        String[] array = path.split("/+");
-        return array[array.length - 1];
-    }
 }

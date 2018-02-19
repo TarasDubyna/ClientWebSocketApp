@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import taras.clientwebsocketapp.file_manager.FileManager;
 import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.scann_network.DevicesRecyclerAdapter;
+import taras.clientwebsocketapp.utils.OpenFileUtils;
 
 /**
  * Created by Taras on 18.02.2018.
@@ -64,7 +66,24 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fileManagerAdapterInterface.getFilePathLast(file.getAbsolutePath());
+                FileManager fileManager = new FileManager();
+                String absolutePath = file.getAbsolutePath();
+                ArrayList<File> files = fileManager.createCurrentFile(absolutePath).getAllFiles();
+                if (fileManager.isFile(files)){
+                    //file
+                    OpenFileUtils.openFile(mContext, new File(absolutePath));
+                    //Toast.makeText(mContext, "Its file", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (fileManager.isEmptyFolder(files)){
+                        //empty
+                        fileManagerAdapterInterface.getFolderEmpty(absolutePath);
+                    } else {
+                        // not empty
+                        fileManagerAdapterInterface.getFolderWithFiles(absolutePath);
+                    }
+                }
+
+                //fileManagerAdapterInterface.getFilePathLast(file.getAbsolutePath());
             }
         });
     }
@@ -80,7 +99,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         notifyDataSetChanged();
     }
 
-    public void addFileFolderList(ArrayList<File> fileList){
+    public void addFileList(ArrayList<File> fileList){
         this.fileList = fileList;
         notifyDataSetChanged();
     }

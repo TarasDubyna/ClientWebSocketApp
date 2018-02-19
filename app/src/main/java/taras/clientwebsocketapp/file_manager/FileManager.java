@@ -64,7 +64,9 @@ public class FileManager {
         ArrayList<File> dirs = new ArrayList<>();
         ArrayList<File> files = new ArrayList<>();
 
-        if (allFiles != null){
+        if (allFiles == null){
+            return null;
+        } else {
             for (File file : allFiles) {
                 if (file.isDirectory()) {
                     dirs.add(file);
@@ -94,135 +96,19 @@ public class FileManager {
         return mimeType;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    public static String getExternalStorageDirectory(){
-        String externalStorageDirectory = Environment.getExternalStorageDirectory().toString();
-        Log.d(LOG_TAG, "Environment.getExternalStorageDirectory(): " +  Environment.getExternalStorageDirectory());
-        Log.d(LOG_TAG, "Environment.getExternalStorageState(): " +  Environment.getExternalStorageState());
-        //Log.d(LOG_TAG, "ExternalStorageDirectory: " + externalStorageDirectory);
-        return externalStorageDirectory;
-    }
-
-    public String getStringPathFromArray(List<String> directories){
-        String path = new String();
-        for (String directory :directories){
-            path += "/";
-            path += directory;
-        }
-        return path;
-    }
-
-    public FileManager getFilesInLocation(){
-        File directoryFile = new File(externalStorageDirectory);
-        this.filesInLocation = directoryFile.listFiles();
-        String[] filesString = directoryFile.list();
-
-        File directory = new File(externalStorageDirectory);
-
-        // get all the files from a directory
-        File[] fList = directory.listFiles();
-        for (File file : fList) {
-            if (file.isFile()) {
-                Log.d(LOG_TAG, "FileName:" + file.toString());
-                //files.add(file);
-            } else if (file.isDirectory()) {
-                Log.d(LOG_TAG, "FileName file.getAbsolutePath():" + file.getAbsolutePath());
-                //listf(file.getAbsolutePath(), files);
-            }
-        }
-        return this;
-    }
-
-    public ArrayList<FileFolder> findFoldersInDirectory(String path){
-        File currentDir = new File(path);
-        ArrayList<FileFolder> fileFolderList = new ArrayList<>();
-        try {
-            File[] files = currentDir.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    fileFolderList.add(new FileFolder(new FileFolder.Folder(file.getCanonicalPath(), file.getName(), file.getAbsolutePath())));
-                    Log.d(LOG_TAG, "Folder:" + file.getName());
-                } else {
-                    fileFolderList.add(new FileFolder(new FileFolder.File(file.getCanonicalPath(), file.getName(), file.getAbsolutePath())));
-                    Log.d(LOG_TAG, "File:" + file.getName());
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return fileFolderList;
-    }
-
-
-    public ArrayList<FileFolder> findFoldersInDirectory(String path) {
-        ArrayList<FileFolder> fileFolderList = new ArrayList<>();
-        File directory = new File(path);
-
-        FileFilter directoryFileFilter = new FileFilter() {
-            public boolean accept(File file) {
-                Log.d(LOG_TAG, "FileName:" + file.toString());
-                fileFolderList.add(new FileFolder(new FileFolder.File(file.getPath(), file.getPath(), file.getAbsolutePath())));
-                //findFoldersInDirectory(file.toString());
-                return file.isDirectory();
-            }
-        };
-
-        File[] directoryListAsFile = directory.listFiles(directoryFileFilter);
-        if (directoryListAsFile != null) {
-            ArrayList<String> foldersInDirectory = new ArrayList<String>(directoryListAsFile.length);
-            for (File directoryAsFile : directoryListAsFile) {
-                //findFoldersInDirectory(directoryAsFile.getPath());
-                Log.d(LOG_TAG, "directoryAsFile.getName():" + directoryAsFile.toString());
-                Log.d(LOG_TAG, "directoryAsFile.getPath():" + directoryAsFile.getPath());
-                fileFolderList.add(new FileFolder(new FileFolder.Folder(directoryAsFile.getPath(), directoryAsFile.getPath(), directoryAsFile.getAbsolutePath())));
-                foldersInDirectory.add(directoryAsFile.getName());
-            }
-        }
-        return fileFolderList;
-    }
-
-
-
-    public List<String> getFilesInLocationToString(){
-        List<String>  filesString = new ArrayList<>();
-
-        for (int i = 0; i < filesInLocation.length; i++){
-            filesString.add(filesInLocation[i].getPath());
-        }
-        return filesString;
-    }
-
-    public void getStorageDirector(){
-        // Use the current directory as title
-        String path = Environment.getExternalStorageDirectory().toString();
-        Log.d("Files", "Path: " + path);
-        File f = new File(path);
-        File file[] = f.listFiles();
-        Log.d("Files", "Size: " + file.length);
-        for (int i = 0; i < file.length; i++) {
-            //here populate your listview
-            Log.d("Files", "FileName:" + file[i].getName());
-
+    public boolean isFile(ArrayList<File> files){
+        if (files == null){
+            return true;
+        } else {
+            return false;
         }
     }
-    */
+
+    public boolean isEmptyFolder(ArrayList<File> files){
+        if (files.size() > 0){
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

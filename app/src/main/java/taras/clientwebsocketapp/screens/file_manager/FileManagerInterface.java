@@ -5,6 +5,9 @@ package taras.clientwebsocketapp.screens.file_manager;
  */
 
 public interface FileManagerInterface {
-    void getFilePathLast(String path);
+
+    void getFolderWithFiles(String absolutePath);
+    void getFolderEmpty(String absolutePath);
+
     void getFilePathPosition(int position);
 }

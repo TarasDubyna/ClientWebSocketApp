@@ -67,7 +67,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         notifyDataSetChanged();
     }
 
-    public void addFileFolderList(ArrayList<ArrayList<FileFolder>> directoryMap){
+    public void addDirectoryList( ArrayList<String> directoryList){
         this.directoryList = directoryList;
         notifyDataSetChanged();
     }
