@@ -1,5 +1,6 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
@@ -12,17 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.file_manager.FileManager;
-import taras.clientwebsocketapp.model.FileFolder;
+import taras.clientwebsocketapp.manager.FileManager;
 
 /**
  * Created by Taras on 17.02.2018.
@@ -37,6 +35,8 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     RecyclerView rvDirectories;
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
+
+    private Context mContext;
 
     private View rootView;
     private FileManagerAdapter fileManagerAdapter;
@@ -65,15 +65,20 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
 
-        directoryList = new ArrayList<>();
+        initAll();
+
         File file = Environment.getExternalStorageDirectory();
         directoryList.add(file.getPath());
 
-        mFileManager = new FileManager();
 
         mCurrentFilesList = mFileManager.setCurrentFile(file).getAllFiles();
         directoryAdapter = new DirectoryAdapter(getContext(), this, directoryList);
         fileManagerAdapter = new FileManagerAdapter(getContext(), this, mCurrentFilesList);
+    }
+
+    private void initAll(){
+        directoryList = new ArrayList<>();
+        mFileManager = new FileManager();
     }
 
     @Override
@@ -91,6 +96,17 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         directoryAdapter.addDirectoryList(directoryList);
         fileManagerAdapter.addFileList(mCurrentFilesList);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void initScanningRecycler(){
@@ -126,10 +142,8 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         rvFiles.setVisibility(View.GONE);
     }
 
-
-
     @Override
-    public void getFilePathPosition(int position) {
+    public void goToPreviousFolder(int position) {
         Log.d(LOG_TAG, "directoryList, size: " + directoryList.size());
         rvFiles.setVisibility(View.VISIBLE);
         mCurrentFilesList = mFileManager.createCurrentFile(directoryList.get(position)).getAllFiles();
@@ -138,6 +152,13 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         fileManagerAdapter.addFileList(mCurrentFilesList);
         directoryAdapter.notifyDataSetChanged();
         fileManagerAdapter.notifyDataSetChanged();
+    }
+
+    public ArrayList<String> getDirectoryList() {
+        return directoryList;
+    }
+    public void setDirectoryList(ArrayList<String> directoryList) {
+        this.directoryList = directoryList;
     }
 
     private void removeListToPosition(ArrayList<String> list, int position){

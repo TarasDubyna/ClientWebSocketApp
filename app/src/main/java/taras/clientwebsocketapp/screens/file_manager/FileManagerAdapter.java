@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -17,10 +16,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.file_manager.FileManager;
-import taras.clientwebsocketapp.model.FileFolder;
-import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.screens.scann_network.DevicesRecyclerAdapter;
+import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.utils.OpenFileUtils;
 
 /**
@@ -51,17 +47,18 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
-        String type = FileManager.getTypeFile(Uri.fromFile(file));
-        if (type == null){
-            //folder
-            holder.ivImage.setVisibility(View.GONE);
-            holder.tvName.setText(file.getName());
-        } else {
-            //file
-            holder.ivImage.setVisibility(View.VISIBLE);
-            holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_launcher_background));
-            holder.tvName.setText(file.getName());
+        String type = FileManager.getTypeFileFolder(file);// is file or folder
+        switch (type){
+            case FileManager.TYPE_FILE:
+                holder.ivImage.setVisibility(View.GONE);
+                break;
+            case FileManager.TYPE_FOLDER:
+                holder.ivImage.setVisibility(View.VISIBLE);
+                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_folder));
+                break;
         }
+        holder.tvName.setText(file.getName());
+
 
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override

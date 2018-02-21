@@ -6,10 +6,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 
 import com.orhanobut.hawk.Hawk;
+
+import java.io.File;
+
+import taras.clientwebsocketapp.utils.DataUtils;
 
 import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
 
@@ -25,6 +30,7 @@ public class AppApplication extends Application{
     public static String networkIp;
     public static String deviceOs;
     public static String deviceType;
+    public static File externalStorageDir;
 
     public static Context appContext;
 
@@ -33,6 +39,8 @@ public class AppApplication extends Application{
     public void onCreate() {
         super.onCreate();
         appContext = getBaseContext();
+
+        externalStorageDir = DataUtils.checkExternalStorage();
 
         Hawk.init(getContext())
                 .build();

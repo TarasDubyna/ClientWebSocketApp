@@ -34,6 +34,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.NotificationService;
+import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.manager.back_press_manager.BackPressManager;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
@@ -46,12 +48,14 @@ public class MainActivity extends AppCompatActivity
     private static final String BACK_STACK_TAG = "BACK_STACK_TAG";
 
 
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     private Switch serverSwitch;
+    private String currentFragmentClass;
 
+    FileManager fileManager;
+    BackPressManager backPressManager;
 
     boolean bound = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -66,6 +70,9 @@ public class MainActivity extends AppCompatActivity
         }
     };
     MyReceiver myReceiver;
+
+
+
     private class MyReceiver extends BroadcastReceiver {
 
         @Override
@@ -86,14 +93,17 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        backPressManager = BackPressManager.getBackPressManager(this);
+        fileManager = FileManager.getManager();
+
         startService();
+
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
 
         initServiceReceiver();
-        ScanNetworkFragment scanNetworkFragment = new ScanNetworkFragment();
-        addFragmentToManager(ScanNetworkFragment.getFragment(),true);
+        addFragmentToManager(ScanNetworkFragment.getFragment());
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -103,8 +113,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     @Override
@@ -119,14 +129,11 @@ public class MainActivity extends AppCompatActivity
         GlobalBus.getBus().unregister(this);
     }
 
-    public void addFragmentToManager(Fragment fragment, Boolean toBackstack){
+    public void addFragmentToManager(Fragment fragment){
+        currentFragmentClass = fragment.getClass().getName();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_layout, fragment, BACK_STACK_TAG);
-        if (toBackstack){
-            fragmentTransaction.addToBackStack(BACK_STACK_TAG).commit();
-        } else {
-            fragmentTransaction.commit();
-        }
+        fragmentTransaction.replace(R.id.content_layout, fragment);
+        fragmentTransaction.commit();
     }
 
     @Override
@@ -141,6 +148,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            BackPressManager.getBackPressManager(this);
             super.onBackPressed();
         }
     }
@@ -191,13 +199,14 @@ public class MainActivity extends AppCompatActivity
             if (scanNetworkFragment == null){
                 scanNetworkFragment = new ScanNetworkFragment();
             }
-            addFragmentToManager(scanNetworkFragment, false);
+
+            addFragmentToManager(scanNetworkFragment);
             // Handle the camera action
         } else if (id == R.id.menu_file_manager) {
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
             }
-            addFragmentToManager(fileManagerFragment, false);
+            addFragmentToManager(fileManagerFragment);
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

@@ -11,12 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.model.FileFolder;
 
 /**
  * Created by Taras on 18.02.2018.
@@ -44,15 +43,19 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position == 0){
-            holder.tvText.setText(" ");
+        if (directoryList.get(position).equals(AppApplication.externalStorageDir.getAbsolutePath())){
+            holder.tvText.setVisibility(View.GONE);
+            holder.ivImage.setVisibility(View.VISIBLE);
+            holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_mobile_phone));
         } else {
+            holder.ivImage.setVisibility(View.GONE);
+            holder.tvText.setVisibility(View.VISIBLE);
             holder.tvText.setText(returnLastDirectory(directoryList.get(position)));
         }
         holder.cvItem.setOnClickListener(view -> {
             Log.d("myLogs", "directoryAdapter click on position: " + position);
             Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
-            fileManagerAdapterInterface.getFilePathPosition(position);
+            fileManagerAdapterInterface.goToPreviousFolder(position);
         });
     }
 
@@ -79,6 +82,8 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         CardView cvItem;
         @BindView(R.id.tvText)
         TextView tvText;
+        @BindView(R.id.ivImage)
+        ImageView ivImage;
 
         public ViewHolder(View itemView) {
             super(itemView);

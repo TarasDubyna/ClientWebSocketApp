@@ -34,7 +34,7 @@ public class StartFragment extends Fragment {
         etName.setOnEditorActionListener((textView, i, keyEvent) -> {
             if(i == EditorInfo.IME_ACTION_DONE){
                 PreferenceUtils.saveDeviceName(textView.toString());
-                ((MainActivity)getActivity()).addFragmentToManager(new ScanNetworkFragment(), true);
+                ((MainActivity)getActivity()).addFragmentToManager(new ScanNetworkFragment());
                 return true;
             }
             return false;

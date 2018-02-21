@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.file_manager;
+package taras.clientwebsocketapp.manager;
 
 import android.net.Uri;
 import android.os.Environment;
@@ -6,13 +6,13 @@ import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.model.FileFolder;
 
 /**
@@ -31,20 +31,23 @@ public class FileManager {
     private List<String> directoryList;
 
     private File mCurrentDir; //Our current location.
-    private File mPreviousDir; //Our previous location.
-    private Stack<File> mHistory; //Our navigation History.
 
-    public FileManager() {
-        mHistory = new Stack<>();
-        checkExternalStorage();
+    private static FileManager fileManager;
+
+    public static FileManager getManager(){
+        if (fileManager == null){
+            fileManager = new FileManager();
+        }
+        return fileManager;
     }
 
-    public void checkExternalStorage(){
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            mCurrentDir = Environment.getExternalStorageDirectory();
-            Log.i(LOG_TAG, String.valueOf(mCurrentDir));
+    public static File checkExternalStorage(){
+        if (AppApplication.externalStorageDir.equals(Environment.MEDIA_MOUNTED)) {
+            Log.i(LOG_TAG, String.valueOf(AppApplication.externalStorageDir));
+            return AppApplication.externalStorageDir;
         } else {
             Log.i(LOG_TAG, "External storage unavailable");
+            return null;
         }
     }
 
@@ -85,15 +88,29 @@ public class FileManager {
         return dirs;
     }
 
-    public static String getTypeFile(Uri uri) {
-        String mimeType = null;
 
-        String extension = MimeTypeMap.getFileExtensionFromUrl(uri.getPath());
+    public static final String TYPE_FILE = "TYPE_FILE";
+    public static final String TYPE_FOLDER = "TYPE_FOLDER";
+    public static final String TYPE_FOLDER_EMPTY = "TYPE_FOLDER_EMPTY";
 
-        if (MimeTypeMap.getSingleton().hasExtension(extension)) {
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    public static String getTypeFile(File file){
+        File[] allFiles = file.listFiles();
+        if (allFiles == null){
+            return TYPE_FILE;
+        } else if (allFiles.length == 0){
+            return TYPE_FOLDER_EMPTY;
+        } else {
+            return TYPE_FOLDER;
         }
-        return mimeType;
+    }
+
+    public static String getTypeFileFolder(File file){
+        File[] allFiles = file.listFiles();
+        if (allFiles == null){
+            return TYPE_FILE;
+        } else {
+            return TYPE_FOLDER;
+        }
     }
 
     public boolean isFile(ArrayList<File> files){
