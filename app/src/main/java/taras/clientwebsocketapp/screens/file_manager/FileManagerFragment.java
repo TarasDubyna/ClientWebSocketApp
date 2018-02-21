@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +22,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.manager.UpdateGuiRecyclersInterface;
+import taras.clientwebsocketapp.manager.back_press_manager.BackPressManager;
+import taras.clientwebsocketapp.screens.MainActivity;
 
 /**
  * Created by Taras on 17.02.2018.
  */
 
-public class FileManagerFragment extends Fragment implements FileManagerInterface {
+public class FileManagerFragment extends Fragment implements UpdateGuiRecyclersInterface {
     private static final String LOG_TAG = "myLogs";
 
     @BindView(R.id.rvFiles)
@@ -36,20 +40,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
 
-    private Context mContext;
-
     private View rootView;
-    private FileManagerAdapter fileManagerAdapter;
-    private DirectoryAdapter directoryAdapter;
 
     //---------------------------------------------
 
-    private ArrayList<String> directoryList;
 
-    //---------------------------------------------
-
-    private FileManager mFileManager;
-    private ArrayList<File> mCurrentFilesList;
 
 
     private static FileManagerFragment fileManagerFragment;
@@ -65,20 +60,12 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
 
-        initAll();
 
-        File file = Environment.getExternalStorageDirectory();
-        directoryList.add(file.getPath());
-
-
-        mCurrentFilesList = mFileManager.setCurrentFile(file).getAllFiles();
-        directoryAdapter = new DirectoryAdapter(getContext(), this, directoryList);
-        fileManagerAdapter = new FileManagerAdapter(getContext(), this, mCurrentFilesList);
-    }
-
-    private void initAll(){
-        directoryList = new ArrayList<>();
-        mFileManager = new FileManager();
+        FileManager.getManager(getContext())
+                .initUpdateGuiRecyclersInterface(this)
+                .initFileManagerAdapter()
+                .initDirectoryAdapter()
+                .done();
     }
 
     @Override
@@ -86,92 +73,55 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         Log.d(LOG_TAG, "FileManagerFragment, onCreateView");
         rootView = inflater.inflate(R.layout.fragment_file_manager, container, false);
         ButterKnife.bind(this, rootView);
-        initScanningRecycler();
+        initFileManagerRecyclers();
         return rootView;
     }
-
     @Override
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
-        directoryAdapter.addDirectoryList(directoryList);
-        fileManagerAdapter.addFileList(mCurrentFilesList);
-    }
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
 
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    // handle back button
+                    BackPressManager.getBackPressManager(getActivity()).checkCurrentFragment(((MainActivity) getActivity()).getCurrentFragmentClass());
+                    return true;
+
+                }
+
+                return false;
+            }
+        });
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
-
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    private void initScanningRecycler(){
+    private void initFileManagerRecyclers(){
         rvDirectories.setHasFixedSize(true);
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvDirectories.setAdapter(directoryAdapter);
+        rvDirectories.setAdapter(FileManager.getManager(getContext()).getDirectoryAdapter());
 
         rvFiles.setHasFixedSize(true);
         rvFiles.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rvFiles.setAdapter(fileManagerAdapter);
-    }
-
-
-
-    @Override
-    public void getFolderWithFiles(String absolutePath) {
-        Log.d(LOG_TAG, "FolderWithFiles: " + absolutePath);
-        directoryList.add(absolutePath);
-        mCurrentFilesList = mFileManager.createCurrentFile(absolutePath).getAllFiles();
-        fileManagerAdapter.addFileList(mCurrentFilesList);
-        directoryAdapter.notifyDataSetChanged();
-        fileManagerAdapter.notifyDataSetChanged();
-        rvDirectories.smoothScrollToPosition(directoryAdapter.getItemCount());
-        tvEmptyFolder.setVisibility(View.GONE);
-        rvFiles.setVisibility(View.VISIBLE);
+        rvFiles.setAdapter(FileManager.getManager(getContext()).getFileManagerAdapter());
     }
 
     @Override
-    public void getFolderEmpty(String absolutePath) {
-        Log.d(LOG_TAG, "FolderEmpty: " + absolutePath);
-        directoryList.add(absolutePath);
+    public void updateFilesRecyclerIfFolderEmpty() {
         tvEmptyFolder.setVisibility(View.VISIBLE);
         rvFiles.setVisibility(View.GONE);
     }
 
     @Override
-    public void goToPreviousFolder(int position) {
-        Log.d(LOG_TAG, "directoryList, size: " + directoryList.size());
+    public void updateFilesRecyclerIfFolderNotEmpty() {;
+        rvDirectories.smoothScrollToPosition(FileManager.getManager(getContext()).getDirectoryAdapter().getItemCount());
+        tvEmptyFolder.setVisibility(View.GONE);
         rvFiles.setVisibility(View.VISIBLE);
-        mCurrentFilesList = mFileManager.createCurrentFile(directoryList.get(position)).getAllFiles();
-
-        removeListToPosition(directoryList, position);
-        fileManagerAdapter.addFileList(mCurrentFilesList);
-        directoryAdapter.notifyDataSetChanged();
-        fileManagerAdapter.notifyDataSetChanged();
     }
-
-    public ArrayList<String> getDirectoryList() {
-        return directoryList;
-    }
-    public void setDirectoryList(ArrayList<String> directoryList) {
-        this.directoryList = directoryList;
-    }
-
-    private void removeListToPosition(ArrayList<String> list, int position){
-        Log.d(LOG_TAG, "ArrayList<String> list, size: " + list.size());
-        Log.d(LOG_TAG, "Position: " + position);
-
-        for (int i = list.size() - 1; i > 0; i--){
-            Log.d(LOG_TAG, "list item: " + list.get(i));
-            Log.d(LOG_TAG, "list item position: " + i);
-            if (list.size() > position + 1){
-                list.remove(i);
-            }
-        }
-    }
-
 }

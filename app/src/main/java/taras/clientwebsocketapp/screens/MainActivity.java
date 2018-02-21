@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -72,7 +73,6 @@ public class MainActivity extends AppCompatActivity
     MyReceiver myReceiver;
 
 
-
     private class MyReceiver extends BroadcastReceiver {
 
         @Override
@@ -92,9 +92,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        backPressManager = BackPressManager.getBackPressManager(this);
-        fileManager = FileManager.getManager();
 
         startService();
 
@@ -130,7 +127,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addFragmentToManager(Fragment fragment){
-        currentFragmentClass = fragment.getClass().getName();
+        currentFragmentClass = setCurrentFragmentType(fragment);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content_layout, fragment);
         fragmentTransaction.commit();
@@ -148,8 +145,8 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            BackPressManager.getBackPressManager(this);
-            super.onBackPressed();
+            BackPressManager.getBackPressManager(this).checkCurrentFragment(currentFragmentClass);
+            //super.onBackPressed();
         }
     }
 
@@ -199,12 +196,12 @@ public class MainActivity extends AppCompatActivity
             if (scanNetworkFragment == null){
                 scanNetworkFragment = new ScanNetworkFragment();
             }
-
             addFragmentToManager(scanNetworkFragment);
             // Handle the camera action
         } else if (id == R.id.menu_file_manager) {
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
+
             }
             addFragmentToManager(fileManagerFragment);
         } else if (id == R.id.nav_slideshow) {
@@ -234,7 +231,6 @@ public class MainActivity extends AppCompatActivity
             registerReceiver(myReceiver, intentFilter);
         }
     }
-
     private void startService(){
         Intent intent = new Intent(MainActivity.this, NotificationService.class);
         //intent.putExtra(NotificationService.TYPE, NotificationService.SCAN_NETWORK);
@@ -242,4 +238,17 @@ public class MainActivity extends AppCompatActivity
         startService(intent);
     }
 
+    private String setCurrentFragmentType(Fragment fragment){
+        if (fragment.getClass().getName().equals(FileManagerFragment.class.getName())){
+            return BackPressManager.FILE_MANAGER_FRAGMENT;
+        }
+        if (fragment.getClass().getName().equals(ScanNetworkFragment.class.getName())){
+            return BackPressManager.SCAN_NETWORK_FRAGMENT;
+        }
+        return null;
+    }
+
+    public String getCurrentFragmentClass() {
+        return currentFragmentClass;
+    }
 }

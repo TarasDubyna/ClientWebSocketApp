@@ -47,6 +47,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
+
         String type = FileManager.getTypeFileFolder(file);// is file or folder
         switch (type){
             case FileManager.TYPE_FILE:
@@ -63,13 +64,12 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FileManager fileManager = new FileManager();
+                FileManager fileManager = FileManager.getManager(mContext);
                 String absolutePath = file.getAbsolutePath();
                 ArrayList<File> files = fileManager.createCurrentFile(absolutePath).getAllFiles();
                 if (fileManager.isFile(files)){
                     //file
                     OpenFileUtils.openFile(mContext, new File(absolutePath));
-                    //Toast.makeText(mContext, "Its file", Toast.LENGTH_SHORT).show();
                 } else {
                     if (fileManager.isEmptyFolder(files)){
                         //empty
@@ -79,8 +79,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
                         fileManagerAdapterInterface.getFolderWithFiles(absolutePath);
                     }
                 }
-
-                //fileManagerAdapterInterface.getFilePathLast(file.getAbsolutePath());
             }
         });
     }

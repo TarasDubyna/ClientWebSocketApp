@@ -8,6 +8,5 @@ public interface FileManagerInterface {
 
     void getFolderWithFiles(String absolutePath);
     void getFolderEmpty(String absolutePath);
-
     void goToPreviousFolder(int position);
 }

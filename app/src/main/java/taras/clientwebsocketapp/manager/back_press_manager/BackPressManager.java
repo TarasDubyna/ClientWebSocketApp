@@ -1,7 +1,9 @@
 package taras.clientwebsocketapp.manager.back_press_manager;
 
 import android.app.Activity;
+import android.util.Log;
 
+import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 
@@ -10,13 +12,13 @@ import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
  */
 
 public class BackPressManager {
+    private static final String LOG_TAG = "myLogs";
 
-    private static final String SCAN_NETWORK_FRAGMENT = "SCAN_NETWORK_FRAGMENT";
-    private static final String FILE_MANAGER_FRAGMENT = "FILE_MANAGER_FRAGMENT";
+    public static final String SCAN_NETWORK_FRAGMENT = "SCAN_NETWORK_FRAGMENT";
+    public static final String FILE_MANAGER_FRAGMENT = "FILE_MANAGER_FRAGMENT";
 
 
     private BackPressManagerInterface backPressManagerInterface;
-    private FileManagerInterface fileManagerInterface;
 
     private Activity mActivity;
 
@@ -37,20 +39,19 @@ public class BackPressManager {
         return this;
     }
 
-    public BackPressManager setFileManagerInterface(FileManagerInterface fileManagerInterface){
-        this.fileManagerInterface = fileManagerInterface;
-        return this;
-    }
 
-
-    public void checkCurrentFragment(String currentFragmentClass){
+    public BackPressManager checkCurrentFragment(String currentFragmentClass){
+        Log.d(LOG_TAG, "BackPressManager, currentFragmentClass: " + currentFragmentClass);
         switch (currentFragmentClass){
             case SCAN_NETWORK_FRAGMENT:
                 break;
             case FILE_MANAGER_FRAGMENT:
-                if (FileManagerFragment.getFragment().getDirectoryList().size() > 1){
+                int directoryListSize = FileManager.getManager(mActivity).getDirectoryList().size();
+                if (directoryListSize > 1){
+                 FileManager.getManager(mActivity).wentToPreviousFolder(directoryListSize - 1);
                 }
                 break;
         }
+        return this;
     }
 }

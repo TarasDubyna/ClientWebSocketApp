@@ -27,10 +27,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     private FileManagerInterface fileManagerAdapterInterface;
     private ArrayList<String> directoryList;
 
-    public DirectoryAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface, ArrayList<String> directoryList) {
+    public DirectoryAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface) {
         this.mContext = mContext;
         this.fileManagerAdapterInterface = fileManagerAdapterInterface;
-        this.directoryList = directoryList;
+        this.directoryList = new ArrayList<>();
     }
 
     @Override
