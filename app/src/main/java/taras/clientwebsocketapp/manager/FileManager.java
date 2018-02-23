@@ -1,32 +1,32 @@
 package taras.clientwebsocketapp.manager;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import java.io.File;
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
 
-import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 
 /**
  * Created by Taras on 18.02.2018.
  */
 
-public class FileManager implements FileManagerInterface {
+public class FileManager {
     private static final String LOG_TAG = "myLogs";
 
     private Context mContext;
+
+    //----------------------------------------------------------------------------------------------
+
+    private String startDirectory;
+    private String lastDirectory;
+    private ArrayList<String> allDirectoriesList;
+
+    //----------------------------------------------------------------------------------------------
 
     private ArrayList<String> directoryList;
     private ArrayList<File> mCurrentDirectoryFilesList;
@@ -34,9 +34,6 @@ public class FileManager implements FileManagerInterface {
 
     private static FileManager fileManager;
 
-    private UpdateGuiRecyclersInterface updateGuiRecyclersInterface;
-    private FileManagerAdapter fileManagerAdapter;
-    private DirectoryAdapter directoryAdapter;
 
     public static FileManager getManager(Context context){
         if (fileManager == null){
@@ -44,15 +41,17 @@ public class FileManager implements FileManagerInterface {
         }
         return fileManager;
     }
-
     public FileManager(Context context) {
         this.mContext = context;
-        File file = Environment.getExternalStorageDirectory();
         directoryList = new ArrayList<>();
+
+        File file = Environment.getExternalStorageDirectory();
+        startDirectory = file.getPath();
+        directoryList.add(startDirectory);
+
         directoryList.add(file.getPath());
         mCurrentDirectoryFilesList = setCurrentFile(file).getAllFiles();
     }
-
 
     public FileManager createCurrentFile(String direction){
         this.mCurrentDir = new File(direction);
@@ -62,7 +61,6 @@ public class FileManager implements FileManagerInterface {
         this.mCurrentDir = file;
         return this;
     }
-
     public ArrayList<File> getAllFiles(){
         File[] allFiles = mCurrentDir.listFiles();
 
@@ -106,7 +104,6 @@ public class FileManager implements FileManagerInterface {
             return TYPE_FOLDER;
         }
     }
-
     public static String getTypeFileFolder(File file){
         File[] allFiles = file.listFiles();
         if (allFiles == null){
@@ -115,7 +112,6 @@ public class FileManager implements FileManagerInterface {
             return TYPE_FOLDER;
         }
     }
-
     public boolean isFile(ArrayList<File> files){
         if (files == null){
             return true;
@@ -123,7 +119,6 @@ public class FileManager implements FileManagerInterface {
             return false;
         }
     }
-
     public boolean isEmptyFolder(ArrayList<File> files){
         if (files.size() > 0){
             return false;
@@ -132,77 +127,16 @@ public class FileManager implements FileManagerInterface {
         }
     }
 
-    public FileManager initUpdateGuiRecyclersInterface(UpdateGuiRecyclersInterface updateGuiRecyclersInterface){
-        this.updateGuiRecyclersInterface = updateGuiRecyclersInterface;
-        return this;
-    }
 
-    //init adapters
-    public FileManager initFileManagerAdapter(){
-        fileManagerAdapter = new FileManagerAdapter(mContext, this , mCurrentDirectoryFilesList);
-        return this;
-    }
-    public FileManager initDirectoryAdapter(){
-        directoryAdapter = new DirectoryAdapter(mContext, this);
-        return this;
-    }
 
-    public FileManagerAdapter getFileManagerAdapter() {
-        return fileManagerAdapter;
-    }
-    public DirectoryAdapter getDirectoryAdapter() {
-        return directoryAdapter;
-    }
 
-    public void done(){
-        directoryAdapter.addDirectoryList(directoryList);
-        fileManagerAdapter.addFileList(mCurrentDirectoryFilesList);
+
+    public String getStartDirectory() {
+        return startDirectory;
     }
-
-    private void removeListToPosition(ArrayList<String> list, int position){
-        Log.d(LOG_TAG, "ArrayList<String> list, size: " + list.size());
-        Log.d(LOG_TAG, "Position: " + position);
-
-        for (int i = list.size() - 1; i > 0; i--){
-            Log.d(LOG_TAG, "list item: " + list.get(i));
-            Log.d(LOG_TAG, "list item position: " + i);
-            if (list.size() > position + 1){
-                list.remove(i);
-            }
-        }
-    }
-
+    public String getLastDirectory(){return lastDirectory;}
     public ArrayList<String> getDirectoryList() {
         return directoryList;
     }
 
-    @Override
-    public void getFolderWithFiles(String absolutePath) {
-        directoryList.add(absolutePath);
-        mCurrentDirectoryFilesList = createCurrentFile(absolutePath).getAllFiles();
-        fileManagerAdapter.addFileList(mCurrentDirectoryFilesList);
-        directoryAdapter.notifyDataSetChanged();
-        fileManagerAdapter.notifyDataSetChanged();
-        updateGuiRecyclersInterface.updateFilesRecyclerIfFolderNotEmpty();
-    }
-
-    @Override
-    public void getFolderEmpty(String absolutePath) {
-        directoryList.add(absolutePath);
-        updateGuiRecyclersInterface.updateFilesRecyclerIfFolderEmpty();
-    }
-
-    @Override
-    public void goToPreviousFolder(int position) {
-        wentToPreviousFolder(position);
-    }
-
-    public void wentToPreviousFolder(int position){
-        mCurrentDirectoryFilesList = createCurrentFile(directoryList.get(position)).getAllFiles();
-        removeListToPosition(directoryList, position);
-        fileManagerAdapter.addFileList(mCurrentDirectoryFilesList);
-        directoryAdapter.notifyDataSetChanged();
-        fileManagerAdapter.notifyDataSetChanged();
-        updateGuiRecyclersInterface.updateFilesRecyclerIfFolderNotEmpty();
-    }
 }

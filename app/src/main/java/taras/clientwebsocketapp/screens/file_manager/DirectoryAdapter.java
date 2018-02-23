@@ -11,26 +11,42 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.screens.interfaces.DirectoryAdapterInterface;
 
 /**
  * Created by Taras on 18.02.2018.
  */
 
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.ViewHolder> {
+    private static final String LOG_TAG = "myLogs";
 
     private Context mContext;
-    private FileManagerInterface fileManagerAdapterInterface;
-    private ArrayList<String> directoryList;
 
-    public DirectoryAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface) {
+    DirectoryAdapterInterface directoryAdapterInterface;
+
+    private ArrayList<String> directoryList;
+    private String fullDirectory;
+
+    public DirectoryAdapter(Context mContext, DirectoryAdapterInterface directoryAdapterInterface) {
         this.mContext = mContext;
-        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
+        this.directoryAdapterInterface = directoryAdapterInterface;
         this.directoryList = new ArrayList<>();
+    }
+
+    public void addStartDirectory(String startDirectory){
+        this.directoryList.add(startDirectory);
+        notifyDataSetChanged();
+    }
+
+    public void addCurrentDirectory(String path){
+        this.directoryList.add(path);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -53,12 +69,31 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             holder.tvText.setText(returnLastDirectory(directoryList.get(position)));
         }
         holder.cvItem.setOnClickListener(view -> {
-            Log.d("myLogs", "directoryAdapter click on position: " + position);
-            Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
-            fileManagerAdapterInterface.goToPreviousFolder(position);
+            if (position != getItemCount()){
+                Log.d("myLogs", "directoryAdapter click on position: " + position);
+                Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
+                directoryAdapterInterface.moveToPosition(position);
+            }
         });
     }
 
+    public void setCurrentDirectoryPosition(int position){
+        removeListToPosition(position);
+        notifyDataSetChanged();
+    }
+
+    private void removeListToPosition(int position){
+        Log.d(LOG_TAG, "ArrayList<String> list, size: " + directoryList.size());
+        Log.d(LOG_TAG, "Position: " + position);
+
+        for (int i = directoryList.size() - 1; i > 0; i--){
+            Log.d(LOG_TAG, "list item: " + directoryList.get(i));
+            Log.d(LOG_TAG, "list item position: " + i);
+            if (directoryList.size() > position + 1){
+                directoryList.remove(i);
+            }
+        }
+    }
 
     @Override
     public int getItemCount() {
@@ -74,6 +109,13 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         this.directoryList = directoryList;
         notifyDataSetChanged();
     }
+
+    /*
+    public void setFullDirectory(String path){
+        this.fullDirectory = path;
+        this.directoryList = getDirectoryListDrop(path);
+    }
+    */
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -95,4 +137,5 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         String[] array = path.split("/+");
         return array[array.length - 1];
     }
+
 }

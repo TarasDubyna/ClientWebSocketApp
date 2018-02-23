@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,15 +26,22 @@ import taras.clientwebsocketapp.utils.OpenFileUtils;
 
 public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
 
+    public interface FileManagerAdapterInterface{
+        void moveToNextFolder(String path);
+    }
 
     private Context mContext;
-    private FileManagerInterface fileManagerAdapterInterface;
-    private ArrayList<File> fileList;
+    FileManagerAdapterInterface fileManagerAdapterInterface;
 
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerAdapterInterface, ArrayList<File> fileList) {
+    private ArrayList<File> fileList;
+    private String directory;
+
+    public FileManagerAdapter(Context mContext, FileManagerAdapterInterface fileManagerAdapterInterface,  String directory) {
         this.mContext = mContext;
+        this.directory = directory;
+        File directoryFile = new File(directory);
+        this.fileList = new ArrayList(Arrays.asList(directoryFile.listFiles()));
         this.fileManagerAdapterInterface = fileManagerAdapterInterface;
-        this.fileList = fileList;
     }
 
     @Override
@@ -46,7 +54,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        File file = fileList.get(position);
+        File file =fileList.get(position);
 
         String type = FileManager.getTypeFileFolder(file);// is file or folder
         switch (type){
@@ -60,23 +68,22 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         }
         holder.tvName.setText(file.getName());
 
-
         holder.cvItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FileManager fileManager = FileManager.getManager(mContext);
                 String absolutePath = file.getAbsolutePath();
                 ArrayList<File> files = fileManager.createCurrentFile(absolutePath).getAllFiles();
+
                 if (fileManager.isFile(files)){
                     //file
-                    OpenFileUtils.openFile(mContext, new File(absolutePath));
+                    OpenFileUtils.openFile(mContext, file);
                 } else {
                     if (fileManager.isEmptyFolder(files)){
                         //empty
-                        fileManagerAdapterInterface.getFolderEmpty(absolutePath);
                     } else {
                         // not empty
-                        fileManagerAdapterInterface.getFolderWithFiles(absolutePath);
+                        fileManagerAdapterInterface.moveToNextFolder(absolutePath);
                     }
                 }
             }
@@ -91,11 +98,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     public void clear(){
         this.fileList = new ArrayList<>();
-        notifyDataSetChanged();
-    }
-
-    public void addFileList(ArrayList<File> fileList){
-        this.fileList = fileList;
         notifyDataSetChanged();
     }
 

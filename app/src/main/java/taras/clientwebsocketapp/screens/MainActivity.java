@@ -36,7 +36,6 @@ import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.NotificationService;
 import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.manager.back_press_manager.BackPressManager;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity
     private String currentFragmentClass;
 
     FileManager fileManager;
-    BackPressManager backPressManager;
 
     boolean bound = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -127,7 +125,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addFragmentToManager(Fragment fragment){
-        currentFragmentClass = setCurrentFragmentType(fragment);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content_layout, fragment);
         fragmentTransaction.commit();
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            BackPressManager.getBackPressManager(this).checkCurrentFragment(currentFragmentClass);
+            System.out.println();
             //super.onBackPressed();
         }
     }
@@ -236,16 +233,6 @@ public class MainActivity extends AppCompatActivity
         //intent.putExtra(NotificationService.TYPE, NotificationService.SCAN_NETWORK);
         //intent.putExtra("ip", etAddress.getText().toString());
         startService(intent);
-    }
-
-    private String setCurrentFragmentType(Fragment fragment){
-        if (fragment.getClass().getName().equals(FileManagerFragment.class.getName())){
-            return BackPressManager.FILE_MANAGER_FRAGMENT;
-        }
-        if (fragment.getClass().getName().equals(ScanNetworkFragment.class.getName())){
-            return BackPressManager.SCAN_NETWORK_FRAGMENT;
-        }
-        return null;
     }
 
     public String getCurrentFragmentClass() {

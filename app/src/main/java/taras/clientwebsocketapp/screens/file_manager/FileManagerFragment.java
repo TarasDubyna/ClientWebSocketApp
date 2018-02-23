@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,30 +16,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.io.File;
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.manager.UpdateGuiRecyclersInterface;
-import taras.clientwebsocketapp.manager.back_press_manager.BackPressManager;
-import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.screens.interfaces.DirectoryAdapterInterface;
 
 /**
  * Created by Taras on 17.02.2018.
  */
 
-public class FileManagerFragment extends Fragment implements UpdateGuiRecyclersInterface {
+public class FileManagerFragment extends Fragment implements DirectoryAdapterInterface, FileManagerAdapter.FileManagerAdapterInterface {
     private static final String LOG_TAG = "myLogs";
 
+    /*
     @BindView(R.id.rvFiles)
     RecyclerView rvFiles;
+    */
     @BindView(R.id.rvDirectories)
     RecyclerView rvDirectories;
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
+
+    @BindView(R.id.vpFileManagerFragment)
+    ViewPager vpDirectoryContent;
+    FileManagerViewPagerAdapter fileManagerViewPagerAdapter;
+
+    DirectoryAdapter directoryAdapter;
 
     private View rootView;
 
@@ -59,13 +63,6 @@ public class FileManagerFragment extends Fragment implements UpdateGuiRecyclersI
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
-
-
-        FileManager.getManager(getContext())
-                .initUpdateGuiRecyclersInterface(this)
-                .initFileManagerAdapter()
-                .initDirectoryAdapter()
-                .done();
     }
 
     @Override
@@ -74,54 +71,58 @@ public class FileManagerFragment extends Fragment implements UpdateGuiRecyclersI
         rootView = inflater.inflate(R.layout.fragment_file_manager, container, false);
         ButterKnife.bind(this, rootView);
         initFileManagerRecyclers();
+        fileManagerViewPagerAdapter = new FileManagerViewPagerAdapter(getFragmentManager(), getContext(), this)
+                .setStartDirectory(FileManager.getManager(getContext()).getStartDirectory());
+        vpDirectoryContent.setAdapter(fileManagerViewPagerAdapter);
+        vpDirectoryContent.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+            @Override
+            public void onPageSelected(int position) {
+                Log.d(LOG_TAG, "onPageScrolled, position: " + position + " , directoryAdapter.size: " + directoryAdapter.getItemCount());
+                directoryAdapter.setCurrentDirectoryPosition(position);
+                vpDirectoryContent.setCurrentItem(position, true);
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                Log.d(LOG_TAG, "onPageScrollStateChanged: " + state);
+            }
+        });
+
         return rootView;
     }
     @Override
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
-                    // handle back button
-                    BackPressManager.getBackPressManager(getActivity()).checkCurrentFragment(((MainActivity) getActivity()).getCurrentFragmentClass());
-                    return true;
-
-                }
-
-                return false;
-            }
-        });
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+
+
 
     private void initFileManagerRecyclers(){
+        directoryAdapter = new DirectoryAdapter(getContext(), this);
+        directoryAdapter.addStartDirectory(FileManager.getManager(getContext()).getStartDirectory());
         rvDirectories.setHasFixedSize(true);
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvDirectories.setAdapter(FileManager.getManager(getContext()).getDirectoryAdapter());
+        rvDirectories.setAdapter(directoryAdapter);
+    }
 
-        rvFiles.setHasFixedSize(true);
-        rvFiles.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rvFiles.setAdapter(FileManager.getManager(getContext()).getFileManagerAdapter());
+
+    //Click directory recycler position
+    @Override
+    public void moveToPosition(int position) {
+        Log.d(LOG_TAG, "moveToPosition: " + position);
+        directoryAdapter.setCurrentDirectoryPosition(position);
+        fileManagerViewPagerAdapter.removeListToPosition(position);
+        vpDirectoryContent.setCurrentItem(position, true);
     }
 
     @Override
-    public void updateFilesRecyclerIfFolderEmpty() {
-        tvEmptyFolder.setVisibility(View.VISIBLE);
-        rvFiles.setVisibility(View.GONE);
+    public void moveToNextFolder(String path) {
+        directoryAdapter.addCurrentDirectory(path);
+        fileManagerViewPagerAdapter.addDirectory(path);
+        vpDirectoryContent.setCurrentItem(directoryAdapter.getItemCount(),true);
     }
 
-    @Override
-    public void updateFilesRecyclerIfFolderNotEmpty() {;
-        rvDirectories.smoothScrollToPosition(FileManager.getManager(getContext()).getDirectoryAdapter().getItemCount());
-        tvEmptyFolder.setVisibility(View.GONE);
-        rvFiles.setVisibility(View.VISIBLE);
-    }
 }
