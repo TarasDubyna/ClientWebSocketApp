@@ -20,4 +20,13 @@
     <string name="found_devices">Found devices</string>
     <string name="no_devices">No devices</string>
 
+    <!-- file info fragment -->
+    <string name="file_info">File info</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="add_to_favorite">Add to Favorite</string>
+    <string name="directory">Directory: </string>
+    <string name="name">Name: </string>
+
+
 </resources>

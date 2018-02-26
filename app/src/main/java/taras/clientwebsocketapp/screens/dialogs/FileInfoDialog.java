@@ -24,7 +24,8 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         mContext = getActivity();
         View dialogView = inflater.inflate(R.layout.dialog_info_fragment,container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        getDialog().getWindow().setLayout(200, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        getDialog().getWindow().setLayout(500, 1000);
         return dialogView;
     }
 }
