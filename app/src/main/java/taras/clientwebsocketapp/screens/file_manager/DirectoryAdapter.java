@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,24 +29,19 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     private Context mContext;
 
-    DirectoryAdapterInterface directoryAdapterInterface;
+    FileManagerInterface fileManagerInterface;
 
     private ArrayList<String> directoryList;
     private String fullDirectory;
 
-    public DirectoryAdapter(Context mContext, DirectoryAdapterInterface directoryAdapterInterface) {
+    public DirectoryAdapter(Context mContext, FileManagerInterface fileManagerInterface) {
         this.mContext = mContext;
-        this.directoryAdapterInterface = directoryAdapterInterface;
+        this.fileManagerInterface = fileManagerInterface;
         this.directoryList = new ArrayList<>();
     }
 
     public void addStartDirectory(String startDirectory){
         this.directoryList.add(startDirectory);
-        notifyDataSetChanged();
-    }
-
-    public void addCurrentDirectory(String path){
-        this.directoryList.add(path);
         notifyDataSetChanged();
     }
 
@@ -69,30 +65,37 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             holder.tvText.setText(returnLastDirectory(directoryList.get(position)));
         }
         holder.cvItem.setOnClickListener(view -> {
+            Log.d("myLogs", "directoryAdapter click on position: " + position);
+            Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
+            fileManagerInterface.returnToPosition(position);
+
+            /*
             if (position != getItemCount()){
                 Log.d("myLogs", "directoryAdapter click on position: " + position);
                 Log.d("myLogs", "directoryAdapter click, path " + directoryList.get(position));
-                directoryAdapterInterface.moveToPosition(position);
+                removeListToPosition(position);
+                notifyDataSetChanged();
+                directoryAdapterInterface.moveToDirectoryPosition(position);
             }
+             */
         });
     }
 
-    public void setCurrentDirectoryPosition(int position){
+
+    public void removeToPosition(int position){
         removeListToPosition(position);
         notifyDataSetChanged();
     }
 
-    private void removeListToPosition(int position){
+    public void removeListToPosition(int position){
         Log.d(LOG_TAG, "ArrayList<String> list, size: " + directoryList.size());
         Log.d(LOG_TAG, "Position: " + position);
-
-        for (int i = directoryList.size() - 1; i > 0; i--){
-            Log.d(LOG_TAG, "list item: " + directoryList.get(i));
-            Log.d(LOG_TAG, "list item position: " + i);
-            if (directoryList.size() > position + 1){
-                directoryList.remove(i);
-            }
+        ArrayList<String> newFileList = new ArrayList<>();
+        for (int i = 0; i <= position; i++){
+            newFileList.add(directoryList.get(i));
         }
+        directoryList = newFileList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -100,22 +103,16 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         return directoryList.size();
     }
 
-    public void clear(){
-        this.directoryList = new ArrayList<>();
+
+    public void addDirectory(String directory){
+        this.directoryList.add(directory);
         notifyDataSetChanged();
     }
 
-    public void addDirectoryList( ArrayList<String> directoryList){
-        this.directoryList = directoryList;
-        notifyDataSetChanged();
+    public String getDirectoryOfListByPosition(int position){
+        return directoryList.get(position);
     }
 
-    /*
-    public void setFullDirectory(String path){
-        this.fullDirectory = path;
-        this.directoryList = getDirectoryListDrop(path);
-    }
-    */
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{

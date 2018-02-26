@@ -13,6 +13,7 @@
 
     <string name="network_manager">Network manager</string>
     <string name="file_manager">File manager</string>
+    <string name="empty_folder">Folder is empty</string>
 
 
     <string name="scanning_network">Scanning network</string>

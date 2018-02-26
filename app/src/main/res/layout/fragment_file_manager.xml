@@ -12,11 +12,19 @@
         android:layout_height="wrap_content"
         tools:listitem="@layout/recycler_directory_item">
     </android.support.v7.widget.RecyclerView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvFiles"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:listitem="@layout/recycler_directory_item">
+    </android.support.v7.widget.RecyclerView>
+    <!--
     <android.support.v4.view.ViewPager
         android:id="@+id/vpFileManagerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </android.support.v4.view.ViewPager>
+    -->
     <TextView
         android:visibility="gone"
         android:id="@+id/tvEmptyFolder"

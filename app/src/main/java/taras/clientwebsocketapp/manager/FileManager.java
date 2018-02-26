@@ -6,8 +6,10 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
+import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 
@@ -112,14 +114,19 @@ public class FileManager {
             return TYPE_FOLDER;
         }
     }
-    public boolean isFile(ArrayList<File> files){
-        if (files == null){
-            return true;
-        } else {
-            return false;
+    public boolean isFile(File file){
+        if (file.listFiles() != null){
+            ArrayList<File> files = new ArrayList(Arrays.asList(file.listFiles()));
+            if (files == null){
+                return true;
+            } else {
+                return false;
+            }
         }
+        return false;
     }
-    public boolean isEmptyFolder(ArrayList<File> files){
+    public boolean isEmptyFolder(File file){
+        ArrayList<File> files = new ArrayList<>(Arrays.asList(file));
         if (files.size() > 0){
             return false;
         } else {

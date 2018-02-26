@@ -9,4 +9,5 @@
         android:layout_height="match_parent"
         tools:listitem="@layout/recycler_file_manager_item">
     </android.support.v7.widget.RecyclerView>
+
 </LinearLayout>

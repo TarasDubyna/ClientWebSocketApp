@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +17,10 @@ import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.utils.OpenFileUtils;
 
 /**
@@ -25,23 +28,21 @@ import taras.clientwebsocketapp.utils.OpenFileUtils;
  */
 
 public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
-
-    public interface FileManagerAdapterInterface{
-        void moveToNextFolder(String path);
-    }
+    private static final String LOG_TAG = "myLogs";
 
     private Context mContext;
-    FileManagerAdapterInterface fileManagerAdapterInterface;
+    FileManagerInterface fileManagerInterface;
 
     private ArrayList<File> fileList;
-    private String directory;
+    private File file;
 
-    public FileManagerAdapter(Context mContext, FileManagerAdapterInterface fileManagerAdapterInterface,  String directory) {
+    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
         this.mContext = mContext;
-        this.directory = directory;
-        File directoryFile = new File(directory);
-        this.fileList = new ArrayList(Arrays.asList(directoryFile.listFiles()));
-        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
+        this.fileList = new ArrayList<>();
+        //this.fileList.add(new File(externalDirectory));
+        File file = new File(externalDirectory);
+        this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
+        this.fileManagerInterface = fileManagerInterface;
     }
 
     @Override
@@ -54,9 +55,9 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        File file =fileList.get(position);
-
+        File file = fileList.get(position);
         String type = FileManager.getTypeFileFolder(file);// is file or folder
+
         switch (type){
             case FileManager.TYPE_FILE:
                 holder.ivImage.setVisibility(View.GONE);
@@ -67,39 +68,45 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
                 break;
         }
         holder.tvName.setText(file.getName());
-
-        holder.cvItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FileManager fileManager = FileManager.getManager(mContext);
-                String absolutePath = file.getAbsolutePath();
-                ArrayList<File> files = fileManager.createCurrentFile(absolutePath).getAllFiles();
-
-                if (fileManager.isFile(files)){
-                    //file
-                    OpenFileUtils.openFile(mContext, file);
-                } else {
-                    if (fileManager.isEmptyFolder(files)){
-                        //empty
-                    } else {
-                        // not empty
-                        fileManagerAdapterInterface.moveToNextFolder(absolutePath);
-                    }
-                }
+        holder.cvItem.setOnClickListener(view -> {
+            if (file.listFiles() == null){
+                //file
+                Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
+                OpenFileUtils.openFile(mContext, file);
+            } else {
+                Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
+                fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
             }
+        });
+        holder.ivMore.setOnClickListener(view -> {
+            fileManagerInterface.callFileInfo(file);
         });
     }
 
+
+    public void setCurrentDirectory(String directory){
+        File directoryFile = new File(directory);
+        this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
+        notifyDataSetChanged();
+    }
+
+    public void removeFilesList(int position){
+        Log.d(LOG_TAG, "ArrayList<String> list, size: " + fileList.size());
+        Log.d(LOG_TAG, "Position: " + position);
+        ArrayList<File> newFileList = new ArrayList<>();
+        for (int i = 0; i <= position; i++){
+            newFileList.add(fileList.get(i));
+        }
+        fileList = newFileList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {
         return fileList.size();
     }
 
-    public void clear(){
-        this.fileList = new ArrayList<>();
-        notifyDataSetChanged();
-    }
+
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -110,6 +117,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         TextView tvName;
         @BindView(R.id.ivImage)
         ImageView ivImage;
+        @BindView(R.id.ivMore)
+        ImageView ivMore;
 
         public ViewHolder(View itemView) {
             super(itemView);

@@ -5,5 +5,5 @@ package taras.clientwebsocketapp.screens.interfaces;
  */
 
 public interface DirectoryAdapterInterface {
-    void moveToPosition(int position);
+    void moveToDirectoryPosition(int position);
 }
