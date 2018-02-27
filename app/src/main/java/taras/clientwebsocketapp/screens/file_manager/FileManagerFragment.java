@@ -118,6 +118,7 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void callFileInfo(File file) {
         FileInfoDialog fileInfoDialog = new FileInfoDialog();
+        fileInfoDialog.setFileForInfo(file);
         fileInfoDialog.show(getFragmentManager(), "sdf");
     }
 }

@@ -4,16 +4,28 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.util.StringTokenizer;
 
 /**
  * Created by Taras on 20.02.2018.
  */
 
-public class OpenFileUtils {
+public class FileUtils {
 
     /*
     public static void openFile(Context context, File file){
@@ -101,5 +113,32 @@ public class OpenFileUtils {
             return ext.toLowerCase();
 
         }
+    }
+
+
+    public void getCreationTime(File file) throws IOException {
+        Process proc = Runtime.getRuntime().exec("cmd /c dir c:\\logfile.log /tc");
+
+        BufferedReader br =
+                new BufferedReader(
+                        new InputStreamReader(proc.getInputStream()));
+
+        String data ="";
+
+        //it's quite stupid but work
+        for(int i=0; i<6; i++){
+            data = br.readLine();
+        }
+
+        System.out.println("Extracted value : " + data);
+
+        //split by space
+        StringTokenizer st = new StringTokenizer(data);
+        String date = st.nextToken();//Get date
+        String time = st.nextToken();//Get time
+
+        System.out.println("Creation Date  : " + date);
+        System.out.println("Creation Time  : " + time);
+        //  also available view.lastAccessTine and view.lastModifiedTime
     }
 }

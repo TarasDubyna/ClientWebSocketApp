@@ -1,7 +1,6 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,11 +16,9 @@ import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
-import taras.clientwebsocketapp.utils.OpenFileUtils;
+import taras.clientwebsocketapp.utils.FileUtils;
 
 /**
  * Created by Taras on 18.02.2018.
@@ -72,7 +69,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
             if (file.listFiles() == null){
                 //file
                 Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                OpenFileUtils.openFile(mContext, file);
+                FileUtils.openFile(mContext, file);
             } else {
                 Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
                 fileManagerInterface.moveNextDirectory(file.getAbsolutePath());

@@ -27,6 +27,7 @@
     <string name="add_to_favorite">Add to Favorite</string>
     <string name="directory">Directory: </string>
     <string name="name">Name: </string>
+    <string name="creation_date">Date of creation: </string>
 
 
 </resources>
