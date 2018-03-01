@@ -14,6 +14,9 @@ import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.utils.DataUtils;
 
 import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
@@ -46,6 +49,7 @@ public class AppApplication extends Application{
                 .build();
 
         getNetworkParams();
+
     }
 
     private void getNetworkParams(){
@@ -75,6 +79,8 @@ public class AppApplication extends Application{
     public void setContext(Context context) {
         this.appContext = context;
     }
+
+
 
 
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Toast;
 
@@ -19,7 +20,16 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.StringTokenizer;
+
+import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.model.FileFolder;
 
 /**
  * Created by Taras on 20.02.2018.
@@ -27,20 +37,7 @@ import java.util.StringTokenizer;
 
 public class FileUtils {
 
-    /*
-    public static void openFile(Context context, File file){
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        Intent newIntent = new Intent(Intent.ACTION_VIEW);
-        String mimeType = myMime.getMimeTypeFromExtension(fileExt(file.getAbsolutePath()).substring(1));
-        newIntent.setDataAndType(Uri.fromFile(file),mimeType);
-        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            context.startActivity(newIntent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "No handler for this type of file.", Toast.LENGTH_LONG).show();
-        }
-    }
-    */
+    private static final String LOG_TAG = "myLogs";
 
     public static void openFile(Context context, File url){
         // Create URI
@@ -96,49 +93,32 @@ public class FileUtils {
         context.startActivity(intent);
     }
 
-    private static String fileExt(String url) {
-        if (url.indexOf("?") > -1) {
-            url = url.substring(0, url.indexOf("?"));
-        }
-        if (url.lastIndexOf(".") == -1) {
-            return null;
-        } else {
-            String ext = url.substring(url.lastIndexOf(".") + 1);
-            if (ext.indexOf("%") > -1) {
-                ext = ext.substring(0, ext.indexOf("%"));
-            }
-            if (ext.indexOf("/") > -1) {
-                ext = ext.substring(0, ext.indexOf("/"));
-            }
-            return ext.toLowerCase();
-
-        }
+    public static String getCreationTime(File file){
+        String date = "";
+        Date lastModDate = new Date(file.lastModified());
+        SimpleDateFormat spf = new SimpleDateFormat("dd:MM:yyyy hh:mm");
+        date = spf.format(lastModDate);
+        Log.d(LOG_TAG, "file lastModified: " + date);
+        return date;
     }
 
+    public static String getSize(Context context, File file){
+        String text = "";
+        if (file.listFiles() == null){
+            double size = file.length();
+            final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
+            int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+            return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 
-    public void getCreationTime(File file) throws IOException {
-        Process proc = Runtime.getRuntime().exec("cmd /c dir c:\\logfile.log /tc");
-
-        BufferedReader br =
-                new BufferedReader(
-                        new InputStreamReader(proc.getInputStream()));
-
-        String data ="";
-
-        //it's quite stupid but work
-        for(int i=0; i<6; i++){
-            data = br.readLine();
+        } else if (file.listFiles().length == 0){
+            text = file.listFiles().length + " " + context.getString(R.string.text_files);
+            return text;
+        } else if (file.listFiles().length == 1){
+            text = file.listFiles().length + " " + context.getString(R.string.text_file);
+            return text;
+        } else {
+            text = file.listFiles().length + " " + context.getString(R.string.text_files);
+            return text;
         }
-
-        System.out.println("Extracted value : " + data);
-
-        //split by space
-        StringTokenizer st = new StringTokenizer(data);
-        String date = st.nextToken();//Get date
-        String time = st.nextToken();//Get time
-
-        System.out.println("Creation Date  : " + date);
-        System.out.println("Creation Time  : " + time);
-        //  also available view.lastAccessTine and view.lastModifiedTime
     }
 }

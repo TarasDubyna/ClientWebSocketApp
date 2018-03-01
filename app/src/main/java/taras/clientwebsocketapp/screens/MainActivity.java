@@ -33,9 +33,13 @@ import com.squareup.otto.ThreadEnforcer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.NotificationService;
 import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.model.realm.FavoriteFile;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
 
+    private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +115,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
+
+        FavoriteFilesManager favoriteFilesManager = FavoriteFilesManager.getInstance(this);
     }
 
     @Override
@@ -134,6 +141,7 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(myReceiver);
+        mRealm.close();
     }
 
     @Override

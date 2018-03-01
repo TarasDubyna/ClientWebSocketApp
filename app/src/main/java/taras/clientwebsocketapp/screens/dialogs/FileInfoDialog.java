@@ -16,12 +16,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.model.realm.FavoriteFile;
+import taras.clientwebsocketapp.utils.FileUtils;
 
 /**
  * Created by Taras on 27.02.2018.
@@ -38,6 +50,8 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     TextView tvDirectory;
     @BindView(R.id.tvDate)
     TextView tvDate;
+    @BindView(R.id.tvSize)
+    TextView tvSize;
 
 
     //clickable
@@ -89,7 +103,15 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     private void setInfo(){
         tvName.setText(file.getName());
         tvDirectory.setText(file.getAbsolutePath());
+        tvDate.setText(FileUtils.getCreationTime(file));
+        tvSize.setText(FileUtils.getSize(getContext(), file));
         etRename.setText(file.getName());
+
+        if (FavoriteFilesManager.getInstance(getContext()).isFavorite(file)){
+            ivFavorite.setVisibility(View.VISIBLE);
+        } else {
+            ivFavorite.setVisibility(View.GONE);
+        }
     }
 
 
@@ -116,8 +138,10 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
                 break;
             case R.id.llFavorite:
                 if (ivFavorite.getVisibility() == View.GONE){
+                    FavoriteFilesManager.getInstance(getContext()).addToFavorite(file);
                     ivFavorite.setVisibility(View.VISIBLE);
                 } else {
+                    FavoriteFilesManager.getInstance(getContext()).removeFromFavorites(file);
                     ivFavorite.setVisibility(View.GONE);
                 }
                 break;
