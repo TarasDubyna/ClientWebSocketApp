@@ -1,44 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ClientWebSocketApp</string>
-    <string name="title_activity_main2">Main2Activity</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
-
-
     <string name="server_on_visible">Your device is visible in the network!</string>
     <string name="server_off_invisible">Your device is not visible in the network!</string>
-
     <string name="network_manager">Network manager</string>
     <string name="file_manager">File manager</string>
     <string name="empty_folder">Folder is empty</string>
-
-
     <string name="scanning_network">Scanning network</string>
     <string name="found_devices">Found devices</string>
     <string name="no_devices">No devices</string>
-
-    <!-- file info fragment -->
     <string name="file_info">File info</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
     <string name="add_to_favorite">Add to Favorite</string>
-    <string name="directory">Directory: </string>
-    <string name="name">Name: </string>
-    <string name="creation_date">Date of creation: </string>
-
-
-
+    <string name="directory">"Directory: "</string>
+    <string name="name">"Name: "</string>
+    <string name="creation_date">"Date of creation: "</string>
+    <string name="rename_file">Rename file</string>
     <string name="delete_file">Delete file</string>
     <string name="sure_delete">Are you sure want to delete this file?</string>
     <string name="file_deleted">File successfully deleted!</string>
     <string name="file_not_deleted">The file could not be deleted!</string>
-
-    <string name="rename_file">Rename file</string>
-    <string name="rename_successful">The file was renamed successfully</string>
-    <string name="rename_not_successful">The file was not renamed</string>
-
-
 </resources>

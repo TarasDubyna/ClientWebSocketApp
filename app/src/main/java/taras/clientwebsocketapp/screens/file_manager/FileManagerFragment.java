@@ -20,12 +20,13 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
+import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
 
 /**
  * Created by Taras on 17.02.2018.
  */
 
-public class FileManagerFragment extends Fragment implements FileManagerInterface {
+public class FileManagerFragment extends Fragment implements FileManagerInterface, FileInfoDialogInterface {
     private static final String LOG_TAG = "myLogs";
 
 
@@ -118,7 +119,12 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void callFileInfo(File file) {
         FileInfoDialog fileInfoDialog = new FileInfoDialog();
-        fileInfoDialog.setFileForInfo(file);
+        fileInfoDialog.setParamsInfo(file, this);
         fileInfoDialog.show(getFragmentManager(), "sdf");
+    }
+
+    @Override
+    public void updateFileManagerRecycler() {
+        fileManagerAdapter.updateRecycler();
     }
 }

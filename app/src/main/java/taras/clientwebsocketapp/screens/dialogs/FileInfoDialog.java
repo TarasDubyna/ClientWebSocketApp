@@ -1,21 +1,26 @@
 package taras.clientwebsocketapp.screens.dialogs;
 
-import android.annotation.SuppressLint;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 
 /**
@@ -23,6 +28,9 @@ import taras.clientwebsocketapp.R;
  */
 
 public class FileInfoDialog extends android.support.v4.app.DialogFragment {
+    private static final String LOG_TAG = "myLogs";
+
+
 
     @BindView(R.id.tvName)
     TextView tvName;
@@ -31,8 +39,34 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     @BindView(R.id.tvDate)
     TextView tvDate;
 
+
+    //clickable
+    @BindView(R.id.tvRename)
+    TextView tvRename;
+    @BindView(R.id.tvDelete)
+    TextView tvDelete;
+    @BindView(R.id.llFavorite)
+    LinearLayout llFavorite;
+
+    @BindView(R.id.llRename)
+    LinearLayout llRename;
+    @BindView(R.id.etRename)
+    EditText etRename;
+    @BindView(R.id.btnRenameFile)
+    Button btnRenameFile;
+
+    @BindView(R.id.llDelete)
+    LinearLayout llDelete;
+    @BindView(R.id.btnDeleteFile)
+    Button btnDeleteFile;
+
+    @BindView(R.id.ivFavorite)
+    ImageView ivFavorite;
+
     private Context mContext;
+
     private File file;
+    private FileInfoDialogInterface fileInfoDialogInterface;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -47,13 +81,80 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         return dialogView;
     }
 
-    public void setFileForInfo(File file){
+    public void setParamsInfo(File file, FileInfoDialogInterface fileInfoDialogInterface){
         this.file = file;
+        this.fileInfoDialogInterface = fileInfoDialogInterface;
     }
 
     private void setInfo(){
         tvName.setText(file.getName());
         tvDirectory.setText(file.getAbsolutePath());
+        etRename.setText(file.getName());
     }
 
+
+    @OnClick({R.id.tvRename, R.id.tvDelete, R.id.llFavorite})
+    void clickRenameText(View view){
+        //llRename.setVisibility(View.GONE);
+        //llDelete.setVisibility(View.GONE);
+        switch (view.getId()){
+            case R.id.tvRename:
+                if (llRename.getVisibility() == View.VISIBLE){
+                    llRename.setVisibility(View.GONE);
+                } else {
+                    llRename.setVisibility(View.VISIBLE);
+                    llDelete.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.tvDelete:
+                if (llDelete.getVisibility() == View.VISIBLE){
+                    llDelete.setVisibility(View.GONE);
+                } else {
+                    llDelete.setVisibility(View.VISIBLE);
+                    llRename.setVisibility(View.GONE);
+                }
+                break;
+            case R.id.llFavorite:
+                if (ivFavorite.getVisibility() == View.GONE){
+                    ivFavorite.setVisibility(View.VISIBLE);
+                } else {
+                    ivFavorite.setVisibility(View.GONE);
+                }
+                break;
+        }
+    }
+
+
+    //delete file
+    @OnClick(R.id.btnDeleteFile)
+    void deleteFile(View view){
+        if(file.delete()){
+            Log.d(LOG_TAG, "FileInfoDialog, file deleted");
+            Toast.makeText(getContext(), getString(R.string.file_deleted), Toast.LENGTH_SHORT).show();
+            fileInfoDialogInterface.updateFileManagerRecycler();
+        }else{
+            Log.d(LOG_TAG, "FileInfoDialog, file not deleted");
+            Toast.makeText(getContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show();
+        }
+        dismiss();
+    }
+
+    //rename file
+    @OnClick(R.id.btnRenameFile)
+    void renameFile(View view){
+
+        String filepath = file.getParent();
+        File from = new File(filepath, file.getName());
+        File to = new File(filepath, etRename.getText().toString().trim());
+
+        if(from.renameTo(to)){
+            Log.d(LOG_TAG, "FileInfoDialog, file rename successful");
+            Toast.makeText(getContext(), getString(R.string.rename_successful), Toast.LENGTH_SHORT).show();
+            fileInfoDialogInterface.updateFileManagerRecycler();
+        }else{
+            Log.d(LOG_TAG, "FileInfoDialog, file rename not successful");
+            Toast.makeText(getContext(), getString(R.string.rename_not_successful), Toast.LENGTH_SHORT).show();
+        }
+        dismiss();
+    }
 }

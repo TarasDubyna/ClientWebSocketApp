@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ClientWebSocketApp</string>
+    <string name="name">"Имя: "</string>
+    <string name="directory">"Директория: "</string>
+    <string name="add_to_favorite">Добавить в Избранное</string>
+    <string name="rename">Переименовать</string>
+    <string name="delete">Удалить</string>
+    <string name="file_info">Информация файла</string>
+    <string name="creation_date">"Дата создания: "</string>
+    <string name="rename_file">Переименовать файл</string>
+    <string name="delete_file">Удалить файл</string>
+    <string name="sure_delete">Вы действительно хотите удалить этот файл?</string>
+    <string name="file_deleted">Файл успешно удален!</string>
+    <string name="file_not_deleted">Файл не может быть удален!</string>
+    <string name="no_devices">Нет устройств</string>
+    <string name="found_devices">Найденные устройства</string>
+</resources>

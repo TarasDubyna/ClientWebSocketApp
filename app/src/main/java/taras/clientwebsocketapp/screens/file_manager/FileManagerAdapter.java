@@ -31,7 +31,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     FileManagerInterface fileManagerInterface;
 
     private ArrayList<File> fileList;
-    private File file;
+    private File directoryFile;
 
     public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
         this.mContext = mContext;
@@ -75,6 +75,9 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
                 fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
             }
         });
+        holder.cvItem.setOnLongClickListener(view -> {
+            return true;
+        });
         holder.ivMore.setOnClickListener(view -> {
             fileManagerInterface.callFileInfo(file);
         });
@@ -82,10 +85,22 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
 
     public void setCurrentDirectory(String directory){
-        File directoryFile = new File(directory);
+        directoryFile = new File(directory);
         this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
         notifyDataSetChanged();
     }
+    public void setCurrentDirectory(File file){
+        this.directoryFile = file;
+        this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
+        notifyDataSetChanged();
+    }
+
+    public void updateRecycler(){
+        String directory = directoryFile.getPath();
+        this.fileList = new ArrayList<File>(Arrays.asList(new File(directory).listFiles()));
+        notifyDataSetChanged();
+    }
+
 
     public void removeFilesList(int position){
         Log.d(LOG_TAG, "ArrayList<String> list, size: " + fileList.size());
