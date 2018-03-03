@@ -78,7 +78,6 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     ImageView ivFavorite;
 
     private Context mContext;
-
     private File file;
     private FileInfoDialogInterface fileInfoDialogInterface;
 
@@ -155,7 +154,7 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         if(file.delete()){
             Log.d(LOG_TAG, "FileInfoDialog, file deleted");
             Toast.makeText(getContext(), getString(R.string.file_deleted), Toast.LENGTH_SHORT).show();
-            fileInfoDialogInterface.updateFileManagerRecycler();
+            fileInfoDialogInterface.updateFileManagerRecyclerAll();
         }else{
             Log.d(LOG_TAG, "FileInfoDialog, file not deleted");
             Toast.makeText(getContext(), getString(R.string.file_not_deleted), Toast.LENGTH_SHORT).show();
@@ -174,7 +173,7 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         if(from.renameTo(to)){
             Log.d(LOG_TAG, "FileInfoDialog, file rename successful");
             Toast.makeText(getContext(), getString(R.string.rename_successful), Toast.LENGTH_SHORT).show();
-            fileInfoDialogInterface.updateFileManagerRecycler();
+            fileInfoDialogInterface.updateFileManagerRecyclerAll();
         }else{
             Log.d(LOG_TAG, "FileInfoDialog, file rename not successful");
             Toast.makeText(getContext(), getString(R.string.rename_not_successful), Toast.LENGTH_SHORT).show();

@@ -124,7 +124,7 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     }
 
     @Override
-    public void updateFileManagerRecycler() {
+    public void updateFileManagerRecyclerAll() {
         fileManagerAdapter.updateRecycler();
     }
 }

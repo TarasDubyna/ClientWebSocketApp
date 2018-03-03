@@ -37,8 +37,10 @@ import io.realm.Realm;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.NotificationService;
+import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.realm.FavoriteFile;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
@@ -46,7 +48,7 @@ import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GlobalBus;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
 
     private static final String LOG_TAG = "myLogs";
     private static final String BACK_STACK_TAG = "BACK_STACK_TAG";
@@ -54,6 +56,8 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.selectedFileView)
+    SelectedFileView selectedFileView;
 
     private Switch serverSwitch;
     private String currentFragmentClass;
@@ -116,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
+        SelectedFileManager.getSelectedFileManager().setSelectedFileView(selectedFileView);
     }
 
     @Override
@@ -226,6 +231,8 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(text);
     }
 
+
+    //work with service
     private void initServiceReceiver(){
         if (myReceiver == null){
             myReceiver = new MainActivity.MyReceiver();
@@ -241,7 +248,4 @@ public class MainActivity extends AppCompatActivity
         startService(intent);
     }
 
-    public String getCurrentFragmentClass() {
-        return currentFragmentClass;
-    }
 }

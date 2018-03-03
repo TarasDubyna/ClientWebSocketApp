@@ -9,53 +9,22 @@
     tools:context="taras.clientwebsocketapp.screens.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:orientation="vertical">
-    <LinearLayout
-        android:id="@+id/llSelectedFiles"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <android.support.v7.widget.CardView
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/content_layout"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginBottom="5dp"
-            app:cardBackgroundColor="@color/blue_grey_500"
-            app:cardElevation="4dp">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <TextView
-                    android:id="@+id/tvSelectedNum"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="5dp"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:gravity="center_vertical"
-                    android:text="@string/selected_files_num"/>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginEnd="15dp"
-                        android:src="@drawable/ic_menu_share" />
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/ic_delete" />
-                </LinearLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/content_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+        </FrameLayout>
+        <taras.clientwebsocketapp.custom_views.SelectedFileView
+            android:id="@+id/selectedFileView"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_height="60dp">
+        </taras.clientwebsocketapp.custom_views.SelectedFileView>
+    </RelativeLayout>
+
 </LinearLayout>

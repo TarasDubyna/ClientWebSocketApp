@@ -1,6 +1,8 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.io.File;
@@ -18,6 +21,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.utils.FileUtils;
 
 /**
@@ -33,6 +38,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     private ArrayList<File> fileList;
     private File directoryFile;
 
+    private View rootView;
+
     public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
@@ -44,15 +51,25 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(parent.getContext())
+       rootView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_file_manager_item, parent, false);
         return new ViewHolder(rootView);
     }
 
 
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
+
+        if ((position == getItemCount() - 1 && !SelectedFileManager.getSelectedFileManager().isEmpty())){
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+
+            layoutParams.setMargins(0, 0, 0, 60);
+            holder.cvItem.setLayoutParams(layoutParams);
+        }
+
         String type = FileManager.getTypeFileFolder(file);// is file or folder
 
         switch (type){
@@ -65,21 +82,36 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
                 break;
         }
         holder.tvName.setText(file.getName());
+
+        holder.ivMore.setOnClickListener(view -> {
+            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+            }
+            fileManagerInterface.callFileInfo(file);
+        });
+        Object object = this;
         holder.cvItem.setOnClickListener(view -> {
-            if (file.listFiles() == null){
-                //file
-                Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                FileUtils.openFile(mContext, file);
+            SelectedFileManager.getSelectedFileManager().insertToSelected(file).updateAdapter(this, position);
+            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
+                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
             } else {
-                Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
-                fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
+                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_300));
+                if (file.listFiles() == null){
+                    //file
+                    Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
+                    FileUtils.openFile(mContext, file);
+                } else {
+                    Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
+                    fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
+                }
             }
         });
         holder.cvItem.setOnLongClickListener(view -> {
+            if (SelectedFileManager.getSelectedFileManager().isEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
+            }
             return true;
-        });
-        holder.ivMore.setOnClickListener(view -> {
-            fileManagerInterface.callFileInfo(file);
         });
     }
 

@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/blue_grey_400"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvDirectories"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/recycler_directory_item">
-    </android.support.v7.widget.RecyclerView>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvFiles"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/recycler_directory_item">
-    </android.support.v7.widget.RecyclerView>
-    <!--
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vpFileManagerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v4.view.ViewPager>
-    -->
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/tvEmptyFolder"
-        android:layout_width="match_parent"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:layout_height="match_parent"
-        android:text="Empty folder"/>
+        android:orientation="vertical">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvDirectories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:listitem="@layout/recycler_directory_item">
+        </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvFiles"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/recycler_directory_item">
+        </android.support.v7.widget.RecyclerView>
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tvEmptyFolder"
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_height="match_parent"
+            android:text="Empty folder"/>
+    </LinearLayout>
+
 </LinearLayout>
