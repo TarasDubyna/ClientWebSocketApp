@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity
     private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
 
-    private Realm mRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +115,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
 
-        FavoriteFilesManager favoriteFilesManager = FavoriteFilesManager.getInstance(this);
+        FavoriteFilesManager.getInstance();
     }
 
     @Override
@@ -141,7 +140,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(myReceiver);
-        mRealm.close();
     }
 
     @Override

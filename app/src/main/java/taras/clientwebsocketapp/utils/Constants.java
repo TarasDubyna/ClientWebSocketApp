@@ -5,6 +5,8 @@ package taras.clientwebsocketapp.utils;
  */
 
 public class Constants {
+    public static final long REALM_DB_VERSION = 3L;
+
     public static final int SERVER_PORT = 20000;
 
     public static final String PACKAGE_TYPE_SCANNING = "package_type_scanning";

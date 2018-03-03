@@ -34,8 +34,6 @@
     <string name="text_file">file</string>
     <string name="text_files">files</string>
 
-
-
     <string name="delete_file">Delete file</string>
     <string name="sure_delete">Are you sure want to delete this file?</string>
     <string name="file_deleted">File successfully deleted!</string>
@@ -45,5 +43,7 @@
     <string name="rename_successful">The file was renamed successfully</string>
     <string name="rename_not_successful">The file was not renamed</string>
 
+    <!--selected files-->
+    <string name="selected_files_num">Selected files: %1$d</string>
 
 </resources>

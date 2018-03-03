@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.managers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -18,43 +19,46 @@ import taras.clientwebsocketapp.model.realm.FavoriteFile;
 
 public class FavoriteFilesManager {
 
-    private Realm mRealm;
+    private static final String LOG_TAG = "myLogs";
 
     private List<FavoriteFile> filesDirectoriesList;
-
     private static FavoriteFilesManager favoriteFilesManager;
 
-    public static FavoriteFilesManager getInstance(Context context){
+    public static FavoriteFilesManager getInstance(){
         if (favoriteFilesManager == null){
-            favoriteFilesManager = new FavoriteFilesManager(context);
+            favoriteFilesManager = new FavoriteFilesManager();
         }
         return favoriteFilesManager;
     }
 
-    public FavoriteFilesManager(Context context) {
-        Realm.init(context);
-        mRealm = Realm.getDefaultInstance();
+    public FavoriteFilesManager() {
+        this.filesDirectoriesList = new ArrayList<>();
         initFavoriteList();
     }
 
 
     private void initFavoriteList(){
-        mRealm.beginTransaction();
-        this.filesDirectoriesList = mRealm.copyFromRealm(mRealm.where(FavoriteFile.class).findAll());
-        mRealm.commitTransaction();
+        Realm mRealm = Realm.getDefaultInstance();
+        mRealm.executeTransaction(realm -> {
+            RealmResults<FavoriteFile> result = realm.where(FavoriteFile.class).findAll();
+            if (result != null){
+                this.filesDirectoriesList.addAll(mRealm.copyFromRealm(result));
+                Log.d(LOG_TAG, "FavoriteFile list from Realm: " + filesDirectoriesList.size());
+            }
+        });
     }
 
     public void addToFavorite(File file){
         FavoriteFile favoriteFile = new FavoriteFile();
         favoriteFile.setDirectory(file.getPath());
         this.filesDirectoriesList.add(favoriteFile);
-        addToRealm(file.getPath());
+        insertToRealm(file.getPath());
     }
     public void addToFavorite(String fileDirectory){
         FavoriteFile favoriteFile = new FavoriteFile();
         favoriteFile.setDirectory(fileDirectory);
         this.filesDirectoriesList.add(favoriteFile);
-        addToRealm(fileDirectory);
+        insertToRealm(fileDirectory);
     }
     public void removeFromFavorites(File file){
         FavoriteFile favoriteFile = new FavoriteFile();
@@ -68,33 +72,33 @@ public class FavoriteFilesManager {
         this.filesDirectoriesList.remove(favoriteFile);
         deleteFromRealm(fileDirectory);
     }
+
     public boolean isFavorite(File file){
-        if (filesDirectoriesList.contains(file.getPath())){
-            return true;
-        } else {
-            return false;
+        FavoriteFile favoriteFile = new FavoriteFile();
+        favoriteFile.setDirectory(file.getPath());
+        for (FavoriteFile favoriteFileRealm: filesDirectoriesList){
+            if (favoriteFile.getDirectory().equals(favoriteFileRealm.getDirectory())){
+                return true;
+            }
         }
+        return false;
     }
 
 
     //work with Realm
-    private void addToRealm(String directory){
-        mRealm.beginTransaction();
-        FavoriteFile favoriteFile = new FavoriteFile();
-        favoriteFile.setDirectory(directory);
-        favoriteFile = mRealm.createObject(FavoriteFile.class);
-
-        mRealm.commitTransaction();
+    private void insertToRealm(String directory){
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            FavoriteFile favoriteFile = new FavoriteFile();
+            favoriteFile.setDirectory(directory);
+            realm.insert(favoriteFile);
+            Log.d(LOG_TAG, "Insert to realm FavoriteFile: " + directory);
+        });
     }
-    public void deleteFromRealm(String directory){
-        mRealm.beginTransaction();
-        RealmResults<FavoriteFile> directories = mRealm.where(FavoriteFile.class).equalTo("directory",directory).findAll();
-        if(!directories.isEmpty()) {
-            for(int i = directories.size() - 1; i >= 0; i--) {
-                directories.get(i).deleteFromRealm();
-            }
-        }
-        mRealm.commitTransaction();
+    public void deleteFromRealm(String directory) {
+        Realm.getDefaultInstance().executeTransaction(realm -> {
+            RealmResults<FavoriteFile> result = realm.where(FavoriteFile.class).equalTo("directory", directory).findAll();
+            result.deleteAllFromRealm();
+        });
     }
 
 }

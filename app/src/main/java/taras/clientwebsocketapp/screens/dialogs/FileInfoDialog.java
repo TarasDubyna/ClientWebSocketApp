@@ -107,7 +107,7 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         tvSize.setText(FileUtils.getSize(getContext(), file));
         etRename.setText(file.getName());
 
-        if (FavoriteFilesManager.getInstance(getContext()).isFavorite(file)){
+        if (FavoriteFilesManager.getInstance().isFavorite(file)){
             ivFavorite.setVisibility(View.VISIBLE);
         } else {
             ivFavorite.setVisibility(View.GONE);
@@ -138,10 +138,10 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
                 break;
             case R.id.llFavorite:
                 if (ivFavorite.getVisibility() == View.GONE){
-                    FavoriteFilesManager.getInstance(getContext()).addToFavorite(file);
+                    FavoriteFilesManager.getInstance().addToFavorite(file);
                     ivFavorite.setVisibility(View.VISIBLE);
                 } else {
-                    FavoriteFilesManager.getInstance(getContext()).removeFromFavorites(file);
+                    FavoriteFilesManager.getInstance().removeFromFavorites(file);
                     ivFavorite.setVisibility(View.GONE);
                 }
                 break;

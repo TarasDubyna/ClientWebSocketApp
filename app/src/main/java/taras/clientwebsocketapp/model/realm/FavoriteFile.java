@@ -12,6 +12,9 @@ public class FavoriteFile extends RealmObject {
     @Required
     private String directory;
 
+    public FavoriteFile() {
+    }
+
     public String getDirectory() {
         return directory;
     }

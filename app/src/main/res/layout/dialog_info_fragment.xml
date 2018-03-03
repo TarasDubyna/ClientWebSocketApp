@@ -212,7 +212,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@android:drawable/star_off"/>
+                    android:src="@drawable/ic_star"/>
             </LinearLayout>
 
         </LinearLayout>
