@@ -13,10 +13,11 @@
 
     <string name="network_manager">Network manager</string>
     <string name="file_manager">File manager</string>
+    <string name="favorite_files">Favorite files</string>
     <string name="empty_folder">Folder is empty</string>
 
 
-    <string name="scanning_network">Scanning network</string>
+    <string name="scanning_network">Scan network</string>
     <string name="found_devices">Found devices</string>
     <string name="no_devices">No devices</string>
 
@@ -45,5 +46,12 @@
 
     <!--selected files-->
     <string name="selected_files_num">Selected files: %1$d</string>
+    <string name="visibility">Visibility</string>
+
+
+    //title
+    <string name="favorite">Favorite</string>
+    <string name="network">Network</string>
+    <string name="files">Files</string>
 
 </resources>

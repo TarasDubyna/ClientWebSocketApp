@@ -37,17 +37,6 @@ public class FavoriteFilesManager {
     }
 
 
-    private void initFavoriteList(){
-        Realm mRealm = Realm.getDefaultInstance();
-        mRealm.executeTransaction(realm -> {
-            RealmResults<FavoriteFile> result = realm.where(FavoriteFile.class).findAll();
-            if (result != null){
-                this.filesDirectoriesList.addAll(mRealm.copyFromRealm(result));
-                Log.d(LOG_TAG, "FavoriteFile list from Realm: " + filesDirectoriesList.size());
-            }
-        });
-    }
-
     public void addToFavorite(File file){
         FavoriteFile favoriteFile = new FavoriteFile();
         favoriteFile.setDirectory(file.getPath());
@@ -72,7 +61,6 @@ public class FavoriteFilesManager {
         this.filesDirectoriesList.remove(favoriteFile);
         deleteFromRealm(fileDirectory);
     }
-
     public boolean isFavorite(File file){
         FavoriteFile favoriteFile = new FavoriteFile();
         favoriteFile.setDirectory(file.getPath());
@@ -86,6 +74,16 @@ public class FavoriteFilesManager {
 
 
     //work with Realm
+    private void initFavoriteList(){
+        Realm mRealm = Realm.getDefaultInstance();
+        mRealm.executeTransaction(realm -> {
+            RealmResults<FavoriteFile> result = realm.where(FavoriteFile.class).findAll();
+            if (result != null){
+                this.filesDirectoriesList.addAll(mRealm.copyFromRealm(result));
+                Log.d(LOG_TAG, "FavoriteFile list from Realm: " + filesDirectoriesList.size());
+            }
+        });
+    }
     private void insertToRealm(String directory){
         Realm.getDefaultInstance().executeTransaction(realm -> {
             FavoriteFile favoriteFile = new FavoriteFile();
@@ -101,4 +99,11 @@ public class FavoriteFilesManager {
         });
     }
 
+    public ArrayList<String> getAllStringFavorites(){
+        ArrayList<String> favoritesString = new ArrayList<>();
+        for (FavoriteFile favoriteFile: filesDirectoriesList){
+            favoritesString.add(favoriteFile.getDirectory());
+        }
+        return favoritesString;
+    }
 }

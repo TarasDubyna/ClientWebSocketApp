@@ -26,10 +26,13 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
+
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,10 +45,13 @@ import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.realm.FavoriteFile;
+import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.ExternalDataUtils;
 import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.utils.StorageOptions;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
@@ -60,9 +66,7 @@ public class MainActivity extends AppCompatActivity
     SelectedFileView selectedFileView;
 
     private Switch serverSwitch;
-    private String currentFragmentClass;
-
-    FileManager fileManager;
+    private TextView toolbarTitle;
 
     boolean bound = false;
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -92,6 +96,7 @@ public class MainActivity extends AppCompatActivity
 
     private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
+    private FavoriteFragment favoriteFragment;
 
 
     @Override
@@ -101,9 +106,13 @@ public class MainActivity extends AppCompatActivity
 
         startService();
 
+        StorageOptions.determineStorageOptions();
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        //toolbar.setSubtitle(R.string.network_manager);
 
         initServiceReceiver();
         addFragmentToManager(ScanNetworkFragment.getFragment());
@@ -209,11 +218,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.menu_file_manager) {
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
-
             }
             addFragmentToManager(fileManagerFragment);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.menu_favorite) {
+            if (favoriteFragment == null){
+                favoriteFragment = new FavoriteFragment();
+            }
+            addFragmentToManager(favoriteFragment);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

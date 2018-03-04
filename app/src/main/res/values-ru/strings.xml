@@ -15,4 +15,21 @@
     <string name="file_not_deleted">Файл не может быть удален!</string>
     <string name="no_devices">Нет устройств</string>
     <string name="found_devices">Найденные устройства</string>
+    <string name="server_on_visible">Ваше устройство видно в сети!</string>
+    <string name="server_off_invisible">Ваше устройство не видно в сети!</string>
+    <string name="network_manager">Сетевой менеджер</string>
+    <string name="file_manager">Файловый менеджер</string>
+    <string name="empty_folder">Папка пуста</string>
+    <string name="scanning_network">Сканировать сеть</string>
+    <string name="size">"Раземер: "</string>
+    <string name="rename_successful">Файл был переименован успешно</string>
+    <string name="rename_not_successful">Файл не был переименован</string>
+    <string name="selected_files_num">Выбранные файлы: %1$d</string>
+    <string name="text_file">файл</string>
+    <string name="text_files">файлы</string>
+    <string name="мisibility">Видимость</string>
+    <string name="favorite_files">Избранные файлы</string>
+    <string name="favorite">Избранные</string>
+    <string name="network">Сеть</string>
+    <string name="files">Файлы</string>
 </resources>

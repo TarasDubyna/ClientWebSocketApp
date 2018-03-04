@@ -17,9 +17,8 @@ import java.io.File;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
-import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.DataUtils;
+import taras.clientwebsocketapp.utils.ExternalDataUtils;
 
 import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
 
@@ -45,7 +44,7 @@ public class AppApplication extends Application{
         super.onCreate();
         appContext = getBaseContext();
 
-        externalStorageDir = DataUtils.checkExternalStorage();
+        externalStorageDir = ExternalDataUtils.getPhoneExternalStorage();
 
         Hawk.init(getContext())
                 .build();

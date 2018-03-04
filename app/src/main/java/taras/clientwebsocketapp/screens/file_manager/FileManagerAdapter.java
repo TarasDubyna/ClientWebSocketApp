@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,8 +31,13 @@ import taras.clientwebsocketapp.utils.FileUtils;
  */
 
 public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
+
     private static final String LOG_TAG = "myLogs";
 
+    public static final String FILE_MANAGER = "FILE_MANAGER";
+    public static final String FAVORITE = "FAVORITE";
+
+    private String type;
     private Context mContext;
     FileManagerInterface fileManagerInterface;
 
@@ -40,12 +46,24 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     private View rootView;
 
+
+
     public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
+        //this.type = type;
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
         //this.fileList.add(new File(externalDirectory));
         File file = new File(externalDirectory);
         this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
+        this.fileManagerInterface = fileManagerInterface;
+    }
+
+    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, List<String> favoriteDirectoriesList) {
+        this.mContext = mContext;
+        this.fileList = new ArrayList<>();
+        for (int i = 0; i < favoriteDirectoriesList.size(); i++){
+            fileList.add(new File(favoriteDirectoriesList.get(i)));
+        }
         this.fileManagerInterface = fileManagerInterface;
     }
 
@@ -62,12 +80,13 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
 
-        if ((position == getItemCount() - 1 && !SelectedFileManager.getSelectedFileManager().isEmpty())){
+        if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isEmpty()){
+            holder.llMain.setPadding(0,0,0, 60);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-            layoutParams.setMargins(0, 0, 0, 60);
-            holder.cvItem.setLayoutParams(layoutParams);
+            layoutParams.setMargins(0, 0, 0, 90);
+            holder.llMain.setLayoutParams(layoutParams);
         }
 
         String type = FileManager.getTypeFileFolder(file);// is file or folder
@@ -91,31 +110,32 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         });
         Object object = this;
         holder.cvItem.setOnClickListener(view -> {
-            SelectedFileManager.getSelectedFileManager().insertToSelected(file).updateAdapter(this, position);
-            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
-                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
+            if (file.listFiles() == null){
+                //file
+                Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
+                FileUtils.openFile(mContext, file);
             } else {
-                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_300));
-                if (file.listFiles() == null){
-                    //file
-                    Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                    FileUtils.openFile(mContext, file);
-                } else {
-                    Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
-                    fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
-                }
+                Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
+                fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
             }
         });
         holder.cvItem.setOnLongClickListener(view -> {
             if (SelectedFileManager.getSelectedFileManager().isEmpty()){
                 SelectedFileManager.getSelectedFileManager().insertToSelected(file);
                 holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
+                this.notifyItemChanged(getItemCount() - 1);
             }
             return true;
         });
     }
 
 
+    public void setFavoritesDirectory(List<String> favoritesDirectories){
+        for (int i = 0; i < favoritesDirectories.size(); i++){
+            this.fileList.add(new File(favoritesDirectories.get(i)));
+        }
+        //notifyDataSetChanged();
+    }
     public void setCurrentDirectory(String directory){
         directoryFile = new File(directory);
         this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
@@ -155,6 +175,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder{
 
+        @BindView(R.id.llMain)
+        LinearLayout llMain;
         @BindView(R.id.cvItem)
         CardView cvItem;
         @BindView(R.id.tvName)

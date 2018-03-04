@@ -70,7 +70,7 @@ public class ScanNetworkFragment extends Fragment {
         Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
         GlobalBus.getBus().register(this);
 
-        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network_manager));
+        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
 
     @Override

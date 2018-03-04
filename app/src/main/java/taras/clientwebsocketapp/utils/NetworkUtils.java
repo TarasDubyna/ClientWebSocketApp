@@ -25,17 +25,6 @@ public class NetworkUtils {
         return Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
     }
 
-    /*
-    public static InetAddress getIpAddress(){
-        try {
-            return InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    */
-
     public static List<String> getAllNetworkAddresses(){
         List<String> arrayList = new ArrayList<>();
         for (int i = 0; i <= 255; i++){

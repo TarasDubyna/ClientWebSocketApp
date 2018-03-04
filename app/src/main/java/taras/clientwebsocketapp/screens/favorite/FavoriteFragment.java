@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.screens.file_manager;
+package taras.clientwebsocketapp.screens.favorite;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,19 +18,21 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.model.FileFolder;
+import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
-import taras.clientwebsocketapp.utils.StorageOptions;
+import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 
 /**
- * Created by Taras on 17.02.2018.
+ * Created by Taras on 04.03.2018.
  */
 
-public class FileManagerFragment extends Fragment implements FileManagerInterface, FileInfoDialogInterface {
+public class FavoriteFragment extends Fragment implements FileManagerInterface, FileInfoDialogInterface {
     private static final String LOG_TAG = "myLogs";
-
 
     @BindView(R.id.rvFiles)
     RecyclerView rvFiles;
@@ -47,16 +49,21 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
 
     //---------------------------------------------
 
-
-
-
-    private static FileManagerFragment fileManagerFragment;
-    public static FileManagerFragment getFragment(){
-        if (fileManagerFragment == null){
-            fileManagerFragment = new FileManagerFragment();
-        }
-        return fileManagerFragment;
+    public FavoriteFragment() {
     }
+
+
+
+
+    /*
+    private static FavoriteFragment favoriteFragment;
+    public static FavoriteFragment getFragment(){
+        if (favoriteFragment == null){
+            favoriteFragment = new FavoriteFragment();
+        }
+        return favoriteFragment;
+    }
+    */
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,18 +86,18 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
-        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
+        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.favorite));
     }
 
     private void initFileManagerRecyclers(){
-        fileManagerAdapter = new FileManagerAdapter(getContext(), this, FileManager.getManager(getContext()).getStartDirectory());
+        fileManagerAdapter = new FileManagerAdapter(getContext(), this, FavoriteFilesManager.getInstance().getAllStringFavorites());
         rvFiles.setHasFixedSize(true);
         rvFiles.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvFiles.setAdapter(fileManagerAdapter);
     }
 
     private void initDirectoryRecyclers(){
-        directoryAdapter = new DirectoryAdapter(DirectoryAdapter.FILE_MANAGER, getContext(), this);
+        directoryAdapter = new DirectoryAdapter(DirectoryAdapter.FAVORITE, getContext(), this);
         rvDirectories.setHasFixedSize(true);
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvDirectories.setAdapter(directoryAdapter);
@@ -99,7 +106,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void returnToPosition(int position) {
         directoryAdapter.removeListToPosition(position);
-        fileManagerAdapter.setCurrentDirectory(directoryAdapter.getDirectoryOfListByPosition(position));
+        if (position == 0){
+            fileManagerAdapter.setFavoritesDirectory(FavoriteFilesManager.getInstance().getAllStringFavorites());
+        } else {
+            fileManagerAdapter.setCurrentDirectory(directoryAdapter.getDirectoryOfListByPosition(position));
+        }
         rvFiles.setVisibility(View.VISIBLE);
         tvEmptyFolder.setVisibility(View.GONE);
     }

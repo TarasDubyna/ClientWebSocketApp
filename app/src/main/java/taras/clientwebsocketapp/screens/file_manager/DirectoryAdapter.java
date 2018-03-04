@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.screens.interfaces.DirectoryAdapterInterface;
 
 /**
@@ -27,22 +28,27 @@ import taras.clientwebsocketapp.screens.interfaces.DirectoryAdapterInterface;
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.ViewHolder> {
     private static final String LOG_TAG = "myLogs";
 
-    private Context mContext;
+    public static final String FILE_MANAGER = "FILE_MANAGER";
+    public static final String FAVORITE = "FAVORITE";
 
+    private String type;
+    private Context mContext;
     FileManagerInterface fileManagerInterface;
 
     private ArrayList<String> directoryList;
     private String fullDirectory;
 
-    public DirectoryAdapter(Context mContext, FileManagerInterface fileManagerInterface) {
+    public DirectoryAdapter(String type, Context mContext, FileManagerInterface fileManagerInterface) {
+        this.type = type;
         this.mContext = mContext;
         this.fileManagerInterface = fileManagerInterface;
         this.directoryList = new ArrayList<>();
-    }
-
-    public void addStartDirectory(String startDirectory){
-        this.directoryList.add(startDirectory);
-        notifyDataSetChanged();
+        if (type.equals(FILE_MANAGER)){
+            this.directoryList.add(FileManager.getManager(mContext).getStartDirectory());
+        }
+        if (type.equals(FAVORITE)){
+            this.directoryList.add("favorite");
+        }
     }
 
     @Override
@@ -55,10 +61,8 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (directoryList.get(position).equals(AppApplication.externalStorageDir.getAbsolutePath())){
-            holder.tvText.setVisibility(View.GONE);
-            holder.ivImage.setVisibility(View.VISIBLE);
-            holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_mobile_phone));
+        if (position == 0){
+            initZeroPosition(holder);
         } else {
             holder.ivImage.setVisibility(View.GONE);
             holder.tvText.setVisibility(View.VISIBLE);
@@ -82,11 +86,6 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
     }
 
 
-    public void removeToPosition(int position){
-        removeListToPosition(position);
-        notifyDataSetChanged();
-    }
-
     public void removeListToPosition(int position){
         Log.d(LOG_TAG, "ArrayList<String> list, size: " + directoryList.size());
         Log.d(LOG_TAG, "Position: " + position);
@@ -95,7 +94,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             newFileList.add(directoryList.get(i));
         }
         directoryList = newFileList;
-        notifyDataSetChanged();
+        notifyItemRangeChanged(0, directoryList.size());
     }
 
     @Override
@@ -113,6 +112,20 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
         return directoryList.get(position);
     }
 
+    private void initZeroPosition(ViewHolder holder){
+        switch (type){
+            case FILE_MANAGER:
+                holder.tvText.setVisibility(View.GONE);
+                holder.ivImage.setVisibility(View.VISIBLE);
+                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_mobile_phone));
+                break;
+            case FAVORITE:
+                holder.tvText.setVisibility(View.GONE);
+                holder.ivImage.setVisibility(View.VISIBLE);
+                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_star));
+                break;
+        }
+    }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder{
