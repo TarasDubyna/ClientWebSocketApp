@@ -99,7 +99,7 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void returnToPosition(int position) {
         directoryAdapter.removeListToPosition(position);
-        fileManagerAdapter.setCurrentDirectory(directoryAdapter.getDirectoryOfListByPosition(position));
+        fileManagerAdapter.setCurrentDirectory(directoryAdapter.getDirectoryLast());
         rvFiles.setVisibility(View.VISIBLE);
         tvEmptyFolder.setVisibility(View.GONE);
     }

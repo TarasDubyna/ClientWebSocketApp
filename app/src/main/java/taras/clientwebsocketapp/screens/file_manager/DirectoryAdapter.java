@@ -94,7 +94,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
             newFileList.add(directoryList.get(i));
         }
         directoryList = newFileList;
-        notifyItemRangeChanged(0, directoryList.size());
+        notifyDataSetChanged();
     }
 
     @Override
@@ -110,6 +110,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.View
 
     public String getDirectoryOfListByPosition(int position){
         return directoryList.get(position);
+    }
+
+    public String getDirectoryLast(){
+        return directoryList.get(directoryList.size() - 1);
     }
 
     private void initZeroPosition(ViewHolder holder){

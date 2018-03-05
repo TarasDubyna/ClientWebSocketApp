@@ -116,8 +116,6 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
 
     @OnClick({R.id.tvRename, R.id.tvDelete, R.id.llFavorite})
     void clickRenameText(View view){
-        //llRename.setVisibility(View.GONE);
-        //llDelete.setVisibility(View.GONE);
         switch (view.getId()){
             case R.id.tvRename:
                 if (llRename.getVisibility() == View.VISIBLE){
@@ -133,15 +131,6 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
                 } else {
                     llDelete.setVisibility(View.VISIBLE);
                     llRename.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.llFavorite:
-                if (ivFavorite.getVisibility() == View.GONE){
-                    FavoriteFilesManager.getInstance().addToFavorite(file);
-                    ivFavorite.setVisibility(View.VISIBLE);
-                } else {
-                    FavoriteFilesManager.getInstance().removeFromFavorites(file);
-                    ivFavorite.setVisibility(View.GONE);
                 }
                 break;
         }
@@ -179,5 +168,18 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
             Toast.makeText(getContext(), getString(R.string.rename_not_successful), Toast.LENGTH_SHORT).show();
         }
         dismiss();
+    }
+
+    //favorite add/delete
+    @OnClick(R.id.tvAddToFavorite)
+    void favoriteFile(View view){
+        if (ivFavorite.getVisibility() == View.GONE){
+            FavoriteFilesManager.getInstance().addToFavorite(file);
+            ivFavorite.setVisibility(View.VISIBLE);
+        } else {
+            FavoriteFilesManager.getInstance().removeFromFavorites(file);
+            ivFavorite.setVisibility(View.GONE);
+        }
+        fileInfoDialogInterface.updateFileManagerRecyclerAll();
     }
 }

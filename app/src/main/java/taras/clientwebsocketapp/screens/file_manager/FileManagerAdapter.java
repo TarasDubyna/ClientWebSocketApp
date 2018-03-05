@@ -22,6 +22,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.utils.FileUtils;
@@ -80,6 +81,12 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
 
+        if (FavoriteFilesManager.getInstance().isFavorite(file)){
+            holder.ivFavorite.setVisibility(View.VISIBLE);
+        } else {
+            holder.ivFavorite.setVisibility(View.INVISIBLE);
+        }
+
         if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isEmpty()){
             holder.llMain.setPadding(0,0,0, 60);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -108,7 +115,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
             }
             fileManagerInterface.callFileInfo(file);
         });
-        Object object = this;
         holder.cvItem.setOnClickListener(view -> {
             if (file.listFiles() == null){
                 //file
@@ -137,7 +143,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         //notifyDataSetChanged();
     }
     public void setCurrentDirectory(String directory){
-        directoryFile = new File(directory);
+        this.directoryFile = new File(directory);
         this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
         notifyDataSetChanged();
     }
@@ -148,7 +154,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     }
 
     public void updateRecycler(){
-        String directory = directoryFile.getPath();
+        String directory = this.directoryFile.getPath();
         this.fileList = new ArrayList<File>(Arrays.asList(new File(directory).listFiles()));
         notifyDataSetChanged();
     }
@@ -171,8 +177,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     }
 
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder{
 
         @BindView(R.id.llMain)
@@ -181,6 +185,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         CardView cvItem;
         @BindView(R.id.tvName)
         TextView tvName;
+        @BindView(R.id.ivFavorite)
+        ImageView ivFavorite;
         @BindView(R.id.ivImage)
         ImageView ivImage;
         @BindView(R.id.ivMore)
