@@ -129,4 +129,9 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void updateFileManagerRecyclerAll() {
         fileManagerAdapter.updateRecycler();
     }
+
+    @Override
+    public void updateAfterFavorite() {
+        fileManagerAdapter.notifyDataSetChanged();
+    }
 }

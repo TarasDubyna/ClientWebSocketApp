@@ -6,4 +6,5 @@ package taras.clientwebsocketapp.screens.dialogs;
 
 public interface FileInfoDialogInterface {
     void updateFileManagerRecyclerAll();
+    void updateAfterFavorite();
 }

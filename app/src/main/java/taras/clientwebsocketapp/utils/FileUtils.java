@@ -109,7 +109,13 @@ public class FileUtils {
             double size = file.length();
             final String[] units = new String[] { "B", "kB", "MB", "GB", "TB" };
             int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-            return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+            String decimalFormat;
+            try {
+                decimalFormat = new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+            } catch (Exception ex){
+                return "----";
+            }
+            return decimalFormat;
 
         } else if (file.listFiles().length == 0){
             text = file.listFiles().length + " " + context.getString(R.string.text_files);

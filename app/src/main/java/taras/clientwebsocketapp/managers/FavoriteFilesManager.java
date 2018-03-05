@@ -50,9 +50,12 @@ public class FavoriteFilesManager {
         insertToRealm(fileDirectory);
     }
     public void removeFromFavorites(File file){
-        FavoriteFile favoriteFile = new FavoriteFile();
-        favoriteFile.setDirectory(file.getPath());
-        this.filesDirectoriesList.remove(favoriteFile);
+        for (int i = 0; i < filesDirectoriesList.size(); i++){
+            if (filesDirectoriesList.get(i).getDirectory().equals(file.getPath())){
+                filesDirectoriesList.remove(i);
+                break;
+            }
+        }
         deleteFromRealm(file.getPath());
     }
     public void removeFromFavorites(String fileDirectory){
@@ -96,6 +99,7 @@ public class FavoriteFilesManager {
         Realm.getDefaultInstance().executeTransaction(realm -> {
             RealmResults<FavoriteFile> result = realm.where(FavoriteFile.class).equalTo("directory", directory).findAll();
             result.deleteAllFromRealm();
+
         });
     }
 
@@ -106,4 +110,13 @@ public class FavoriteFilesManager {
         }
         return favoritesString;
     }
+
+    public ArrayList<File> getAllFilesFavorites(){
+        ArrayList<File> favoritesFiles = new ArrayList<>();
+        for (FavoriteFile favoriteFile: filesDirectoriesList){
+            favoritesFiles.add(new File(favoriteFile.getDirectory()));
+        }
+        return favoritesFiles;
+    }
+
 }

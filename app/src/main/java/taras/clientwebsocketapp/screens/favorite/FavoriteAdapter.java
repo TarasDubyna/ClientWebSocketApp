@@ -1,8 +1,6 @@
-package taras.clientwebsocketapp.screens.file_manager;
+package taras.clientwebsocketapp.screens.favorite;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,14 +22,15 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 import taras.clientwebsocketapp.utils.FileUtils;
 
 /**
- * Created by Taras on 18.02.2018.
+ * Created by Taras on 05.03.2018.
  */
 
-public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
+public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
 
     private static final String LOG_TAG = "myLogs";
 
@@ -49,14 +48,17 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
 
 
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
+    public FavoriteAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
+        //this.type = type;
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
+        //this.fileList.add(new File(externalDirectory));
         File file = new File(externalDirectory);
         this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
         this.fileManagerInterface = fileManagerInterface;
     }
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, List<String> favoriteDirectoriesList) {
+
+    public FavoriteAdapter(Context mContext, FileManagerInterface fileManagerInterface, List<String> favoriteDirectoriesList) {
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
         for (int i = 0; i < favoriteDirectoriesList.size(); i++){
@@ -66,13 +68,16 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       rootView = LayoutInflater.from(parent.getContext())
+    public FavoriteAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        rootView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_file_manager_item, parent, false);
-        return new ViewHolder(rootView);
+        return new FavoriteAdapter.ViewHolder(rootView);
     }
+
+
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(FavoriteAdapter.ViewHolder holder, int position) {
         File file = fileList.get(position);
 
         if (FavoriteFilesManager.getInstance().isFavorite(file)){
@@ -152,10 +157,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         this.fileList = new ArrayList<File>(Arrays.asList(new File(this.directoryFile.getPath()).listFiles()));
         notifyDataSetChanged();
     }
-    public void setNewFileList(ArrayList<File> fileList){
-        this.fileList = fileList;
-        notifyDataSetChanged();
-    }
+
+
     public void removeFilesList(int position){
         Log.d(LOG_TAG, "ArrayList<String> list, size: " + fileList.size());
         Log.d(LOG_TAG, "Position: " + position);

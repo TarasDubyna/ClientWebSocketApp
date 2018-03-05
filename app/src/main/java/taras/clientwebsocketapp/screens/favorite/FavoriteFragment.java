@@ -52,19 +52,6 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
     public FavoriteFragment() {
     }
 
-
-
-
-    /*
-    private static FavoriteFragment favoriteFragment;
-    public static FavoriteFragment getFragment(){
-        if (favoriteFragment == null){
-            favoriteFragment = new FavoriteFragment();
-        }
-        return favoriteFragment;
-    }
-    */
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,6 +125,13 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
 
     @Override
     public void updateFileManagerRecyclerAll() {
-        fileManagerAdapter.updateRecycler();
+        fileManagerAdapter.setNewFileList(FavoriteFilesManager.getInstance().getAllFilesFavorites());
+        fileManagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateAfterFavorite() {
+        fileManagerAdapter.setNewFileList(FavoriteFilesManager.getInstance().getAllFilesFavorites());
+        fileManagerAdapter.notifyDataSetChanged();
     }
 }

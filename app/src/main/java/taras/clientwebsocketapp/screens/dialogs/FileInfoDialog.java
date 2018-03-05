@@ -32,6 +32,7 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.model.realm.FavoriteFile;
 import taras.clientwebsocketapp.utils.FileUtils;
 
@@ -140,7 +141,14 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     //delete file
     @OnClick(R.id.btnDeleteFile)
     void deleteFile(View view){
+        boolean isFavorite = false;
+        if (FavoriteFilesManager.getInstance().isFavorite(file)){
+            isFavorite = true;
+        }
         if(file.delete()){
+            if (isFavorite){
+                FavoriteFilesManager.getInstance().removeFromFavorites(file);
+            }
             Log.d(LOG_TAG, "FileInfoDialog, file deleted");
             Toast.makeText(getContext(), getString(R.string.file_deleted), Toast.LENGTH_SHORT).show();
             fileInfoDialogInterface.updateFileManagerRecyclerAll();
@@ -154,12 +162,20 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     //rename file
     @OnClick(R.id.btnRenameFile)
     void renameFile(View view){
+        boolean isFavorite = false;
+        if (FavoriteFilesManager.getInstance().isFavorite(file)){
+            isFavorite = true;
+        }
 
         String filepath = file.getParent();
         File from = new File(filepath, file.getName());
         File to = new File(filepath, etRename.getText().toString().trim());
 
         if(from.renameTo(to)){
+            if (isFavorite){
+                FavoriteFilesManager.getInstance().removeFromFavorites(from);
+                FavoriteFilesManager.getInstance().addToFavorite(to);
+            }
             Log.d(LOG_TAG, "FileInfoDialog, file rename successful");
             Toast.makeText(getContext(), getString(R.string.rename_successful), Toast.LENGTH_SHORT).show();
             fileInfoDialogInterface.updateFileManagerRecyclerAll();
@@ -180,6 +196,6 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
             FavoriteFilesManager.getInstance().removeFromFavorites(file);
             ivFavorite.setVisibility(View.GONE);
         }
-        fileInfoDialogInterface.updateFileManagerRecyclerAll();
+        fileInfoDialogInterface.updateAfterFavorite();
     }
 }
