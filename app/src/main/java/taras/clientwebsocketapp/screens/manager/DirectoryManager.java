@@ -1,7 +1,6 @@
-package taras.clientwebsocketapp.manager;
+package taras.clientwebsocketapp.screens.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 /**

@@ -10,16 +10,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.screens.interfaces.DirectoryAdapterInterface;
+import taras.clientwebsocketapp.screens.manager.FileManager;
 
 /**
  * Created by Taras on 18.02.2018.

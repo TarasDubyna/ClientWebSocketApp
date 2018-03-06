@@ -3,8 +3,6 @@ package taras.clientwebsocketapp.custom_views;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -12,13 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.List;
-import java.util.zip.Inflater;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.utils.GlobalBus;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -67,6 +64,7 @@ public class SelectedFileView extends LinearLayout {
 
     @OnClick(R.id.ivShare)
     void clickShare(){
+        GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
         Toast.makeText(getContext(), "Share", Toast.LENGTH_SHORT).show();
     }
     @OnClick(R.id.ivCancel)

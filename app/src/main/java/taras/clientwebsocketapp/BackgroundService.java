@@ -1,6 +1,9 @@
 package taras.clientwebsocketapp;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,14 +13,16 @@ import android.util.Log;
 
 import com.squareup.otto.Subscribe;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;
 import taras.clientwebsocketapp.server.Server;
-import taras.clientwebsocketapp.utils.AndroidBus;
 import taras.clientwebsocketapp.utils.BusUtil;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GlobalBus;
@@ -26,7 +31,7 @@ import taras.clientwebsocketapp.utils.GlobalBus;
  * Created by Taras on 04.02.2018.
  */
 
-public class NotificationService extends Service implements ScanningInterface {
+public class BackgroundService extends Service implements ScanningInterface {
 
     private static final String LOG_TAG = "myLogs";
 
@@ -47,39 +52,14 @@ public class NotificationService extends Service implements ScanningInterface {
 
 
     public class LocalBinder extends Binder {
-        NotificationService getService() {
-            return NotificationService.this;
+        BackgroundService getService() {
+            return BackgroundService.this;
         }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        /*
-        type = intent.getStringExtra(TYPE);
-        switch (type){
-            case SCAN_NETWORK:
-                try {
-                    NetworkConnection.getConnectionRepository()
-                            .scanNetwork(this, AppApplication.networkIp);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case SEND_MESSAGE:
-                try {
-                    messageText = intent.getStringExtra("message");
-                    serverIp = intent.getStringExtra("ip");
-                    NetworkConnection.getConnectionRepository()
-                            .sendMessage(this, messageText, serverIp);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case SEND_DATA:
-                break;
-
-        }*/
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
@@ -111,33 +91,35 @@ public class NotificationService extends Service implements ScanningInterface {
                 }
                 break;
             case Constants.SERVER_START:
+                startForeground(NotificationsManager.ID_FOREGROUND_SERVICE,
+                        NotificationsManager.createServerNotification(this));
                 server.startServer();
                 break;
             case Constants.SERVER_STOP:
                 server.stopServer();
+                NotificationsManager.removeServerNotification(this);
+                stopForeground(true);
                 break;
 
         }
     }
+
+    @Subscribe
+    public void getFilesToSend(ArrayList<File> filesList){
+
+    }
+
 
 
     @Override
     public void successfulResponse(String scannerPackage) {
         Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
         GlobalBus.getBus().post(scannerPackage);
-        /*
-        Intent intent = new Intent();
-        intent.setAction(MY_ACTION);
-        intent.putExtra("string", scannerPackage);
-        sendBroadcast(intent);
-        */
     }
-
     @Override
     public void errorResponse(Throwable throwable) {
 
     }
-
     @Override
     public void successfulScanningResponse(ScannerPackage scannerPackage) {
         Log.d(LOG_TAG, "successfulScanningResponse: " + scannerPackage.toString());
@@ -147,15 +129,7 @@ public class NotificationService extends Service implements ScanningInterface {
                 BusUtil.postOnMain(GlobalBus.getBus(), scannerPackage);
             }
         }
-
-        /*
-        Intent intent = new Intent();
-        intent.setAction(MY_ACTION);
-        intent.putExtra("string", scannerPackage);
-        sendBroadcast(intent);
-        */
     }
-
     private boolean applicationInForeground() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> services = activityManager.getRunningAppProcesses();
@@ -167,5 +141,27 @@ public class NotificationService extends Service implements ScanningInterface {
         }
 
         return isActivityFound;
+    }
+
+
+
+    private void createNotification(){
+        //Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent();
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+        // Build notification
+        // Actions are just fake
+        Notification noti = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_folder)
+                .setContentTitle("Title notification")
+                .setContentText("Device is visible in the network")
+                .setContentIntent(pIntent)
+                .setAutoCancel(false)
+                .build();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // hide the notification after its selected
+        noti.flags |= Notification.FLAG_NO_CLEAR;
+        notificationManager.notify(0, noti);
     }
 }

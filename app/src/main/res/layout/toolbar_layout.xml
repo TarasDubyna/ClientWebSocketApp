@@ -13,5 +13,6 @@
             android:layout_centerVertical="true"
             android:gravity="center"
             android:switchPadding="2dp"
+            android:theme="@style/ServerSwitch"
             android:text="@string/visibility" />
 </RelativeLayout>

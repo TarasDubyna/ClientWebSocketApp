@@ -17,12 +17,10 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.manager.FileManager;
-import taras.clientwebsocketapp.model.FileFolder;
+import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
-import taras.clientwebsocketapp.utils.StorageOptions;
 
 /**
  * Created by Taras on 17.02.2018.

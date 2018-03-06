@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.manager;
+package taras.clientwebsocketapp.screens.manager;
 
 /**
  * Created by Taras on 22.02.2018.

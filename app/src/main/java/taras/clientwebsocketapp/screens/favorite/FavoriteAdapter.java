@@ -19,10 +19,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.manager.FileManager;
+import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 import taras.clientwebsocketapp.utils.FileUtils;
 

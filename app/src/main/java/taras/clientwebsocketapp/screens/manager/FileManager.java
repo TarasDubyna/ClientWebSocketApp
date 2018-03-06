@@ -1,17 +1,12 @@
-package taras.clientwebsocketapp.manager;
+package taras.clientwebsocketapp.screens.manager;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
-import taras.clientwebsocketapp.model.FileFolder;
-import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 
 /**
  * Created by Taras on 18.02.2018.

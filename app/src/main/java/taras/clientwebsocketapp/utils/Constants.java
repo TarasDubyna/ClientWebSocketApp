@@ -11,7 +11,11 @@ public class Constants {
 
     public static final String PACKAGE_TYPE_SCANNING = "package_type_scanning";
 
+    //EventBus
     public static final String START_SCANNING = "start_scanning";
+    public static final String SEND_FILE = "send_file";
+
+
     public static final String SERVER_START = "start_server";
     public static final String SERVER_STOP = "stop_server";
 

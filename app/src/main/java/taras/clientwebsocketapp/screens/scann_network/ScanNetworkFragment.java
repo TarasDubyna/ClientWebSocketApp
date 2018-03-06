@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import com.squareup.otto.ThreadEnforcer;
 
 import java.util.ArrayList;
 
@@ -24,7 +22,6 @@ import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GlobalBus;
 
@@ -69,7 +66,6 @@ public class ScanNetworkFragment extends Fragment {
         super.onResume();
         Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
         GlobalBus.getBus().register(this);
-
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
 
@@ -86,7 +82,6 @@ public class ScanNetworkFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_network, container, false);
         ButterKnife.bind(this, rootView);
         initScanningRecycler();
-
         return rootView;
     }
 
@@ -102,7 +97,6 @@ public class ScanNetworkFragment extends Fragment {
     public void getScanningResultFromService(ScannerPackage scannerPackage){
         Log.d(LOG_TAG, "getScanningResultFromService, response: " + scannerPackage);
         devicesRecyclerAdapter.addDevice(scannerPackage);
-
         tvNoDevices.setVisibility(View.GONE);
         rvNetworkDevices.setVisibility(View.VISIBLE);
     }

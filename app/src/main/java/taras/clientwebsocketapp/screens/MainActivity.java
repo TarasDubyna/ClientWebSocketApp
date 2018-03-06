@@ -10,11 +10,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -23,34 +21,23 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
-
-import java.util.Arrays;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
-import taras.clientwebsocketapp.AppApplication;
+import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.NotificationService;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
-import taras.clientwebsocketapp.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.model.realm.FavoriteFile;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.ExternalDataUtils;
 import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 import taras.clientwebsocketapp.utils.StorageOptions;
 
 public class MainActivity extends AppCompatActivity
@@ -132,6 +119,8 @@ public class MainActivity extends AppCompatActivity
         SelectedFileManager.getSelectedFileManager().setSelectedFileView(selectedFileView);
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -175,6 +164,9 @@ public class MainActivity extends AppCompatActivity
         MenuItem switchItem = menu.findItem(R.id.toolbar_switcher);
         switchItem.setActionView(R.layout.toolbar_layout);
         serverSwitch = menu.findItem(R.id.toolbar_switcher).getActionView().findViewById(R.id.switchServerToolbar);
+        if (PreferenceUtils.isServerRunning()){
+            serverSwitch.setChecked(true);
+        }
         serverSwitch.setOnClickListener(this);
         return super.onCreateOptionsMenu(menu);
     }
@@ -248,13 +240,13 @@ public class MainActivity extends AppCompatActivity
         if (myReceiver == null){
             myReceiver = new MainActivity.MyReceiver();
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(NotificationService.MY_ACTION);
+            intentFilter.addAction(BackgroundService.MY_ACTION);
             registerReceiver(myReceiver, intentFilter);
         }
     }
     private void startService(){
-        Intent intent = new Intent(MainActivity.this, NotificationService.class);
-        //intent.putExtra(NotificationService.TYPE, NotificationService.SCAN_NETWORK);
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        //intent.putExtra(BackgroundService.TYPE, BackgroundService.SCAN_NETWORK);
         //intent.putExtra("ip", etAddress.getText().toString());
         startService(intent);
     }

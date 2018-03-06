@@ -6,6 +6,7 @@ import android.view.View;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.screens.MainActivity;
@@ -48,6 +49,9 @@ public class SelectedFileManager {
         }
         return this;
     }
+    public List<File> getAllSelectedDirectoriesFilesList(){
+        return this.selectedDirectoriesFilesList;
+    }
 
     public void removeAllSelected(){
         selectedDirectoriesFilesList.clear();
@@ -71,6 +75,8 @@ public class SelectedFileManager {
             selectedFileView.setVisibility(View.GONE);
         }
     }
+
+
 
     public int getSize(){
         return selectedDirectoriesFilesList.size();

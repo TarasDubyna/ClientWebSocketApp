@@ -39,7 +39,7 @@
         </activity>
 
 
-        <service android:name=".NotificationService" />
+        <service android:name=".BackgroundService" />
 
         <activity
             android:name=".screens.MainActivity"
