@@ -18,11 +18,6 @@ import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 
 public class SelectedFileManager {
 
-    public interface SelectedFileManagerInterface{
-        void setViewVisibility(boolean visible);
-        void setViewCount(int count);
-    }
-
 
     private ArrayList<File> selectedDirectoriesFilesList;
     private int selectedFilesCounter = 0;
@@ -76,14 +71,13 @@ public class SelectedFileManager {
         }
     }
 
-
-
     public int getSize(){
         return selectedDirectoriesFilesList.size();
     }
 
-    public void setSelectedFileView(SelectedFileView selectedFileView) {
+    public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
         this.selectedFileView = selectedFileView;
+        this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
     }
     public boolean isEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){

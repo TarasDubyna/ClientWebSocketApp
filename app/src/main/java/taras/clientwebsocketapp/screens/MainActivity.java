@@ -29,9 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
@@ -41,7 +39,7 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
 import taras.clientwebsocketapp.utils.StorageOptions;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener{
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     private static final String LOG_TAG = "myLogs";
     private static final String BACK_STACK_TAG = "BACK_STACK_TAG";
@@ -49,8 +47,6 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.selectedFileView)
-    SelectedFileView selectedFileView;
 
     private Switch serverSwitch;
     private TextView toolbarTitle;
@@ -116,7 +112,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
-        SelectedFileManager.getSelectedFileManager().setSelectedFileView(selectedFileView);
     }
 
 

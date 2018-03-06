@@ -128,4 +128,19 @@ public class FileUtils {
             return text;
         }
     }
+
+    public static void createFolderForSaving(Context context){
+        File folder = new File(Environment.getExternalStorageDirectory() +
+                File.separator + "TollCulator");
+        boolean success = true;
+        if (!folder.exists()) {
+            success = folder.mkdirs();
+        }
+        if (success) {
+            PreferenceUtils.saveSavingFolderPath(folder.getPath());
+            Toast.makeText(context, "Saved folder created sucsessful!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, "Saved folder created failed!", Toast.LENGTH_LONG).show();
+        }
+    }
 }

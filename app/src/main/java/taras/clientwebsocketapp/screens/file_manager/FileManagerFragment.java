@@ -17,6 +17,8 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.custom_views.SelectedFileView;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
@@ -36,10 +38,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     RecyclerView rvDirectories;
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
+    @BindView(R.id.selectedFileView)
+    SelectedFileView selectedFileView;
 
     DirectoryAdapter directoryAdapter;
     FileManagerAdapter fileManagerAdapter;
-    private int lastPageSelected;
 
     private View rootView;
 
@@ -60,6 +63,7 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
+
     }
 
     @Override
@@ -70,6 +74,8 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
 
         initDirectoryRecyclers();
         initFileManagerRecyclers();
+
+        SelectedFileManager.getSelectedFileManager().setSelectedFileView(selectedFileView, () -> fileManagerAdapter.notifyDataSetChanged());
 
         return rootView;
     }

@@ -23,6 +23,10 @@ import taras.clientwebsocketapp.utils.GlobalBus;
 
 public class SelectedFileView extends LinearLayout {
 
+    public interface SelectedFileViewInterface{
+        void removeAllFromSelectedFiles();
+    }
+
     @BindView(R.id.tvSelectedNum)
     TextView tvSelectedNum;
     @BindView(R.id.ivShare)
@@ -31,6 +35,7 @@ public class SelectedFileView extends LinearLayout {
     ImageView ivCancel;
 
     private View rootView;
+    private SelectedFileViewInterface selectedFileViewInterface;
 
     public SelectedFileView(Context context) {
         super(context);
@@ -58,6 +63,10 @@ public class SelectedFileView extends LinearLayout {
         ButterKnife.bind(this, rootView);
     }
 
+    public void initRemoveAllFilesFromSelected(SelectedFileViewInterface selectedFileViewInterface){
+        this.selectedFileViewInterface = selectedFileViewInterface;
+    }
+
     public void setSelectedNum(int count){
         tvSelectedNum.setText(getContext().getString(R.string.selected_files_num, count));
     }
@@ -65,10 +74,12 @@ public class SelectedFileView extends LinearLayout {
     @OnClick(R.id.ivShare)
     void clickShare(){
         GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
-        Toast.makeText(getContext(), "Share", Toast.LENGTH_SHORT).show();
+        SelectedFileManager.getSelectedFileManager().removeAllSelected();
+        selectedFileViewInterface.removeAllFromSelectedFiles();
     }
     @OnClick(R.id.ivCancel)
     void clickCancel(){
-        Toast.makeText(getContext(), "Cancel", Toast.LENGTH_SHORT).show();
+        SelectedFileManager.getSelectedFileManager().removeAllSelected();
+        selectedFileViewInterface.removeAllFromSelectedFiles();
     }
 }

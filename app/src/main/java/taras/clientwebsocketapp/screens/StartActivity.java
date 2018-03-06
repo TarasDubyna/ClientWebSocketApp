@@ -21,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.utils.FileUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
@@ -39,6 +40,7 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (selectStartFragment()){
             setContentView(R.layout.fragment_start);
             unbinder = ButterKnife.bind(this);
@@ -71,13 +73,33 @@ public class StartActivity extends AppCompatActivity {
         }
     }
 
+
+
+    private void startMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        unbinder.unbind();
+        createSavedFolder();
+        startActivity(intent);
+        this.finish();
+    }
+
+    private void createSavedFolder(){
+        Log.d(LOG_TAG, "saving folder path: " + PreferenceUtils.getSavingFolderPath());
+        if (!PreferenceUtils.isSavingFolderPathCreated()){
+            FileUtils.createFolderForSaving(this);
+        }
+    }
+
+
+
+
+
+    //work with permissions
     private List<String> notGrantedPermission = new ArrayList<>();
     private List<String> permissionsList = new ArrayList<String>(){{
         add(Manifest.permission.READ_EXTERNAL_STORAGE);
         add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }};
-
-
     private void allowPermissions(){
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (String item: permissionsList){
@@ -96,14 +118,6 @@ public class StartActivity extends AppCompatActivity {
             startMainActivity();
         }
     }
-
-    private void startMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
-        unbinder.unbind();
-        startActivity(intent);
-        this.finish();
-    }
-
     private void checkWriteExternalPermission(String permission){
         int res = this.checkCallingOrSelfPermission(permission);
         if (res != PackageManager.PERMISSION_GRANTED){
@@ -113,7 +127,6 @@ public class StartActivity extends AppCompatActivity {
             notGrantedPermission.add(permission);
         }
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {

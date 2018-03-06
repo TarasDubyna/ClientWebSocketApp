@@ -9,22 +9,10 @@
     tools:context="taras.clientwebsocketapp.screens.MainActivity"
     tools:showIn="@layout/app_bar_main"
     android:orientation="vertical">
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/content_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <FrameLayout
-            android:id="@+id/content_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-        </FrameLayout>
-        <taras.clientwebsocketapp.custom_views.SelectedFileView
-            android:id="@+id/selectedFileView"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_height="60dp">
-        </taras.clientwebsocketapp.custom_views.SelectedFileView>
-    </RelativeLayout>
-
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    </FrameLayout>
 </LinearLayout>

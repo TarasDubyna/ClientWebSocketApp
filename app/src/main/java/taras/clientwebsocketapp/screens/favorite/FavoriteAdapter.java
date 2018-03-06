@@ -48,10 +48,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
 
     public FavoriteAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
-        //this.type = type;
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
-        //this.fileList.add(new File(externalDirectory));
         File file = new File(externalDirectory);
         this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
         this.fileManagerInterface = fileManagerInterface;

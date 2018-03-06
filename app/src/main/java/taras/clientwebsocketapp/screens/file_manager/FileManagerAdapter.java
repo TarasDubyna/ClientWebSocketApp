@@ -32,10 +32,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
 
     private static final String LOG_TAG = "myLogs";
 
-    public static final String FILE_MANAGER = "FILE_MANAGER";
-    public static final String FAVORITE = "FAVORITE";
-
-    private String type;
     private Context mContext;
     FileManagerInterface fileManagerInterface;
 
@@ -107,7 +103,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         holder.cvItem.setOnLongClickListener(view -> {
             if (SelectedFileManager.getSelectedFileManager().isEmpty()){
                 SelectedFileManager.getSelectedFileManager().insertToSelected(file);
-                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
+                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_500));
                 this.notifyItemChanged(getItemCount() - 1);
             } else {
                 SelectedFileManager.getSelectedFileManager().removeAllSelected();
