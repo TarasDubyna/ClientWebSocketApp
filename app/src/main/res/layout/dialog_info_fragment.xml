@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
     <android.support.v7.widget.CardView
         android:layout_width="300dp"
@@ -200,32 +201,17 @@
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
-            <LinearLayout
-                android:id="@+id/llFavorite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
+            <TextView
+                android:id="@+id/tvAddToFavorite"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:textColor="@color/blue_grey_500"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"
                 android:layout_margin="5dp"
-                android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/tvAddToFavorite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:textColor="@color/blue_grey_500"
-                    android:gravity="center"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:text="@string/add_to_favorite"/>
-                <ImageView
-                    android:id="@+id/ivFavorite"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="3dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_star"/>
-            </LinearLayout>
-
+                tools:text="@string/favorites_add"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

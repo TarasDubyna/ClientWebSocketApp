@@ -49,8 +49,10 @@ public class SelectedFileManager {
         return this;
     }
 
-    public void updateAdapter(FileManagerAdapter adapter, int position){
-        adapter.notifyItemChanged(position);
+    public void removeAllSelected(){
+        selectedDirectoriesFilesList.clear();
+        selectedFileView.setSelectedNum(0);
+        selectedFileView.setVisibility(View.GONE);
     }
 
     private void addToSelected(File file){
@@ -61,7 +63,6 @@ public class SelectedFileManager {
             selectedFileView.setVisibility(View.VISIBLE);
         }
     }
-
     private void removeFromSelected(File file){
         selectedDirectoriesFilesList.remove(file);
         selectedFilesCounter = selectedDirectoriesFilesList.size();
@@ -71,10 +72,13 @@ public class SelectedFileManager {
         }
     }
 
+    public int getSize(){
+        return selectedDirectoriesFilesList.size();
+    }
+
     public void setSelectedFileView(SelectedFileView selectedFileView) {
         this.selectedFileView = selectedFileView;
     }
-
     public boolean isEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){
             return true;
@@ -82,7 +86,6 @@ public class SelectedFileManager {
             return false;
         }
     }
-
     public boolean isSelected(File file){
         if (selectedDirectoriesFilesList.contains(file)){
             return true;

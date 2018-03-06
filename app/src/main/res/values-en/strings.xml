@@ -12,7 +12,6 @@
     <string name="file_info">File info</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
-    <string name="add_to_favorite">Add to Favorite</string>
     <string name="directory">"Directory: "</string>
     <string name="name">"Name: "</string>
     <string name="creation_date">"Date of creation: "</string>
@@ -27,9 +26,11 @@
     <string name="selected_files_num">Selected files: %1$d</string>
     <string name="text_file">file</string>
     <string name="text_files">files</string>
-    <string name="мisibility">Visibility</string>
     <string name="favorite_files">Favorite files</string>
     <string name="files">Files</string>
     <string name="network">Network</string>
     <string name="favorite">Favorite</string>
+    <string name="favorites_remove">Remove from Favorites</string>
+    <string name="favorites_add">Add to Favorites</string>
+    <string name="visibility">Visibility in the network</string>
 </resources>

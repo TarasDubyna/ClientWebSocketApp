@@ -74,24 +74,72 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         File file = fileList.get(position);
+        checkIsFavorite(holder, file);
+        setLastItemGravity(holder, position);
+        setItemType(holder, file);
+        holder.tvName.setText(file.getName());
 
+        if (SelectedFileManager.getSelectedFileManager().isSelected(file)){
+            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
+        } else {
+            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
+        }
+
+        holder.ivMore.setOnClickListener(view -> {
+            fileManagerInterface.callFileInfo(file);
+        });
+        holder.cvItem.setOnClickListener(view -> {
+            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+                if (SelectedFileManager.getSelectedFileManager().isEmpty()){
+                    notifyDataSetChanged();
+                } else {
+                    notifyItemChanged(position);
+                }
+            } else {
+                if (file.listFiles() == null){
+                    //file
+                    Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
+                    FileUtils.openFile(mContext, file);
+                } else {
+                    Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
+                    fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
+                }
+            }
+        });
+        holder.cvItem.setOnLongClickListener(view -> {
+            if (SelectedFileManager.getSelectedFileManager().isEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
+                this.notifyItemChanged(getItemCount() - 1);
+            } else {
+                SelectedFileManager.getSelectedFileManager().removeAllSelected();
+                notifyDataSetChanged();
+            }
+            return true;
+        });
+    }
+
+    private void checkIsFavorite(ViewHolder holder, File file){
         if (FavoriteFilesManager.getInstance().isFavorite(file)){
             holder.ivFavorite.setVisibility(View.VISIBLE);
         } else {
             holder.ivFavorite.setVisibility(View.INVISIBLE);
         }
-
+    }
+    private void setLastItemGravity(ViewHolder holder, int position){
         if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isEmpty()){
-            holder.llMain.setPadding(0,0,0, 60);
+            Log.d(LOG_TAG, "setLastItemGravity, itemCount: " + getItemCount() + ", position: " + position + " ,selectedFileManager.size: " + SelectedFileManager.getSelectedFileManager().getSize());
+            //holder.llMain.setPadding(0,0,0, 60);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-            layoutParams.setMargins(0, 0, 0, 90);
+            layoutParams.setMargins(0, 0, 0, 100);
             holder.llMain.setLayoutParams(layoutParams);
         }
-
+    }
+    private void setItemType(ViewHolder holder, File file){
         String type = FileManager.getTypeFileFolder(file);// is file or folder
-
         switch (type){
             case FileManager.TYPE_FILE:
                 holder.ivImage.setVisibility(View.GONE);
@@ -101,34 +149,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
                 holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_folder));
                 break;
         }
-        holder.tvName.setText(file.getName());
-
-        holder.ivMore.setOnClickListener(view -> {
-            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
-            }
-            fileManagerInterface.callFileInfo(file);
-        });
-        holder.cvItem.setOnClickListener(view -> {
-            if (file.listFiles() == null){
-                //file
-                Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                FileUtils.openFile(mContext, file);
-            } else {
-                Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
-                fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
-            }
-        });
-        holder.cvItem.setOnLongClickListener(view -> {
-            if (SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
-                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
-                this.notifyItemChanged(getItemCount() - 1);
-            }
-            return true;
-        });
     }
-
 
     public void setFavoritesDirectory(List<String> favoritesDirectories){
         for (int i = 0; i < favoritesDirectories.size(); i++){
@@ -141,12 +162,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
         notifyDataSetChanged();
     }
-    public void setCurrentDirectory(File file){
-        this.directoryFile = file;
-        this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
-        notifyDataSetChanged();
-    }
-
     public void updateRecycler(){
         //String directory = this.directoryFile.getPath();
         this.fileList = new ArrayList<File>(Arrays.asList(new File(this.directoryFile.getPath()).listFiles()));
@@ -154,16 +169,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     }
     public void setNewFileList(ArrayList<File> fileList){
         this.fileList = fileList;
-        notifyDataSetChanged();
-    }
-    public void removeFilesList(int position){
-        Log.d(LOG_TAG, "ArrayList<String> list, size: " + fileList.size());
-        Log.d(LOG_TAG, "Position: " + position);
-        ArrayList<File> newFileList = new ArrayList<>();
-        for (int i = 0; i <= position; i++){
-            newFileList.add(fileList.get(i));
-        }
-        fileList = newFileList;
         notifyDataSetChanged();
     }
 

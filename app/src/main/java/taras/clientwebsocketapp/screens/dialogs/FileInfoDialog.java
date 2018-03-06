@@ -60,8 +60,6 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     TextView tvRename;
     @BindView(R.id.tvDelete)
     TextView tvDelete;
-    @BindView(R.id.llFavorite)
-    LinearLayout llFavorite;
 
     @BindView(R.id.llRename)
     LinearLayout llRename;
@@ -75,8 +73,8 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     @BindView(R.id.btnDeleteFile)
     Button btnDeleteFile;
 
-    @BindView(R.id.ivFavorite)
-    ImageView ivFavorite;
+    @BindView(R.id.tvAddToFavorite)
+    TextView tvFavorite;
 
     private Context mContext;
     private File file;
@@ -108,14 +106,14 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
         etRename.setText(file.getName());
 
         if (FavoriteFilesManager.getInstance().isFavorite(file)){
-            ivFavorite.setVisibility(View.VISIBLE);
+            tvFavorite.setText(R.string.favorites_remove);
         } else {
-            ivFavorite.setVisibility(View.GONE);
+            tvFavorite.setText(R.string.favorites_add);
         }
     }
 
 
-    @OnClick({R.id.tvRename, R.id.tvDelete, R.id.llFavorite})
+    @OnClick({R.id.tvRename, R.id.tvDelete})
     void clickRenameText(View view){
         switch (view.getId()){
             case R.id.tvRename:
@@ -189,13 +187,14 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     //favorite add/delete
     @OnClick(R.id.tvAddToFavorite)
     void favoriteFile(View view){
-        if (ivFavorite.getVisibility() == View.GONE){
+        if (tvFavorite.getText().toString().equals(getString(R.string.favorites_add))){
             FavoriteFilesManager.getInstance().addToFavorite(file);
-            ivFavorite.setVisibility(View.VISIBLE);
+            tvFavorite.setText(getString(R.string.favorites_remove));
         } else {
             FavoriteFilesManager.getInstance().removeFromFavorites(file);
-            ivFavorite.setVisibility(View.GONE);
+            tvFavorite.setText(getString(R.string.favorites_add));
         }
+        dismiss();
         fileInfoDialogInterface.updateAfterFavorite();
     }
 }

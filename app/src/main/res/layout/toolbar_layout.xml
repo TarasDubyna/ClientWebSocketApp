@@ -7,9 +7,11 @@
             android:id="@+id/switchServerToolbar"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:maxWidth="170dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:switchPadding="10dp"
+            android:gravity="center"
+            android:switchPadding="2dp"
             android:text="@string/visibility" />
 </RelativeLayout>
