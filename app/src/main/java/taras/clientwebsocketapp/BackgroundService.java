@@ -106,6 +106,7 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     @Subscribe
     public void getFilesToSend(ArrayList<File> filesList){
+        Log.d(LOG_TAG, "service, getFilesToSend, filesList.size: " + filesList.size());
 
     }
 
@@ -143,25 +144,4 @@ public class BackgroundService extends Service implements ScanningInterface {
         return isActivityFound;
     }
 
-
-
-    private void createNotification(){
-        //Intent intent = new Intent(this, MainActivity.class);
-        Intent intent = new Intent();
-        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
-
-        // Build notification
-        // Actions are just fake
-        Notification noti = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_folder)
-                .setContentTitle("Title notification")
-                .setContentText("Device is visible in the network")
-                .setContentIntent(pIntent)
-                .setAutoCancel(false)
-                .build();
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        // hide the notification after its selected
-        noti.flags |= Notification.FLAG_NO_CLEAR;
-        notificationManager.notify(0, noti);
-    }
 }

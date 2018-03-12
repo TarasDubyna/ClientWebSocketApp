@@ -28,9 +28,12 @@ import taras.clientwebsocketapp.utils.FileUtils;
  * Created by Taras on 18.02.2018.
  */
 
-public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.ViewHolder> {
+public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String LOG_TAG = "myLogs";
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
 
     private Context mContext;
     FileManagerInterface fileManagerInterface;
@@ -38,10 +41,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     private ArrayList<File> fileList;
     private File directoryFile;
 
-    private View rootView;
-
-
-
+    private boolean isFooterVisible = false;
     public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
         this.mContext = mContext;
         this.fileList = new ArrayList<>();
@@ -59,87 +59,93 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-       rootView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recycler_file_manager_item, parent, false);
-        return new ViewHolder(rootView);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM){
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recycler_file_manager_item, parent, false);
+            return new ItemViewHolder(view);
+        } else if(viewType == TYPE_FOOTER) {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.recycler_file_manager_footer, parent, false);
+            return new FooterViewHolder(view);
+        }
+        return null;
     }
+
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        File file = fileList.get(position);
-        checkIsFavorite(holder, file);
-        setLastItemGravity(holder, position);
-        setItemType(holder, file);
-        holder.tvName.setText(file.getName());
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ItemViewHolder){
+            File file = fileList.get(position);
+            checkIsFavorite(holder, file);
+            setItemType(holder, file);
+            ((ItemViewHolder)holder).tvName.setText(file.getName());
 
-        if (SelectedFileManager.getSelectedFileManager().isSelected(file)){
-            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
-        } else {
-            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
-        }
+            if (SelectedFileManager.getSelectedFileManager().isFileSelected(file)){
+                ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
+            } else {
+                ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
+            }
 
-        holder.ivMore.setOnClickListener(view -> {
-            fileManagerInterface.callFileInfo(file);
-        });
-        holder.cvItem.setOnClickListener(view -> {
-            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
-                if (SelectedFileManager.getSelectedFileManager().isEmpty()){
+            ((ItemViewHolder)holder).ivMore.setOnClickListener(view -> {
+                fileManagerInterface.callFileInfo(file);
+            });
+            ((ItemViewHolder)holder).cvItem.setOnClickListener(view -> {
+                if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
+                    if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                        setFooterVisible(false);
+                        notifyDataSetChanged();
+                    } else {
+                        notifyItemChanged(position);
+                    }
+                } else {
+                    if (file.listFiles() == null){
+                        //file
+                        Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
+                        FileUtils.openFile(mContext, file);
+                    } else {
+                        Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
+                        fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
+                    }
+                }
+            });
+            ((ItemViewHolder)holder).cvItem.setOnLongClickListener(view -> {
+                if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
+                    setFooterVisible(true);
+                    ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(((ItemViewHolder)holder).cvItem.getContext().getResources().getColor(R.color.blue_grey_500));
+                } else {
+                    SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
                     notifyDataSetChanged();
-                } else {
-                    notifyItemChanged(position);
                 }
+                return true;
+            });
+        }
+        if (holder instanceof FooterViewHolder){
+            if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                ((FooterViewHolder)holder).View.setVisibility(View.VISIBLE);
             } else {
-                if (file.listFiles() == null){
-                    //file
-                    Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                    FileUtils.openFile(mContext, file);
-                } else {
-                    Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
-                    fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
-                }
+                ((FooterViewHolder)holder).View.setVisibility(View.GONE);
             }
-        });
-        holder.cvItem.setOnLongClickListener(view -> {
-            if (SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
-                holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_500));
-                this.notifyItemChanged(getItemCount() - 1);
-            } else {
-                SelectedFileManager.getSelectedFileManager().removeAllSelected();
-                notifyDataSetChanged();
-            }
-            return true;
-        });
+        }
     }
 
-    private void checkIsFavorite(ViewHolder holder, File file){
+    private void checkIsFavorite(RecyclerView.ViewHolder holder, File file){
         if (FavoriteFilesManager.getInstance().isFavorite(file)){
-            holder.ivFavorite.setVisibility(View.VISIBLE);
+            ((ItemViewHolder)holder).ivFavorite.setVisibility(View.VISIBLE);
         } else {
-            holder.ivFavorite.setVisibility(View.INVISIBLE);
+            ((ItemViewHolder)holder).ivFavorite.setVisibility(View.INVISIBLE);
         }
     }
-    private void setLastItemGravity(ViewHolder holder, int position){
-        if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isEmpty()){
-            Log.d(LOG_TAG, "setLastItemGravity, itemCount: " + getItemCount() + ", position: " + position + " ,selectedFileManager.size: " + SelectedFileManager.getSelectedFileManager().getSize());
-            //holder.llMain.setPadding(0,0,0, 60);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-            layoutParams.setMargins(0, 0, 0, 100);
-            holder.llMain.setLayoutParams(layoutParams);
-        }
-    }
-    private void setItemType(ViewHolder holder, File file){
+    private void setItemType(RecyclerView.ViewHolder holder, File file){
         String type = FileManager.getTypeFileFolder(file);// is file or folder
         switch (type){
             case FileManager.TYPE_FILE:
-                holder.ivImage.setVisibility(View.GONE);
+                ((ItemViewHolder)holder).ivImage.setVisibility(View.GONE);
                 break;
             case FileManager.TYPE_FOLDER:
-                holder.ivImage.setVisibility(View.VISIBLE);
-                holder.ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_folder));
+                ((ItemViewHolder)holder).ivImage.setVisibility(View.VISIBLE);
+                ((ItemViewHolder)holder).ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_folder));
                 break;
         }
     }
@@ -165,13 +171,37 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemCount() {
-        return fileList.size();
+
+    public void setFooterVisible(boolean visible){
+        this.isFooterVisible = visible;
+        notifyDataSetChanged();
     }
 
+    @Override
+    public int getItemCount() {
+        if (isFooterVisible){
+            return fileList.size() + 1;
+        } else {
+            return fileList.size();
+        }
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    @Override
+    public int getItemViewType(int position) {
+        if (isPositionFooter(position)){
+            return TYPE_FOOTER;
+        } else {
+            return TYPE_ITEM;
+        }
+    }
+
+    private boolean isPositionFooter(int position) {
+        if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty() && (position == getItemCount() - 1)){
+            return true;
+        } else return false;
+    }
+
+    public class ItemViewHolder extends RecyclerView.ViewHolder{
 
         @BindView(R.id.llMain)
         LinearLayout llMain;
@@ -186,9 +216,19 @@ public class FileManagerAdapter extends RecyclerView.Adapter<FileManagerAdapter.
         @BindView(R.id.ivMore)
         ImageView ivMore;
 
-        public ViewHolder(View itemView) {
+        public ItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+
+    public class FooterViewHolder extends RecyclerView.ViewHolder {
+        public View View;
+        public FooterViewHolder(View v) {
+            super(v);
+            View = v;
+            // Add your UI Components here
+        }
+
     }
 }

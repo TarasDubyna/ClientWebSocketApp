@@ -57,7 +57,6 @@ public class ScanNetworkFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "ScanNetworkFragment, onCreate");
-
         devicesRecyclerAdapter = new DevicesRecyclerAdapter(getContext(), new ArrayList<>());
     }
 
@@ -66,6 +65,11 @@ public class ScanNetworkFragment extends Fragment {
         super.onResume();
         Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
         GlobalBus.getBus().register(this);
+        Bundle bundle = getArguments();
+        if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
+            btnScannNetworkDevices.performClick();
+            devicesRecyclerAdapter.isToSend(true);
+        }
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
 

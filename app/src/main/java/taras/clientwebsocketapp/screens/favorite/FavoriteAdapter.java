@@ -83,7 +83,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             holder.ivFavorite.setVisibility(View.INVISIBLE);
         }
 
-        if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isEmpty()){
+        if ((position == getItemCount() - 1) && !SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
             holder.llMain.setPadding(0,0,0, 60);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -106,8 +106,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         holder.tvName.setText(file.getName());
 
         holder.ivMore.setOnClickListener(view -> {
-            if (!SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+            if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
             }
             fileManagerInterface.callFileInfo(file);
         });
@@ -122,8 +122,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             }
         });
         holder.cvItem.setOnLongClickListener(view -> {
-            if (SelectedFileManager.getSelectedFileManager().isEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelected(file);
+            if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
                 holder.cvItem.setCardBackgroundColor(holder.cvItem.getContext().getResources().getColor(R.color.blue_grey_900));
                 this.notifyItemChanged(getItemCount() - 1);
             }

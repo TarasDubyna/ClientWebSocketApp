@@ -18,6 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
@@ -41,14 +42,10 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
 
     DirectoryAdapter directoryAdapter;
     FileManagerAdapter fileManagerAdapter;
-    private int lastPageSelected;
 
     private View rootView;
 
-    //---------------------------------------------
 
-    public FavoriteFragment() {
-    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,11 +62,17 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
         initDirectoryRecyclers();
         initFileManagerRecyclers();
 
+
         return rootView;
     }
     @Override
     public void onResume() {
         super.onResume();
+        if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+            fileManagerAdapter.setFooterVisible(true);
+        }
+        SelectedFileManager.getSelectedFileManager().setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {
+            fileManagerAdapter.setFooterVisible(false);});
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.favorite));
     }

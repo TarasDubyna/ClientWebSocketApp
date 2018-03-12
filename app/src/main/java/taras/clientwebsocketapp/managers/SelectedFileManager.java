@@ -1,16 +1,14 @@
 package taras.clientwebsocketapp.managers;
 
-import android.support.v7.widget.RecyclerView;
+import android.app.Activity;
 import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -18,9 +16,10 @@ import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 
 public class SelectedFileManager {
 
+    private Activity mActivity;
 
     private ArrayList<File> selectedDirectoriesFilesList;
-    private int selectedFilesCounter = 0;
+    private ArrayList<String> selectedDevicesIp;
 
     private static SelectedFileManager selectedFileManager;
     private SelectedFileView selectedFileView;
@@ -34,63 +33,72 @@ public class SelectedFileManager {
 
     public SelectedFileManager() {
         selectedDirectoriesFilesList = new ArrayList<>();
+        selectedDevicesIp = new ArrayList<>();
     }
 
-    public SelectedFileManager insertToSelected(File file){
+    public SelectedFileManager setActivity(Activity activity){
+        this.mActivity = activity;
+        return this;
+    }
+    public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
+        this.selectedFileView = selectedFileView;
+        this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
+    }
+
+    //work with selected files;
+    public SelectedFileManager insertToSelectedFilesList(File file){
         if (selectedDirectoriesFilesList.contains(file)){
-            removeFromSelected(file);
+            removeFromSelectedFiles(file);
         } else {
-            addToSelected(file);
+            addToSelectedFiles(file);
         }
         return this;
     }
     public List<File> getAllSelectedDirectoriesFilesList(){
         return this.selectedDirectoriesFilesList;
     }
-
-    public void removeAllSelected(){
+    public int getSelectedFilesListSize(){
+        return selectedDirectoriesFilesList.size();
+    }
+    public void removeAllSelectedFiles(){
         selectedDirectoriesFilesList.clear();
+        ((MainActivity)mActivity).setDrawerLayoutOpened();
         selectedFileView.setSelectedNum(0);
         selectedFileView.setVisibility(View.GONE);
     }
-
-    private void addToSelected(File file){
+    private void addToSelectedFiles(File file){
         selectedDirectoriesFilesList.add(file);
-        selectedFilesCounter = selectedDirectoriesFilesList.size();
-        selectedFileView.setSelectedNum(selectedFilesCounter);
-        if (selectedFilesCounter > 0){
+        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        if (selectedDirectoriesFilesList.size() > 0){
+            ((MainActivity)mActivity).setDrawerLayoutLocked();
             selectedFileView.setVisibility(View.VISIBLE);
         }
     }
-    private void removeFromSelected(File file){
+    private void removeFromSelectedFiles(File file){
         selectedDirectoriesFilesList.remove(file);
-        selectedFilesCounter = selectedDirectoriesFilesList.size();
-        selectedFileView.setSelectedNum(selectedFilesCounter);
-        if (selectedFilesCounter == 0){
+        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        if (selectedDirectoriesFilesList.size() == 0){
+            ((MainActivity)mActivity).setDrawerLayoutOpened();
             selectedFileView.setVisibility(View.GONE);
         }
     }
-
-    public int getSize(){
-        return selectedDirectoriesFilesList.size();
-    }
-
-    public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
-        this.selectedFileView = selectedFileView;
-        this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
-    }
-    public boolean isEmpty(){
+    public boolean isSelectedFilesListEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){
             return true;
         } else {
             return false;
         }
     }
-    public boolean isSelected(File file){
+    public boolean isFileSelected(File file){
         if (selectedDirectoriesFilesList.contains(file)){
             return true;
         } else {
             return false;
         }
     }
+
+    //work with selected devices
+
+
+
 }

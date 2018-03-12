@@ -24,7 +24,7 @@
                 android:id="@+id/rvFiles"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/recycler_directory_item">
+                tools:listitem="@layout/recycler_file_manager_item">
             </android.support.v7.widget.RecyclerView>
             <TextView
                 android:visibility="gone"
@@ -35,6 +35,7 @@
                 android:layout_height="match_parent"
                 android:text="Empty folder"/>
         </LinearLayout>
+        <!--
         <taras.clientwebsocketapp.custom_views.SelectedFileView
             android:id="@+id/selectedFileView"
             android:visibility="gone"
@@ -42,6 +43,7 @@
             android:layout_alignParentBottom="true"
             android:layout_height="60dp">
         </taras.clientwebsocketapp.custom_views.SelectedFileView>
+        -->
     </RelativeLayout>
 
 </LinearLayout>

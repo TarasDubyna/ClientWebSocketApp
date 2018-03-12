@@ -17,7 +17,6 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
@@ -38,18 +37,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     RecyclerView rvDirectories;
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
-    @BindView(R.id.selectedFileView)
-    SelectedFileView selectedFileView;
 
     DirectoryAdapter directoryAdapter;
     FileManagerAdapter fileManagerAdapter;
 
     private View rootView;
-
-    //---------------------------------------------
-
-
-
 
     private static FileManagerFragment fileManagerFragment;
     public static FileManagerFragment getFragment(){
@@ -75,13 +67,18 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         initDirectoryRecyclers();
         initFileManagerRecyclers();
 
-        SelectedFileManager.getSelectedFileManager().setSelectedFileView(selectedFileView, () -> fileManagerAdapter.notifyDataSetChanged());
+
 
         return rootView;
     }
     @Override
     public void onResume() {
         super.onResume();
+        if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+            fileManagerAdapter.setFooterVisible(true);
+        }
+        SelectedFileManager.getSelectedFileManager().setActivity(getActivity()).
+                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {fileManagerAdapter.setFooterVisible(false);});
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
     }

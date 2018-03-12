@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.Snackbar;
@@ -29,6 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
@@ -47,6 +49,14 @@ public class MainActivity extends AppCompatActivity
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.selectedFileView)
+    SelectedFileView selectedFileView;
+    ActionBarDrawerToggle toggle;
+
+
+    private Drawable navigationIcon;
 
     private Switch serverSwitch;
     private TextView toolbarTitle;
@@ -93,23 +103,26 @@ public class MainActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        navigationIcon = toolbar.getNavigationIcon();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
         //toolbar.setSubtitle(R.string.network_manager);
 
         initServiceReceiver();
         addFragmentToManager(ScanNetworkFragment.getFragment());
 
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
+
 
         FavoriteFilesManager.getInstance();
     }
@@ -229,6 +242,30 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(text);
     }
 
+
+    public SelectedFileView getSelectedFileView(){
+        return selectedFileView;
+    }
+
+    public void setDrawerLayoutLocked(){
+
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        toggle.syncState();
+
+    }
+    public void setDrawerLayoutOpened(){
+        toolbar.setNavigationIcon(navigationIcon);
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
+
+        toggle.syncState();
+    }
 
     //work with service
     private void initServiceReceiver(){

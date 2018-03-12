@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.custom_views;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -8,14 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
+import taras.clientwebsocketapp.utils.Constants;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -73,13 +75,20 @@ public class SelectedFileView extends LinearLayout {
 
     @OnClick(R.id.ivShare)
     void clickShare(){
-        GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
-        SelectedFileManager.getSelectedFileManager().removeAllSelected();
-        selectedFileViewInterface.removeAllFromSelectedFiles();
+        //GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
+        //SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+        //selectedFileViewInterface.removeAllFromSelectedFiles();
+        tvSelectedNum.setText(R.string.select_device);
+        ivShare.setVisibility(INVISIBLE);
+        ScanNetworkFragment scanNetworkFragment = new ScanNetworkFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Constants.START_SCANNING_FOR_FILE, true);
+        scanNetworkFragment.setArguments(bundle);
+        ((MainActivity) getContext()).addFragmentToManager(scanNetworkFragment);
     }
     @OnClick(R.id.ivCancel)
     void clickCancel(){
-        SelectedFileManager.getSelectedFileManager().removeAllSelected();
+        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
         selectedFileViewInterface.removeAllFromSelectedFiles();
     }
 }
