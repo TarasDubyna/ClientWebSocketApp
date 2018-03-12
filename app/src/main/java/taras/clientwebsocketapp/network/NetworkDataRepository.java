@@ -3,6 +3,7 @@ package taras.clientwebsocketapp.network;
 import java.io.IOException;
 import java.util.List;
 
+import taras.clientwebsocketapp.model.GetPermissionPackage;
 import taras.clientwebsocketapp.utils.NetworkUtils;
 
 /**
@@ -26,6 +27,11 @@ public class NetworkDataRepository implements ConnectionRepository {
     public void sendMessage(ScanningInterface scanningInterface, String message, String ip) throws IOException {
         this.scanningInterface = scanningInterface;
         new Thread(() -> NetworkOperations.takeRequest(ip, message, this.scanningInterface)).start();
+    }
+
+    @Override
+    public void getPermission(ScanningInterface scanningInterface, GetPermissionPackage getPermissionPackage) throws IOException {
+
     }
 
 }

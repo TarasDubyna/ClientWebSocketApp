@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +19,7 @@ import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.GlobalBus;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -82,21 +84,25 @@ public class SelectedFileView extends LinearLayout {
 
     @OnClick(R.id.ivShare)
     void clickShare(){
-        //GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
-        //SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
-        //selectedFileViewInterface.removeAllFromSelectedFiles();
-        tvSelectedNum.setText(R.string.select_device);
-        ivShare.setVisibility(INVISIBLE);
-        ScanNetworkFragment scanNetworkFragment = new ScanNetworkFragment();
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(Constants.START_SCANNING_FOR_FILE, true);
-        scanNetworkFragment.setArguments(bundle);
-        ((MainActivity) getContext()).addFragmentToManager(scanNetworkFragment);
+        if (SelectedFileManager.getSelectedFileManager().isSelectedDevicesListEmpty()){
+            tvSelectedNum.setText(R.string.select_device);
+            ivShare.setVisibility(INVISIBLE);
+            ScanNetworkFragment scanNetworkFragment = new ScanNetworkFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.START_SCANNING_FOR_FILE, true);
+            scanNetworkFragment.setArguments(bundle);
+            ((MainActivity) getContext()).addFragmentToManager(scanNetworkFragment);
+        } else {
+            Toast.makeText(getContext(), "Get permission", Toast.LENGTH_SHORT).show();
+            SelectedFileManager.getSelectedFileManager().sendDataToService();
+            selectedFileViewInterface.removeAllFromSelectedFiles();
+        }
     }
     @OnClick(R.id.ivCancel)
     void clickCancel(){
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
         selectedFileViewInterface.removeAllFromSelectedFiles();
+        ivShare.setVisibility(VISIBLE);
         if (!SelectedFileManager.getSelectedFileManager().isSelectedDevicesListEmpty()){
             SelectedFileManager.getSelectedFileManager().removeAllSelectedDevices();
             selectedDeviceViewInterface.removeAllFromSelectedDevices();

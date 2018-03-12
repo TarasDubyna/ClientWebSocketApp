@@ -1,9 +1,6 @@
 package taras.clientwebsocketapp;
 
 import android.app.ActivityManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taras.clientwebsocketapp.managers.NotificationsManager;
+import taras.clientwebsocketapp.model.GetPermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;
@@ -110,6 +108,17 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     }
 
+    @Subscribe
+    public void checkPermissionToSend(GetPermissionPackage permission){
+        if (permission.getDescription() == GlobalBus.TO_SERVICE){
+            try {
+                NetworkConnection.getConnectionRepository().scanNetwork(this, AppApplication.networkIp);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 
     @Override
@@ -131,6 +140,20 @@ public class BackgroundService extends Service implements ScanningInterface {
             }
         }
     }
+
+    // get permission
+    @Override
+    public void successfulGetPermission(GetPermissionPackage getPermissionPackage) {
+
+    }
+
+    @Override
+    public void errorGetPermission(GetPermissionPackage getPermissionPackage) {
+
+    }
+    //-----------------------
+
+
     private boolean applicationInForeground() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> services = activityManager.getRunningAppProcesses();

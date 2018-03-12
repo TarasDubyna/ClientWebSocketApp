@@ -9,6 +9,7 @@ import java.util.List;
 
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.utils.GlobalBus;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -54,7 +55,9 @@ public class SelectedFileManager {
         if (selectedDirectoriesFilesList.contains(file)){
             removeFromSelectedFiles(file);
         } else {
-            addToSelectedFiles(file);
+            if ( selectedDevicesIp.size() <= maxSelectedDevices){
+                addToSelectedFiles(file);
+            }
         }
         return this;
     }
@@ -138,6 +141,13 @@ public class SelectedFileManager {
     }
     public void removeAllSelectedDevices(){
         selectedDevicesIp.clear();
+    }
+
+
+    //work with service
+    public void sendDataToService(){
+        GlobalBus.getBus().post(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectoriesFilesList());
+        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
     }
 
 }

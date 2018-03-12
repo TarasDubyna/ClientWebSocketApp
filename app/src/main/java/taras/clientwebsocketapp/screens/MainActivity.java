@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity
 
     private Drawable navigationIcon;
 
+    private NavigationView navigationView;
     private Switch serverSwitch;
     private TextView toolbarTitle;
 
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -265,6 +266,11 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNDEFINED);
 
         toggle.syncState();
+    }
+
+
+    public NavigationView getNavigationView() {
+        return navigationView;
     }
 
     //work with service

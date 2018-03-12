@@ -1,7 +1,6 @@
 package taras.clientwebsocketapp.network;
 
-import java.util.function.Consumer;
-
+import taras.clientwebsocketapp.model.GetPermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -12,4 +11,7 @@ public interface ScanningInterface {
     void successfulResponse(String stringJson);
     void errorResponse(Throwable throwable);
     void successfulScanningResponse(ScannerPackage scannerPackage);
+
+    void successfulGetPermission(GetPermissionPackage getPermissionPackage);
+    void errorGetPermission(GetPermissionPackage getPermissionPackage);
 }
