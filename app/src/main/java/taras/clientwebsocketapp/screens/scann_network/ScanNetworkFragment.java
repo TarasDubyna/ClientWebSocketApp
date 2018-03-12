@@ -20,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.utils.Constants;
@@ -68,7 +69,7 @@ public class ScanNetworkFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
             btnScannNetworkDevices.performClick();
-            devicesRecyclerAdapter.isToSend(true);
+            devicesRecyclerAdapter.addView(((MainActivity) getActivity()).getSelectedFileView());
         }
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
@@ -114,4 +115,7 @@ public class ScanNetworkFragment extends Fragment {
         rvNetworkDevices.setVisibility(View.GONE);
     }
 
+    public DevicesRecyclerAdapter getDevicesRecyclerAdapter() {
+        return devicesRecyclerAdapter;
+    }
 }

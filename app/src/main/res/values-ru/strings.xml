@@ -33,5 +33,5 @@
     <string name="favorites_remove">Убрать с Избранных</string>
     <string name="favorites_add">Добавить в Избранные</string>
     <string name="visibility">Видимость в сети</string>
-    <string name="select_device">Выберите устройство для отправки</string>
+    <string name="select_device">Выберите устройство</string>
 </resources>

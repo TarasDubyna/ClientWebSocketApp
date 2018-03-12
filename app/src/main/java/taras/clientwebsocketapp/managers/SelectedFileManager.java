@@ -20,6 +20,7 @@ public class SelectedFileManager {
 
     private ArrayList<File> selectedDirectoriesFilesList;
     private ArrayList<String> selectedDevicesIp;
+    private int maxSelectedDevices = 1;
 
     private static SelectedFileManager selectedFileManager;
     private SelectedFileView selectedFileView;
@@ -43,6 +44,9 @@ public class SelectedFileManager {
     public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
         this.selectedFileView = selectedFileView;
         this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
+    }
+    public void setSelectedFileView() {
+        //this.selectedFileView.initRemoveAllDeviceFromSelected(selectedDeviceViewInterface);
     }
 
     //work with selected files;
@@ -98,7 +102,42 @@ public class SelectedFileManager {
     }
 
     //work with selected devices
-
-
+    public SelectedFileManager insertToSelectedDevicesList(String deviceIp){
+        if (selectedDevicesIp.contains(deviceIp)){
+            removeFromSelectedDevices(deviceIp);
+        } else {
+            addToSelectedDevices(deviceIp);
+        }
+        return this;
+    }
+    private void addToSelectedDevices(String deviceIp){
+        selectedDevicesIp.add(deviceIp);
+        if (selectedDevicesIp.size() > 0){
+            selectedFileView.getIvShare().setVisibility(View.VISIBLE);
+        }
+    }
+    private void removeFromSelectedDevices(String deviceIp){
+        selectedDevicesIp.remove(deviceIp);
+        if (selectedDevicesIp.size() == 0){
+            selectedFileView.getIvShare().setVisibility(View.INVISIBLE);
+        }
+    }
+    public boolean isSelectedDevicesListEmpty(){
+        if (selectedDevicesIp.size() == 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean isDeviceSelected(String deviceIp){
+        if (selectedDevicesIp.contains(deviceIp)){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public void removeAllSelectedDevices(){
+        selectedDevicesIp.clear();
+    }
 
 }

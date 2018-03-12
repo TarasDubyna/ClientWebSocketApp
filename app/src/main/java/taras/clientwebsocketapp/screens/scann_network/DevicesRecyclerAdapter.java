@@ -15,6 +15,7 @@ import java.util.zip.Inflater;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
@@ -24,14 +25,11 @@ import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
  * Created by Taras on 17.02.2018.
  */
 
-public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecyclerAdapter.ViewHolder> {
+public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecyclerAdapter.ViewHolder> implements SelectedFileView.SelectedDeviceViewInterface {
 
     private Context mContext;
     private ArrayList<ScannerPackage> scannerPackagesList;
 
-    private String selectedIp;
-
-    private boolean toSend = false;
 
     public DevicesRecyclerAdapter(Context mContext, ArrayList<ScannerPackage> scannerPackagesList) {
         this.mContext = mContext;
@@ -45,19 +43,11 @@ public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecycler
         return new ViewHolder(rootView);
     }
 
-    public void isToSend(boolean toSend){
-        this.toSend = toSend;
-        if (!toSend){
-            selectedIp = null;
-            notifyDataSetChanged();
-        }
-    }
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ScannerPackage.ServerData device = scannerPackagesList.get(position).getServerData();
 
-        if (selectedIp != null && selectedIp.equals(device.getServerIp())){
+        if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(device.getServerIp())){
             holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
         } else {
             holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
@@ -66,11 +56,12 @@ public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecycler
         holder.tvDeviceName.setText(device.getServerName());
         holder.tvDeviceIp.setText(device.getServerIp());
         holder.cvItem.setOnClickListener(view -> {
-            if (toSend){
-                holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
-                selectedIp = device.getServerIp();
+            if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelectedDevicesList(device.getServerIp());
+                if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(device.getServerIp())){
+                    holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
+                }
                 notifyDataSetChanged();
-
             }
         });
     }
@@ -92,6 +83,15 @@ public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecycler
 
     public void addDevice(ScannerPackage scannerPackage){
         this.scannerPackagesList.add(scannerPackage);
+        notifyDataSetChanged();
+    }
+
+    public void addView(SelectedFileView selectedFileView){
+        selectedFileView.initRemoveAllDeviceFromSelected(this);
+    }
+
+    @Override
+    public void removeAllFromSelectedDevices() {
         notifyDataSetChanged();
     }
 

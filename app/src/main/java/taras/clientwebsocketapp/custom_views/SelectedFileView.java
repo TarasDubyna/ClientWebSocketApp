@@ -28,6 +28,9 @@ public class SelectedFileView extends LinearLayout {
     public interface SelectedFileViewInterface{
         void removeAllFromSelectedFiles();
     }
+    public interface SelectedDeviceViewInterface{
+        void removeAllFromSelectedDevices();
+    }
 
     @BindView(R.id.tvSelectedNum)
     TextView tvSelectedNum;
@@ -38,6 +41,7 @@ public class SelectedFileView extends LinearLayout {
 
     private View rootView;
     private SelectedFileViewInterface selectedFileViewInterface;
+    private SelectedDeviceViewInterface selectedDeviceViewInterface;
 
     public SelectedFileView(Context context) {
         super(context);
@@ -68,6 +72,9 @@ public class SelectedFileView extends LinearLayout {
     public void initRemoveAllFilesFromSelected(SelectedFileViewInterface selectedFileViewInterface){
         this.selectedFileViewInterface = selectedFileViewInterface;
     }
+    public void initRemoveAllDeviceFromSelected(SelectedDeviceViewInterface selectedDeviceViewInterface){
+        this.selectedDeviceViewInterface = selectedDeviceViewInterface;
+    }
 
     public void setSelectedNum(int count){
         tvSelectedNum.setText(getContext().getString(R.string.selected_files_num, count));
@@ -90,5 +97,30 @@ public class SelectedFileView extends LinearLayout {
     void clickCancel(){
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
         selectedFileViewInterface.removeAllFromSelectedFiles();
+        if (!SelectedFileManager.getSelectedFileManager().isSelectedDevicesListEmpty()){
+            SelectedFileManager.getSelectedFileManager().removeAllSelectedDevices();
+            selectedDeviceViewInterface.removeAllFromSelectedDevices();
+        }
+    }
+
+    public TextView getTvSelectedNum() {
+        return tvSelectedNum;
+    }
+    public void setTvSelectedNum(TextView tvSelectedNum) {
+        this.tvSelectedNum = tvSelectedNum;
+    }
+
+    public ImageView getIvShare() {
+        return ivShare;
+    }
+    public void setIvShare(ImageView ivShare) {
+        this.ivShare = ivShare;
+    }
+
+    public ImageView getIvCancel() {
+        return ivCancel;
+    }
+    public void setIvCancel(ImageView ivCancel) {
+        this.ivCancel = ivCancel;
     }
 }
