@@ -2,7 +2,7 @@ package taras.clientwebsocketapp.network;
 
 import java.io.IOException;
 
-import taras.clientwebsocketapp.model.GetPermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackage;
 
 /**
  * Created by Taras on 08.02.2018.
@@ -11,5 +11,5 @@ import taras.clientwebsocketapp.model.GetPermissionPackage;
 public interface ConnectionRepository {
     void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException;
     void sendMessage(ScanningInterface scanningInterface, String message, String ip) throws IOException;
-    void getPermission(ScanningInterface scanningInterface, GetPermissionPackage getPermissionPackage) throws IOException;
+    void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException;
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import taras.clientwebsocketapp.managers.NotificationsManager;
-import taras.clientwebsocketapp.model.GetPermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;
@@ -105,11 +105,20 @@ public class BackgroundService extends Service implements ScanningInterface {
     @Subscribe
     public void getFilesToSend(ArrayList<File> filesList){
         Log.d(LOG_TAG, "service, getFilesToSend, filesList.size: " + filesList.size());
-
     }
 
     @Subscribe
-    public void checkPermissionToSend(GetPermissionPackage permission){
+    public void getPermissionSend(PermissionPackage permissionPackage){
+        Log.d(LOG_TAG, "service, getPermissionSend");
+        try {
+            NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Subscribe
+    public void checkPermissionToSend(PermissionPackage permission){
         if (permission.getDescription() == GlobalBus.TO_SERVICE){
             try {
                 NetworkConnection.getConnectionRepository().scanNetwork(this, AppApplication.networkIp);
@@ -143,12 +152,12 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     // get permission
     @Override
-    public void successfulGetPermission(GetPermissionPackage getPermissionPackage) {
+    public void successfulGetPermission(PermissionPackage permissionPackage) {
 
     }
 
     @Override
-    public void errorGetPermission(GetPermissionPackage getPermissionPackage) {
+    public void errorGetPermission(PermissionPackage permissionPackage) {
 
     }
     //-----------------------

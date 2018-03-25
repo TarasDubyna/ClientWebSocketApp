@@ -3,7 +3,7 @@ package taras.clientwebsocketapp.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import taras.clientwebsocketapp.model.GetPermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -25,16 +25,16 @@ public class GsonUtils {
     }
 
 
-    public static GetPermissionPackage parseGetPermissionPackage(String json){
+    public static PermissionPackage parseGetPermissionPackage(String json){
         Gson gson = new Gson();
-        GetPermissionPackage getPermissionPackage = gson.fromJson(json, GetPermissionPackage.class);
-        return getPermissionPackage;
+        PermissionPackage permissionPackage = gson.fromJson(json, PermissionPackage.class);
+        return permissionPackage;
     }
 
-    public static String createGetPermissionPackage(GetPermissionPackage getPermissionPackage){
+    public static String createGetPermissionPackage(PermissionPackage permissionPackage){
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
-        return gson.toJson(getPermissionPackage);
+        return gson.toJson(permissionPackage);
     }
 
 
