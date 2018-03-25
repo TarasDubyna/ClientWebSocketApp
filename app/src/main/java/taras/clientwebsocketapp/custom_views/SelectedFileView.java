@@ -93,7 +93,6 @@ public class SelectedFileView extends LinearLayout {
             scanNetworkFragment.setArguments(bundle);
             ((MainActivity) getContext()).addFragmentToManager(scanNetworkFragment);
         } else {
-            Toast.makeText(getContext(), "Get permission", Toast.LENGTH_SHORT).show();
             SelectedFileManager.getSelectedFileManager().sendDataToService();
             selectedFileViewInterface.removeAllFromSelectedFiles();
         }

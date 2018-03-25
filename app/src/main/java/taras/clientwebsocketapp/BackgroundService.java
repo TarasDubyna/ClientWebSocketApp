@@ -110,18 +110,9 @@ public class BackgroundService extends Service implements ScanningInterface {
     @Subscribe
     public void getPermissionSend(PermissionPackage permissionPackage){
         Log.d(LOG_TAG, "service, getPermissionSend");
-        try {
-            NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Subscribe
-    public void checkPermissionToSend(PermissionPackage permission){
-        if (permission.getDescription() == GlobalBus.TO_SERVICE){
+        if (permissionPackage.getDescription() == GlobalBus.TO_SERVICE){
             try {
-                NetworkConnection.getConnectionRepository().scanNetwork(this, AppApplication.networkIp);
+                NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

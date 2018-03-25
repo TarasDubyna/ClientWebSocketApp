@@ -88,11 +88,8 @@ public class Server {
                                 char[] buffer = new char[4096];
                                 stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
                                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-
-                                String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
-
                                 System.out.println("message from client: " + stringBuilder);
-
+                                String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
                                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
                                 //outputStreamWriter.write("Message from server 192.168.1.133");
                                 outputStreamWriter.write(response);
