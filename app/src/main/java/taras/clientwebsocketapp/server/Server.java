@@ -8,14 +8,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.util.Enumeration;
 
-import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 
@@ -89,6 +84,7 @@ public class Server {
                                 stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
                                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                                 System.out.println("message from client: " + stringBuilder);
+
                                 String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
                                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
                                 //outputStreamWriter.write("Message from server 192.168.1.133");
@@ -114,6 +110,9 @@ public class Server {
         switch (type){
             case Constants.PACKAGE_TYPE_SCANNING:
                 return serverResponse.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
+            case Constants.PACKAGE_TYPE_PERMISSION:
+                Log.d(LOG_TAG, "PACKAGE_TYPE_PERMISSION");
+                return serverResponse.createPermissionResponse(GsonUtils.parsePermissionPackage(jsonString));
         }
         return null;
     }

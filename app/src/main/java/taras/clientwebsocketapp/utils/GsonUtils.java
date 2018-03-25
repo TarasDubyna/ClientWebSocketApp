@@ -25,13 +25,13 @@ public class GsonUtils {
     }
 
 
-    public static PermissionPackage parseGetPermissionPackage(String json){
+    public static PermissionPackage parsePermissionPackage(String json){
         Gson gson = new Gson();
         PermissionPackage permissionPackage = gson.fromJson(json, PermissionPackage.class);
         return permissionPackage;
     }
 
-    public static String createGetPermissionPackage(PermissionPackage permissionPackage){
+    public static String createPermissionPackage(PermissionPackage permissionPackage){
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(permissionPackage);

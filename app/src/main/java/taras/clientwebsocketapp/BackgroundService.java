@@ -24,6 +24,7 @@ import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.BusUtil;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 04.02.2018.
@@ -69,6 +70,7 @@ public class BackgroundService extends Service implements ScanningInterface {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        PreferenceUtils.saveServerState(false);
         GlobalBus.getBus().unregister(this);
     }
 
@@ -110,12 +112,11 @@ public class BackgroundService extends Service implements ScanningInterface {
     @Subscribe
     public void getPermissionSend(PermissionPackage permissionPackage){
         Log.d(LOG_TAG, "service, getPermissionSend");
-        if (permissionPackage.getDescription() == GlobalBus.TO_SERVICE){
-            try {
-                NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Log.d(LOG_TAG, "permissionPackage: " + permissionPackage.toString());
+        try {
+            NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

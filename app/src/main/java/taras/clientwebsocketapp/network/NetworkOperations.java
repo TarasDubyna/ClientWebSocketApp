@@ -142,7 +142,7 @@ public class NetworkOperations {
                 try {
                     Log.d(LOG_TAG, "WatchSocket: send message - " + permissionPackage.getServerDeviceIp());
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(GsonUtils.createGetPermissionPackage(permissionPackage));
+                    out.println(GsonUtils.createPermissionPackage(permissionPackage));
                 } catch (Exception e) {}
 
                 // Следим за потоком, принимающим сообщения
@@ -156,7 +156,7 @@ public class NetworkOperations {
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
                         Log.d(LOG_TAG, "WatchSocket: close response socket - " + permissionPackage.getServerDeviceIp());
-                        scanningInterface.successfulGetPermission(GsonUtils.parseGetPermissionPackage(stringBuilder.toString()));
+                        scanningInterface.successfulGetPermission(GsonUtils.parsePermissionPackage(stringBuilder.toString()));
                     }
                 }
             }

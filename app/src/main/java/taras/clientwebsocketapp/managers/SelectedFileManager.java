@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.managers;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 
 import java.io.File;
@@ -161,6 +162,9 @@ public class SelectedFileManager {
         permissionPackage.setFilesName(filesName);
         permissionPackage.setClientDeviceIp(AppApplication.deviceIp);
         permissionPackage.setClientDeviceName(PreferenceUtils.getDeviceName());
+        permissionPackage.setServerDeviceIp(selectedDevicesIp.get(0));
+
+        Log.d("myLogs", "sendDataToService: " + permissionPackage.toString());
 
         GlobalBus.getBus().post(permissionPackage);
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();

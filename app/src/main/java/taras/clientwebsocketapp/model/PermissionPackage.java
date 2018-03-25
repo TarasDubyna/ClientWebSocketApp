@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import taras.clientwebsocketapp.utils.GsonUtils;
+
 /**
  * Created by Taras on 13.03.2018.
  */
@@ -36,12 +38,12 @@ public class PermissionPackage {
     private String serverDeviceIp;
     @SerializedName("isAllowed")
     @Expose
-    private boolean isAllowed;
+    private String isAllowed;
 
     public PermissionPackage(){
     }
 
-    public PermissionPackage(int description, String type, List<String> filesName, String clientDeviceName, String clientDeviceIp, String serverDeviceIp, boolean isAllowed) {
+    public PermissionPackage(int description, String type, List<String> filesName, String clientDeviceName, String clientDeviceIp, String serverDeviceIp, String isAllowed) {
         this.description = description;
         this.type = type;
         this.filesName = filesName;
@@ -107,11 +109,17 @@ public class PermissionPackage {
         this.serverDeviceIp = serverDeviceIp;
     }
 
-    public boolean isAllowed() {
+    public String isAllowed() {
         return isAllowed;
     }
 
-    public void setAllowed(boolean allowed) {
+    public void setAllowed(String allowed) {
         isAllowed = allowed;
+    }
+
+
+    @Override
+    public String toString() {
+        return GsonUtils.createPermissionPackage(this);
     }
 }
