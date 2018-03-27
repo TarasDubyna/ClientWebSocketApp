@@ -80,15 +80,6 @@ public class Server {
                     // block the call until connection is created and return
                     // Socket object
                     Socket socket = serverSocket.accept();
-
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    }).start();
-
-                    /*
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
@@ -115,7 +106,6 @@ public class Server {
                             }
                         }
                     }).start();
-                    */
                 }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
