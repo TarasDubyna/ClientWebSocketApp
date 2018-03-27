@@ -47,6 +47,7 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     public static final String SEND_MESSAGE = "SEND_MESSAGE";
     public static final String SEND_DATA = "SEND_DATA";
+    public static final String SEND_DAsdfTA = "SEND_DATA";
 
     private String type;
     private String serverIp;
