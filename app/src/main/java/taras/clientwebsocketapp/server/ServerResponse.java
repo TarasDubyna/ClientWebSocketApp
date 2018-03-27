@@ -1,10 +1,12 @@
 package taras.clientwebsocketapp.server;
 
+import android.os.Handler;
 import android.util.Log;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.utils.GlobalBus;
 import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
@@ -14,6 +16,7 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class ServerResponse {
     private static final String LOG_TAG = "myLogs";
+
 
     public ServerResponse() {
     }
@@ -28,6 +31,7 @@ public class ServerResponse {
     public String createPermissionResponse(PermissionPackage permissionPackage){
         //заглушка
         permissionPackage.setAllowed("false");
+
         //-------
         String permissionResponse = GsonUtils.createPermissionPackage(permissionPackage);
         Log.d(LOG_TAG, "Server stringResponse: " + permissionResponse);

@@ -26,12 +26,17 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.otto.Subscribe;
+
+import java.io.IOException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
@@ -287,6 +292,16 @@ public class MainActivity extends AppCompatActivity
         //intent.putExtra(BackgroundService.TYPE, BackgroundService.SCAN_NETWORK);
         //intent.putExtra("ip", etAddress.getText().toString());
         startService(intent);
+    }
+
+
+    @Subscribe
+    public void getPermissionSend(PermissionPackage permissionPackage){
+        Log.d(LOG_TAG, "main activity, check permission");
+    }
+
+    public static Context getContext(){
+        return getContext();
     }
 
 }

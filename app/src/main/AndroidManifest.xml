@@ -43,7 +43,12 @@
 
         <activity
             android:name=".screens.MainActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme"/>
+
+        <activity
+            android:name=".screens.dialogs.permission_dialog.CheckPermissionDialogActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:excludeFromRecents="true"/>
     </application>
 
 </manifest>

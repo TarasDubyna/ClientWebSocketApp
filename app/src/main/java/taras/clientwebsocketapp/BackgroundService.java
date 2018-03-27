@@ -5,8 +5,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.squareup.otto.Subscribe;
 
@@ -20,6 +24,7 @@ import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;
+import taras.clientwebsocketapp.screens.StartActivity;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.BusUtil;
 import taras.clientwebsocketapp.utils.Constants;
@@ -47,7 +52,8 @@ public class BackgroundService extends Service implements ScanningInterface {
     private String serverIp;
     private String messageText;
 
-    private Server server = Server.getInstance();
+    private Server server;
+    private Handler uiHandler;
 
 
     public class LocalBinder extends Binder {
@@ -65,6 +71,13 @@ public class BackgroundService extends Service implements ScanningInterface {
     public void onCreate() {
         super.onCreate();
         GlobalBus.getBus().register(this);
+        uiHandler = new Handler(Looper.getMainLooper()){
+            public void handleMessage(Message message){
+                Log.d(LOG_TAG, "from handler");
+                Toast.makeText(getApplicationContext(), "toast from server", Toast.LENGTH_SHORT).show();
+            }
+        };
+        server = Server.getInstance(uiHandler);
     }
 
     @Override
@@ -108,9 +121,8 @@ public class BackgroundService extends Service implements ScanningInterface {
     public void getFilesToSend(ArrayList<File> filesList){
         Log.d(LOG_TAG, "service, getFilesToSend, filesList.size: " + filesList.size());
     }
-
     @Subscribe
-    public void getPermissionSend(PermissionPackage permissionPackage){
+    public void getPermissionPackage(PermissionPackage permissionPackage){
         Log.d(LOG_TAG, "service, getPermissionSend");
         Log.d(LOG_TAG, "permissionPackage: " + permissionPackage.toString());
         try {
@@ -119,7 +131,6 @@ public class BackgroundService extends Service implements ScanningInterface {
             e.printStackTrace();
         }
     }
-
 
 
     @Override
@@ -167,5 +178,6 @@ public class BackgroundService extends Service implements ScanningInterface {
 
         return isActivityFound;
     }
+
 
 }
