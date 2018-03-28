@@ -3,15 +3,15 @@ package taras.clientwebsocketapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.GsonUtils;
+
 /**
  * Created by Taras on 08.02.2018.
  */
 
-public class ScannerPackage {
+public class ScannerPackage extends Package {
 
-    @SerializedName("type")
-    @Expose
-    private String type;
     @SerializedName("clientData")
     @Expose
     private ClientData clientData;
@@ -19,23 +19,14 @@ public class ScannerPackage {
     @Expose
     private ServerData serverData;
 
-
-
-    public ScannerPackage(String type, ClientData clientData) {
-        this.type = type;
+    public ScannerPackage(ClientData clientData, ServerData serverData) {
+        super(Constants.PACKAGE_TYPE_SCANNING);
         this.clientData = clientData;
-    }
-
-    public ScannerPackage(String type, ServerData serverData) {
-        this.type = type;
         this.serverData = serverData;
     }
 
-    public String getType() {
-        return type;
-    }
-    public void setType(String type) {
-        this.type = type;
+    public void setDescription(int description){
+        this.setDescription(description);
     }
 
     public ClientData getClientData() {
@@ -52,38 +43,10 @@ public class ScannerPackage {
         this.serverData = serverData;
     }
 
-    public static class ClientData{
-        @SerializedName("myIp")
-        @Expose
-        private String myIp;
-        @SerializedName("myOs")
-        @Expose
-        private String myOs;
-
-        public ClientData(String myIp, String myOs) {
-            this.myIp = myIp;
-            this.myOs = myOs;
-        }
+    public String toJson(){
+        return GsonUtils.createJsonScannerPackage(this);
     }
-    public static class ServerData{
-        @SerializedName("serverName")
-        @Expose
-        private String serverName;
-        @SerializedName("serverIp")
-        @Expose
-        private String serverIp;
-
-        public String getServerName() {
-            return serverName;
-        }
-        public String getServerIp() {
-            return serverIp;
-        }
-
-
-        public ServerData(String serverIp, String serverName) {
-            this.serverIp = serverIp;
-            this.serverName = serverName;
-        }
+    public static ScannerPackage parse(String json){
+        return GsonUtils.parseScannerPackage(json);
     }
 }

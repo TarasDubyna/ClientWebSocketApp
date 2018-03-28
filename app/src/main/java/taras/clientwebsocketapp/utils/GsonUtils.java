@@ -31,7 +31,7 @@ public class GsonUtils {
         return permissionPackage;
     }
 
-    public static String createPermissionPackage(PermissionPackage permissionPackage){
+    public static String createJsonPermissionPackage(PermissionPackage permissionPackage){
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(permissionPackage);

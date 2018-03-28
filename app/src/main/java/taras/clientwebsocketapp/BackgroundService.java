@@ -47,14 +47,8 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     public static final String SEND_MESSAGE = "SEND_MESSAGE";
     public static final String SEND_DATA = "SEND_DATA";
-    public static final String SEND_DAsdfTA = "SEND_DATA";
-
-    private String type;
-    private String serverIp;
-    private String messageText;
 
     private Server server;
-    private Handler uiHandler;
 
 
     public class LocalBinder extends Binder {
@@ -72,13 +66,7 @@ public class BackgroundService extends Service implements ScanningInterface {
     public void onCreate() {
         super.onCreate();
         GlobalBus.getBus().register(this);
-        uiHandler = new Handler(Looper.getMainLooper()){
-            public void handleMessage(Message message){
-                Log.d(LOG_TAG, "from handler");
-                Toast.makeText(getApplicationContext(), "toast from server", Toast.LENGTH_SHORT).show();
-            }
-        };
-        server = Server.getInstance(uiHandler);
+        server = Server.getInstance();
     }
 
     @Override

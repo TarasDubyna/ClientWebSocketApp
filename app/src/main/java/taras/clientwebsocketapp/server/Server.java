@@ -30,16 +30,14 @@ public class Server {
     private boolean serverState = false;
 
     private static Server server;
-    private Handler uiHandler;
 
 
-    public Server(Handler handler) {
-        this.uiHandler = handler;
+    public Server() {
     }
 
-    public static Server getInstance(Handler handler){
+    public static Server getInstance(){
         if (server == null){
-            server = new Server(handler);
+            server = new Server();
         }
         return server;
     }
@@ -93,7 +91,6 @@ public class Server {
                                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                                 System.out.println("message from client: " + stringBuilder);
 
-                                uiHandler.obtainMessage(1, new Object());
 
                                 String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
                                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
@@ -121,8 +118,6 @@ public class Server {
                 return serverResponse.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
             case Constants.PACKAGE_TYPE_PERMISSION:
                 Log.d(LOG_TAG, "PACKAGE_TYPE_PERMISSION");
-                uiHandler.obtainMessage(1, new Object());
-
                 return serverResponse.createPermissionResponse(GsonUtils.parsePermissionPackage(jsonString));
         }
         return null;
