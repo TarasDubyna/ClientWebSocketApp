@@ -19,6 +19,7 @@ import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ExternalDataUtils;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
 
@@ -33,7 +34,7 @@ public class AppApplication extends Application{
     public static String deviceIp;
     public static String networkIp;
     public static String deviceOs;
-    public static String deviceType;
+    public static String deviceName;
     public static File externalStorageDir;
 
     public static Context appContext;
@@ -50,6 +51,7 @@ public class AppApplication extends Application{
                 .build();
 
         getNetworkParams();
+        deviceName = PreferenceUtils.getDeviceName();
 
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()

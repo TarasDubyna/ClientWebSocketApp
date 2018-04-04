@@ -158,13 +158,10 @@ public class SelectedFileManager {
 
         PermissionPackage permissionPackage = new PermissionPackage();
         permissionPackage.setDescription(GlobalBus.TO_SERVICE);
-        permissionPackage.setType(Constants.PACKAGE_TYPE_PERMISSION);
         permissionPackage.setFilesName(filesName);
-        permissionPackage.setClientDeviceIp(AppApplication.deviceIp);
-        permissionPackage.setClientDeviceName(PreferenceUtils.getDeviceName());
-        permissionPackage.setServerDeviceIp(selectedDevicesIp.get(0));
+        permissionPackage.setServerIp(selectedDevicesIp.get(0));
 
-        Log.d("myLogs", "sendDataToService: " + permissionPackage.toString());
+        Log.d("myLogs", "sendDataToService: " + permissionPackage.toJson());
 
         GlobalBus.getBus().post(permissionPackage);
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();

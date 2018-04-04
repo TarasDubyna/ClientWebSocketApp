@@ -135,7 +135,7 @@ public class BackgroundService extends Service implements ScanningInterface {
     public void successfulScanningResponse(ScannerPackage scannerPackage) {
         Log.d(LOG_TAG, "successfulScanningResponse: " + scannerPackage.toString());
         if (applicationInForeground()){
-            if (!scannerPackage.getServerData().getServerIp().equals(AppApplication.deviceIp)){
+            if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
                 Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
                 BusUtil.postOnMain(GlobalBus.getBus(), scannerPackage);
             }

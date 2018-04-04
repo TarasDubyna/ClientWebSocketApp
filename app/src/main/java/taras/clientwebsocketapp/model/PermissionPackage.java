@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 
@@ -19,25 +20,20 @@ public class PermissionPackage extends Package{
     @SerializedName("filesName")
     @Expose
     private List<String> filesName;
-    @SerializedName("clientData")
-    @Expose
-    private ClientData clientData;
-    @SerializedName("serverData")
-    @Expose
-    private ServerData serverData;
+    @SerializedName("isAllowed")
     @Expose
     private String isAllowed;
 
-    public PermissionPackage(List<String> filesName, ClientData clientData, ServerData serverData, String isAllowed) {
+    public PermissionPackage() {
         super(Constants.PACKAGE_TYPE_PERMISSION);
-        this.filesName = filesName;
-        this.clientData = clientData;
-        this.serverData = serverData;
-        this.isAllowed = isAllowed;
+        this.setClientIp(AppApplication.deviceIp);
+        this.setClientName(AppApplication.deviceName);
     }
 
-    public void setDescription(int description){
-        this.setDescription(description);
+    public PermissionPackage(List<String> filesName, String isAllowed) {
+        super(Constants.PACKAGE_TYPE_PERMISSION);
+        this.filesName = filesName;
+        this.isAllowed = isAllowed;
     }
 
     public List<String> getFilesName() {

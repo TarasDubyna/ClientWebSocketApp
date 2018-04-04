@@ -22,20 +22,18 @@ public class ServerResponse {
     }
 
     public String createScanningNetworkResponse(ScannerPackage scannerPackage){
-        scannerPackage.setServerData(new ScannerPackage.ServerData(AppApplication.deviceIp, PreferenceUtils.getDeviceName()));
-        String scanningNetworkResponse = GsonUtils.createJsonScannerPackage(scannerPackage);
-        Log.d(LOG_TAG, "Server stringResponse: " + scanningNetworkResponse);
-        return scanningNetworkResponse;
+        scannerPackage.setServerIp(AppApplication.deviceIp);
+        scannerPackage.setServerName(AppApplication.deviceName);
+        Log.d(LOG_TAG, "Server stringResponse: " + scannerPackage.toJson());
+        return scannerPackage.toJson();
     }
 
     public String createPermissionResponse(PermissionPackage permissionPackage){
         //заглушка
         permissionPackage.setAllowed("false");
-
         //-------
-        String permissionResponse = GsonUtils.createPermissionPackage(permissionPackage);
-        Log.d(LOG_TAG, "Server stringResponse: " + permissionResponse);
-        return permissionResponse;
+        Log.d(LOG_TAG, "Server stringResponse: " + permissionPackage.toJson());
+        return permissionPackage.toJson();
     }
 
 }

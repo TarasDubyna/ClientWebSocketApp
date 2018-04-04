@@ -45,20 +45,20 @@ public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecycler
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ScannerPackage.ServerData device = scannerPackagesList.get(position).getServerData();
+        ScannerPackage scannerPackage = scannerPackagesList.get(position);
 
-        if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(device.getServerIp())){
+        if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(scannerPackage.getServerIp())){
             holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
         } else {
             holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
         }
 
-        holder.tvDeviceName.setText(device.getServerName());
-        holder.tvDeviceIp.setText(device.getServerIp());
+        holder.tvDeviceName.setText(scannerPackage.getServerName());
+        holder.tvDeviceIp.setText(scannerPackage.getServerIp());
         holder.cvItem.setOnClickListener(view -> {
             if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelectedDevicesList(device.getServerIp());
-                if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(device.getServerIp())){
+                SelectedFileManager.getSelectedFileManager().insertToSelectedDevicesList(scannerPackage.getServerIp());
+                if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(scannerPackage.getServerIp())){
                     holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
                 }
                 notifyDataSetChanged();
