@@ -20,11 +20,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.GlobalBus;
 
 /**
  * Created by Taras on 14.02.2018.

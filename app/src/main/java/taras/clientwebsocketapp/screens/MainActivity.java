@@ -26,9 +26,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
-
-import java.io.IOException;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,14 +36,11 @@ import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
-import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
-import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 import taras.clientwebsocketapp.utils.StorageOptions;
 
@@ -136,17 +133,16 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
-    protected void onResume() {
-        super.onResume();
-        GlobalBus.getBus().register(this);
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
-        GlobalBus.getBus().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     public void addFragmentToManager(Fragment fragment){
@@ -193,12 +189,13 @@ public class MainActivity extends AppCompatActivity
             serverSwitch.setChecked(true);
             Snackbar.make(view, getString(R.string.server_on_visible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            GlobalBus.getBus().post(Constants.SERVER_START);
+            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START);
         } else {
             serverSwitch.setChecked(false);
             Snackbar.make(view, getString(R.string.server_off_invisible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            GlobalBus.getBus().post(Constants.SERVER_STOP);
+            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP);
+            EventBus.getDefault().post(message);
         }
     }
 
@@ -293,10 +290,23 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Subscribe
-    public void getPermissionSend(PermissionPackage permissionPackage){
-        Log.d(LOG_TAG, "main activity, check permission");
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onNewPostCreated(EventBusMsg<Object> ebMessage) {
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
+            switch (ebMessage.getCodeType()){
+                case EventBusMsg.PACKAGE_PERMISSION:
+                    break;
+                case EventBusMsg.PACKAGE_SCANNER:
+                    break;
+                case EventBusMsg.PACKAGE_SERVER_STATE:
+                    break;
+            }
+        }
+        EventBus.getDefault().removeStickyEvent(ebMessage);
     }
+
 
     public static Context getContext(){
         return getContext();

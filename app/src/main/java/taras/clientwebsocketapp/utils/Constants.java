@@ -18,8 +18,7 @@ public class Constants {
     public static final String SEND_FILE = "send_file";
 
 
-    public static final String SERVER_START = "start_server";
-    public static final String SERVER_STOP = "stop_server";
+
 
     public static final String START_SCANNING_FOR_FILE = "start_scanning_for_file";
 

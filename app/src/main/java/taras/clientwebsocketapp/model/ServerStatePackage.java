@@ -7,6 +7,7 @@ import java.util.List;
 
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
+import taras.clientwebsocketapp.utils.TimeUtils;
 
 /**
  * Created by Taras on 05.04.2018.
@@ -15,7 +16,7 @@ import taras.clientwebsocketapp.utils.GsonUtils;
 public class ServerStatePackage extends Package {
     @SerializedName("time_send")
     @Expose
-    private String timeSend;
+    private long timeSend;
     @SerializedName("request_type")
     @Expose
     private String requestType;
@@ -26,12 +27,8 @@ public class ServerStatePackage extends Package {
         this.setClientName(pack.getClientName());
         this.setServerIp(pack.getServerIp());
         this.setServerName(pack.getServerName());
-        this.timeSend = createTimeSend();
+        this.timeSend = TimeUtils.getCurrentTime();
         this.requestType = pack.getType();
-    }
-
-    private String createTimeSend(){
-        return String.valueOf(System.currentTimeMillis());
     }
 
     public String toJson(){

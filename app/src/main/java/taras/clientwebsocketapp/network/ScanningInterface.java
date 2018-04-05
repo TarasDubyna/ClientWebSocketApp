@@ -8,10 +8,10 @@ import taras.clientwebsocketapp.model.ScannerPackage;
  */
 
 public interface ScanningInterface {
-    void successfulResponse(String stringJson);
+
     void errorResponse(Throwable throwable);
     void successfulScanningResponse(ScannerPackage scannerPackage);
-
     void successfulGetPermission(PermissionPackage permissionPackage);
+
     void errorGetPermission(PermissionPackage permissionPackage);
 }

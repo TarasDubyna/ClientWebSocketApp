@@ -8,13 +8,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.GlobalBus;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 03.03.2018.

@@ -24,12 +24,6 @@ public class NetworkDataRepository implements ConnectionRepository {
     }
 
     @Override
-    public void sendMessage(ScanningInterface scanningInterface, String message, String ip) throws IOException {
-        this.scanningInterface = scanningInterface;
-        new Thread(() -> NetworkOperations.takeRequest(ip, message, this.scanningInterface)).start();
-    }
-
-    @Override
     public void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException {
         this.scanningInterface = scanningInterface;
         new Thread(() -> NetworkOperations.checkPermission(permissionPackage, this.scanningInterface)).start();

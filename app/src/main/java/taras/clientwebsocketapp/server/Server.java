@@ -83,10 +83,12 @@ public class Server {
                                 stringBuilder.deleteCharAt(stringBuilder.length() - 1);
                                 System.out.println("message from client: " + stringBuilder);
 
+                                ServerManager serverManager = new ServerManager();
+                                serverManager.getRequest(stringBuilder.toString());
+                                String response = serverManager.returnResponse();
 
-                                String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
+                                //String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
                                 outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-                                //outputStreamWriter.write("Message from server 192.168.1.133");
                                 outputStreamWriter.write(response);
                                 outputStreamWriter.flush();
                                 outputStreamWriter.close();
@@ -102,30 +104,4 @@ public class Server {
             }
         }
     }
-
-    private String parseRequestToServer(String jsonString, String type){
-        ServerManager serverManager = new ServerManager();
-        switch (type){
-            case Constants.PACKAGE_TYPE_SCANNING:
-                return serverManager.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
-            case Constants.PACKAGE_TYPE_PERMISSION:
-                Log.d(LOG_TAG, "PACKAGE_TYPE_PERMISSION");
-                return serverManager.createPermissionResponse(GsonUtils.parsePermissionPackage(jsonString));
-        }
-        return null;
-    }
-    private String checkPackageType (String stringRequest){
-        try {
-            JSONObject jsonObject = new JSONObject(stringRequest);
-            Log.d(LOG_TAG, "Server stringRequest: " + stringRequest);
-            String type = jsonObject.getString("type");
-            return type;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-
-
 }

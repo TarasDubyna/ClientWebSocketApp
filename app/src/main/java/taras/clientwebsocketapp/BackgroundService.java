@@ -5,14 +5,12 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.squareup.otto.Subscribe;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +20,13 @@ import java.util.List;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.ScanningInterface;
-import taras.clientwebsocketapp.screens.StartActivity;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.BusUtil;
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.GlobalBus;
+import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
@@ -58,7 +56,7 @@ public class BackgroundService extends Service implements ScanningInterface {
     @Override
     public void onCreate() {
         super.onCreate();
-        GlobalBus.getBus().register(this);
+        EventBus.getDefault().register(this);
         server = Server.getInstance();
     }
 
@@ -66,7 +64,7 @@ public class BackgroundService extends Service implements ScanningInterface {
     public void onDestroy() {
         super.onDestroy();
         PreferenceUtils.saveServerState(false);
-        GlobalBus.getBus().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -74,63 +72,63 @@ public class BackgroundService extends Service implements ScanningInterface {
         return new Binder();
     }
 
-    @Subscribe
-    public void getMessage(String messageText){
-        switch (messageText){
-            case Constants.START_SCANNING:
-                try {
-                    NetworkConnection.getConnectionRepository()
-                            .scanNetwork(this, AppApplication.networkIp);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                break;
-            case Constants.SERVER_START:
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getDataFromApp(EventBusMsg<Object> ebMessage) {
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
+            switch (ebMessage.getCodeType()){
+                case EventBusMsg.PACKAGE_SCANNER:
+                    try {
+                        NetworkConnection
+                                .getConnectionRepository()
+                                .scanNetwork(this, AppApplication.networkIp);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case EventBusMsg.PACKAGE_PERMISSION:
+                    Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackage)ebMessage.getModel()).toJson());
+                    try {
+                        NetworkConnection.getConnectionRepository().getPermission(this, (PermissionPackage) ebMessage.getModel());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                case EventBusMsg.SERVER_START:
                 startForeground(NotificationsManager.ID_FOREGROUND_SERVICE,
-                        NotificationsManager.createServerNotification(this));
+                            NotificationsManager.createServerNotification(this));
                 server.startServer();
-                break;
-            case Constants.SERVER_STOP:
-                server.stopServer();
-                NotificationsManager.removeServerNotification(this);
-                stopForeground(true);
-                break;
+                case EventBusMsg.SERVER_STOP:
+                    server.stopServer();
+                    NotificationsManager.removeServerNotification(this);
+                    stopForeground(true);
+                    break;
 
+                case EventBusMsg.PACKAGE_SERVER_STATE:
+                    server.stopServer();
+                    NotificationsManager.removeServerNotification(this);
+                    stopForeground(true);
+                    break;
+            }
         }
+        EventBus.getDefault().removeStickyEvent(ebMessage);
     }
 
-    @Subscribe
-    public void getFilesToSend(ArrayList<File> filesList){
-        Log.d(LOG_TAG, "service, getFilesToSend, filesList.size: " + filesList.size());
-    }
-    @Subscribe
-    public void getPermissionPackage(PermissionPackage permissionPackage){
-        Log.d(LOG_TAG, "service, getPermissionSend");
-        Log.d(LOG_TAG, "permissionPackage: " + permissionPackage.toString());
-        try {
-            NetworkConnection.getConnectionRepository().getPermission(this, permissionPackage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    @Override
-    public void successfulResponse(String scannerPackage) {
-        Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
-        GlobalBus.getBus().post(scannerPackage);
-    }
     @Override
     public void errorResponse(Throwable throwable) {
 
     }
     @Override
     public void successfulScanningResponse(ScannerPackage scannerPackage) {
-        Log.d(LOG_TAG, "successfulScanningResponse: " + scannerPackage.toString());
+        Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
         if (applicationInForeground()){
             if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
                 Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                BusUtil.postOnMain(GlobalBus.getBus(), scannerPackage);
+                EventBusMsg<ScannerPackage> message =
+                        new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
+                EventBus.getDefault().post(message);
             }
         }
     }

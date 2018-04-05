@@ -10,6 +10,5 @@ import taras.clientwebsocketapp.model.PermissionPackage;
 
 public interface ConnectionRepository {
     void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException;
-    void sendMessage(ScanningInterface scanningInterface, String message, String ip) throws IOException;
     void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException;
 }
