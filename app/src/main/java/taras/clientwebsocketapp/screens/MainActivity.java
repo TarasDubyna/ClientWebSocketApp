@@ -189,12 +189,12 @@ public class MainActivity extends AppCompatActivity
             serverSwitch.setChecked(true);
             Snackbar.make(view, getString(R.string.server_on_visible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START);
+            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START, null);
         } else {
             serverSwitch.setChecked(false);
             Snackbar.make(view, getString(R.string.server_off_invisible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP);
+            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP, null);
             EventBus.getDefault().post(message);
         }
     }

@@ -52,6 +52,10 @@ public class BackgroundService extends Service implements ScanningInterface {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new Binder();
+    }
 
     @Override
     public void onCreate() {
@@ -59,19 +63,12 @@ public class BackgroundService extends Service implements ScanningInterface {
         EventBus.getDefault().register(this);
         server = Server.getInstance();
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         PreferenceUtils.saveServerState(false);
         EventBus.getDefault().unregister(this);
     }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return new Binder();
-    }
-
 
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -94,8 +91,6 @@ public class BackgroundService extends Service implements ScanningInterface {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
-
                 case EventBusMsg.SERVER_START:
                 startForeground(NotificationsManager.ID_FOREGROUND_SERVICE,
                             NotificationsManager.createServerNotification(this));
@@ -132,11 +127,15 @@ public class BackgroundService extends Service implements ScanningInterface {
             }
         }
     }
-
     // get permission
     @Override
     public void successfulGetPermission(PermissionPackage permissionPackage) {
-
+        if (applicationInForeground()){
+            Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
+            EventBusMsg<PermissionPackage> message =
+                    new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
+            EventBus.getDefault().post(message);
+        }
     }
 
     @Override

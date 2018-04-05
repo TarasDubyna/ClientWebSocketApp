@@ -11,22 +11,16 @@ import taras.clientwebsocketapp.utils.NetworkUtils;
  */
 
 public class NetworkDataRepository implements ConnectionRepository {
-
-    private ScanningInterface scanningInterface;
-
     @Override
     public void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException {
-        this.scanningInterface = scanningInterface;
-        List<String> consumer = NetworkUtils.getAllNetworkAddresses();
-        for (String address: consumer){
-            new Thread(() -> NetworkOperations.takeRequest(address, this.scanningInterface)).start();
+        for (String address: NetworkUtils.getAllNetworkAddresses()){
+            new Thread(() -> NetworkOperations.scanNetwork(address, scanningInterface)).start();
         }
     }
 
     @Override
     public void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException {
-        this.scanningInterface = scanningInterface;
-        new Thread(() -> NetworkOperations.checkPermission(permissionPackage, this.scanningInterface)).start();
+        new Thread(() -> NetworkOperations.getPermission(permissionPackage, scanningInterface)).start();
     }
 
 }
