@@ -50,13 +50,6 @@ public class BackgroundService extends Service implements ScanningInterface {
 
     private Server server;
 
-
-    public class LocalBinder extends Binder {
-        BackgroundService getService() {
-            return BackgroundService.this;
-        }
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;

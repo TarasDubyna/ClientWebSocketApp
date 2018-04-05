@@ -1,13 +1,6 @@
 package taras.clientwebsocketapp.server;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,7 +11,6 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import taras.clientwebsocketapp.BackgroundService;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 
@@ -112,13 +104,13 @@ public class Server {
     }
 
     private String parseRequestToServer(String jsonString, String type){
-        ServerResponse serverResponse = new ServerResponse();
+        ServerManager serverManager = new ServerManager();
         switch (type){
             case Constants.PACKAGE_TYPE_SCANNING:
-                return serverResponse.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
+                return serverManager.createScanningNetworkResponse(GsonUtils.parseScannerPackage(jsonString));
             case Constants.PACKAGE_TYPE_PERMISSION:
                 Log.d(LOG_TAG, "PACKAGE_TYPE_PERMISSION");
-                return serverResponse.createPermissionResponse(GsonUtils.parsePermissionPackage(jsonString));
+                return serverManager.createPermissionResponse(GsonUtils.parsePermissionPackage(jsonString));
         }
         return null;
     }

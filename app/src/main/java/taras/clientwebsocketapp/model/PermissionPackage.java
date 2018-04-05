@@ -17,10 +17,10 @@ import taras.clientwebsocketapp.utils.GsonUtils;
 
 public class PermissionPackage extends Package{
 
-    @SerializedName("filesName")
+    @SerializedName("files_name")
     @Expose
     private List<String> filesName;
-    @SerializedName("isAllowed")
+    @SerializedName("is_allowed")
     @Expose
     private String isAllowed;
 

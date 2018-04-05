@@ -289,8 +289,6 @@ public class MainActivity extends AppCompatActivity
     }
     private void startService(){
         Intent intent = new Intent(MainActivity.this, BackgroundService.class);
-        //intent.putExtra(BackgroundService.TYPE, BackgroundService.SCAN_NETWORK);
-        //intent.putExtra("ip", etAddress.getText().toString());
         startService(intent);
     }
 

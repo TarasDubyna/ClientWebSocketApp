@@ -14,17 +14,17 @@ public class Package {
     @Expose
     private String type;
 
-    @SerializedName("clientIp")
+    @SerializedName("client_ip")
     @Expose
     private String clientIp;
-    @SerializedName("clientName")
+    @SerializedName("client_name")
     @Expose
     private String clientName;
 
-    @SerializedName("serverIp")
+    @SerializedName("server_ip")
     @Expose
     private String serverIp;
-    @SerializedName("serverName")
+    @SerializedName("server_name")
     @Expose
     private String serverName;
 
