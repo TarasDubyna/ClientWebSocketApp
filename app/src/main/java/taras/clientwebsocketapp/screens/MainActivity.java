@@ -32,11 +32,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import taras.clientwebsocketapp.BackgroundService;
+import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
@@ -67,6 +66,8 @@ public class MainActivity extends AppCompatActivity
     private TextView toolbarTitle;
 
     boolean bound = false;
+
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder binder) {
             Log.d(LOG_TAG, "MainActivity onServiceConnected");
@@ -86,11 +87,11 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             // TODO Auto-generated method stub
-
             String responseData = arg1.getStringExtra("string");
             Toast.makeText(MainActivity.this,"Message: " + responseData, Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
@@ -110,9 +111,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         navigationIcon = toolbar.getNavigationIcon();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //toolbar.setSubtitle(R.string.network_manager);
 
         initServiceReceiver();
         addFragmentToManager(ScanNetworkFragment.getFragment());
@@ -280,7 +278,7 @@ public class MainActivity extends AppCompatActivity
         if (myReceiver == null){
             myReceiver = new MainActivity.MyReceiver();
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BackgroundService.MY_ACTION);
+            intentFilter.addAction(BackgroundService.SERVICE_ACTION);
             registerReceiver(myReceiver, intentFilter);
         }
     }

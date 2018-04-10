@@ -24,7 +24,7 @@ import taras.clientwebsocketapp.model.ScannerPackage;
 public class NetworkOperations {
     private static final String LOG_TAG = "myLogs";
 
-    public static void scanNetwork(String ip, ScanningInterface scanningInterface) {
+    public static void scanNetwork(String ip, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
             socket = new Socket(InetAddress.getByName(ip), Constants.SERVER_PORT);
@@ -78,7 +78,7 @@ public class NetworkOperations {
         }
     }
 
-    public static void getPermission(PermissionPackage permissionPackage, ScanningInterface scanningInterface) {
+    public static void getPermission(PermissionPackage permissionPackage, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
             socket = new Socket(InetAddress.getByName(permissionPackage.getServerIp()), Constants.SERVER_PORT);
@@ -103,7 +103,7 @@ public class NetworkOperations {
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
                         Log.d(LOG_TAG, "WatchSocket: close response socket - " + permissionPackage.getServerIp());
-                        scanningInterface.successfulGetPermission(permissionPackage);
+                        scanningInterface.successfulGetPermissionFirstStage(permissionPackage);
                     }
                 }
             }

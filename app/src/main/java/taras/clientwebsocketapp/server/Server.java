@@ -49,17 +49,6 @@ public class Server {
         }
     }
 
-    public void onDestroy() {
-        if (serverSocket != null) {
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
     private class SocketServerThread extends Thread {
         @Override
         public void run() {
@@ -73,25 +62,14 @@ public class Server {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            InputStreamReader inputStreamReader = null;
                             try {
-                                inputStreamReader = new InputStreamReader(socket.getInputStream());
+                                InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-                                StringBuilder stringBuilder = new StringBuilder();
-                                char[] buffer = new char[4096];
-                                stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-                                stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-                                System.out.println("message from client: " + stringBuilder);
 
                                 ServerManager serverManager = new ServerManager();
-                                serverManager.getRequest(stringBuilder.toString());
-                                String response = serverManager.returnResponse();
+                                serverManager.getRequest(getRequestFromClient(inputStreamReader));
 
-                                //String response = parseRequestToServer(stringBuilder.toString(), checkPackageType(stringBuilder.toString()));
-                                outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-                                outputStreamWriter.write(response);
-                                outputStreamWriter.flush();
-                                outputStreamWriter.close();
+                                sendResponse(outputStreamWriter, serverManager.returnResponse());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -103,5 +81,20 @@ public class Server {
                 e.printStackTrace();
             }
         }
+
+        private String getRequestFromClient(InputStreamReader inputStreamReader) throws IOException {
+            StringBuilder stringBuilder = new StringBuilder();
+            char[] buffer = new char[4096];
+            stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            return stringBuilder.toString();
+        }
+
+        private void sendResponse(OutputStreamWriter outputStreamWriter, String response) throws IOException {
+            outputStreamWriter.write(response);
+            outputStreamWriter.flush();
+            outputStreamWriter.close();
+        }
+
     }
 }

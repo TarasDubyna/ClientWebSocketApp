@@ -39,7 +39,7 @@
         </activity>
 
 
-        <service android:name=".BackgroundService" />
+        <service android:name=".service.BackgroundService" />
 
         <activity
             android:name=".screens.MainActivity"

@@ -1,5 +1,6 @@
 package taras.clientwebsocketapp;
 
+import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -13,6 +14,7 @@ import android.util.Log;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
+import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -89,8 +91,4 @@ public class AppApplication extends Application{
     public void setContext(Context context) {
         this.appContext = context;
     }
-
-
-
-
 }

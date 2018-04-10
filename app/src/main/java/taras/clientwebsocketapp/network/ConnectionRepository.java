@@ -9,6 +9,6 @@ import taras.clientwebsocketapp.model.PermissionPackage;
  */
 
 public interface ConnectionRepository {
-    void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException;
-    void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException;
+    void scanNetwork(RequestServiceInterface requestServiceInterface, String networkIP) throws IOException;
+    void getPermission(RequestServiceInterface scanningInterface, PermissionPackage permissionPackage) throws IOException;
 }

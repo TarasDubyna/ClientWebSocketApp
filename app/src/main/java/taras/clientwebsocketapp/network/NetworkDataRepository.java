@@ -12,15 +12,15 @@ import taras.clientwebsocketapp.utils.NetworkUtils;
 
 public class NetworkDataRepository implements ConnectionRepository {
     @Override
-    public void scanNetwork(ScanningInterface scanningInterface, String networkIP) throws IOException {
+    public void scanNetwork(RequestServiceInterface requestServiceInterface, String networkIP) throws IOException {
         for (String address: NetworkUtils.getAllNetworkAddresses()){
-            new Thread(() -> NetworkOperations.scanNetwork(address, scanningInterface)).start();
+            new Thread(() -> NetworkOperations.scanNetwork(address, requestServiceInterface)).start();
         }
     }
 
     @Override
-    public void getPermission(ScanningInterface scanningInterface, PermissionPackage permissionPackage) throws IOException {
-        new Thread(() -> NetworkOperations.getPermission(permissionPackage, scanningInterface)).start();
+    public void getPermission(RequestServiceInterface requestServiceInterface, PermissionPackage permissionPackage) throws IOException {
+        new Thread(() -> NetworkOperations.getPermission(permissionPackage, requestServiceInterface)).start();
     }
 
 }

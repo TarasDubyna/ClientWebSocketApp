@@ -7,11 +7,13 @@ import taras.clientwebsocketapp.model.ScannerPackage;
  * Created by Taras on 08.02.2018.
  */
 
-public interface ScanningInterface {
+public interface RequestServiceInterface {
 
-    void errorResponse(Throwable throwable);
     void successfulScanningResponse(ScannerPackage scannerPackage);
-    void successfulGetPermission(PermissionPackage permissionPackage);
+    void successfulGetPermissionFirstStage(PermissionPackage permissionPackage);
+    void successfulGetPermissionSecondStage(PermissionPackage permissionPackage);
+
 
     void errorGetPermission(PermissionPackage permissionPackage);
+    void errorResponse(Throwable throwable);
 }
