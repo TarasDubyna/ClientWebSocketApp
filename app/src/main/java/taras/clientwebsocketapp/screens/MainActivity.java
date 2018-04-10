@@ -32,6 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
@@ -126,7 +127,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.menu_network_manager);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         FavoriteFilesManager.getInstance();
     }
 
@@ -183,18 +183,19 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view) {
+        EventBusMsg<String> message = null;
         if (serverSwitch.isChecked()){
             serverSwitch.setChecked(true);
             Snackbar.make(view, getString(R.string.server_on_visible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START, null);
+            message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START, null);
         } else {
             serverSwitch.setChecked(false);
             Snackbar.make(view, getString(R.string.server_off_invisible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
-            EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP, null);
-            EventBus.getDefault().post(message);
+            message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP, null);
         }
+        EventBus.getDefault().post(message);
     }
 
     @Override
@@ -290,15 +291,13 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onNewPostCreated(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
             switch (ebMessage.getCodeType()){
-                case EventBusMsg.PACKAGE_PERMISSION:
-                    break;
-                case EventBusMsg.PACKAGE_SCANNER:
-                    break;
                 case EventBusMsg.PACKAGE_SERVER_STATE:
+                    Log.d(LOG_TAG, "PACKAGE_SERVER_STATE");
                     break;
             }
         }

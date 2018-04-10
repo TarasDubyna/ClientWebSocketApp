@@ -11,14 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.service.RequestServiceManager;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.EventBusMsg;
 
 /**
  * Created by Taras on 14.02.2018.
@@ -59,7 +70,7 @@ public class ScanNetworkFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
-        GlobalBus.getBus().register(this);
+        EventBus.getDefault().register(this);
         Bundle bundle = getArguments();
         if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
             btnScannNetworkDevices.performClick();
@@ -72,7 +83,7 @@ public class ScanNetworkFragment extends Fragment {
     public void onStop() {
         super.onStop();
         Log.d(LOG_TAG, "ScanNetworkFragment, onStop");
-        GlobalBus.getBus().unregister(this);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -88,16 +99,22 @@ public class ScanNetworkFragment extends Fragment {
     void scanningNetwork(){
         tvNoDevices.setVisibility(View.VISIBLE);
         devicesRecyclerAdapter.clear();
-        GlobalBus.getBus().post(Constants.START_SCANNING);
+        EventBusMsg<String> message =
+                new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);
+        EventBus.getDefault().post(message);
     }
 
-    //response from server;
-    @Subscribe
-    public void getScanningResultFromService(ScannerPackage scannerPackage){
-        Log.d(LOG_TAG, "getScanningResultFromService, response: " + scannerPackage);
-        devicesRecyclerAdapter.addDevice(scannerPackage);
-        tvNoDevices.setVisibility(View.GONE);
-        rvNetworkDevices.setVisibility(View.VISIBLE);
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getDataFromService(EventBusMsg<Object> ebMessage) {
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
+            if (ebMessage.getCodeType() == EventBusMsg.PACKAGE_SCANNER){
+                ScannerPackage scannerPackage = (ScannerPackage) ebMessage.getModel();
+                devicesRecyclerAdapter.addDevice(scannerPackage);
+                tvNoDevices.setVisibility(View.GONE);
+                rvNetworkDevices.setVisibility(View.VISIBLE);
+            }
+        }
+        EventBus.getDefault().removeStickyEvent(ebMessage);
     }
 
     private void initScanningRecycler(){

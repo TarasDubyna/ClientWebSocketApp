@@ -46,11 +46,12 @@ public class DevicesRecyclerAdapter extends RecyclerView.Adapter<DevicesRecycler
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         ScannerPackage scannerPackage = scannerPackagesList.get(position);
-
-        if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(scannerPackage.getServerIp())){
-            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
-        } else {
-            holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
+        if (SelectedFileManager.getSelectedFileManager() != null){
+            if (SelectedFileManager.getSelectedFileManager().isDeviceSelected(scannerPackage.getServerIp())){
+                holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
+            } else {
+                holder.cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
+            }
         }
 
         holder.tvDeviceName.setText(scannerPackage.getServerName());

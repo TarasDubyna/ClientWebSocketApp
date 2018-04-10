@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.View;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.utils.EventBusMsg;
 
 /**
  * Created by Taras on 03.03.2018.
@@ -153,14 +156,16 @@ public class SelectedFileManager {
         }
 
         PermissionPackage permissionPackage = new PermissionPackage();
-        permissionPackage.setDescription(GlobalBus.TO_SERVICE);
         permissionPackage.setFilesName(filesName);
         permissionPackage.setServerIp(selectedDevicesIp.get(0));
 
         Log.d("myLogs", "sendDataToService: " + permissionPackage.toJson());
 
-        GlobalBus.getBus().post(permissionPackage);
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+        EventBusMsg<PermissionPackage> message =
+                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, permissionPackage);
+        EventBus.getDefault().post(message);
+
     }
 
 }

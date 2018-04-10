@@ -56,7 +56,7 @@ public class BackgroundService extends Service {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getDataFromApp(EventBusMsg<Object> ebMessage) {
-        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
             RequestServiceManager requestServiceManager = new RequestServiceManager(this);
             try {
                 requestServiceManager
