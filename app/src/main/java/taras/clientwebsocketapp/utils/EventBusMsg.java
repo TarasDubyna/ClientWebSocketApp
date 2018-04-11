@@ -13,6 +13,7 @@ public class EventBusMsg<T> {
     public static final int PACKAGE_PERMISSION_FIRST = 1;
     public static final int PACKAGE_PERMISSION_SECOND = 2;
     public static final int PACKAGE_SERVER_STATE = 3;
+    public static final int CHECK_IS_SERVER_WORK = 4;
 
     public static final int SERVER_START = 4;
     public static final int SERVER_STOP = 5;

@@ -2,6 +2,7 @@ package taras.clientwebsocketapp.network;
 
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -43,7 +44,13 @@ public class NetworkOperations {
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     char[] buffer = new char[4096];
-                    stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+
+                    try {
+                        stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+                    } catch (Exception ex){
+                        Log.d(LOG_TAG, "Exception: " + ex.getMessage());
+                    }
+
                     Log.d(LOG_TAG, "WatchSocket: socket get response - " + ip);
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
                     if (stringBuilder.toString().length() > 0){

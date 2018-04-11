@@ -62,22 +62,14 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
     }
 
     public void clear(){
-        this.scannerPackagesList.clear();
+        this.scannerPackagesList = new ArrayList<>();
         notifyDataSetChanged();
     }
 
     public void addItem(ScannerPackage scannerPackage){
         this.scannerPackagesList.add(scannerPackage);
-        notifyItemInserted(getItemCount() - 1);
+        notifyDataSetChanged();
     }
-
-
-    /*
-    public void addView(SelectedFileView selectedFileView){
-        selectedFileView.initRemoveAllDeviceFromSelected(this);
-    }
-    */
-
 
     private void initDataList(List<ScannerPackage> scannerPackagesList){
         if (scannerPackagesList == null){

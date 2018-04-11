@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.ExpandableListView;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -45,12 +47,14 @@ public class BackgroundService extends Service {
         super.onCreate();
         EventBus.getDefault().register(this);
         server = Server.getInstance();
+
+        EventBusMsg<Boolean> message = new EventBusMsg<Boolean>(EventBusMsg.TO_APP, EventBusMsg.CHECK_IS_SERVER_WORK, server.isServerIsRun());
+        EventBus.getDefault().postSticky(message);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         server.stopServer();
-        PreferenceUtils.saveServerState(false);
         EventBus.getDefault().unregister(this);
     }
 

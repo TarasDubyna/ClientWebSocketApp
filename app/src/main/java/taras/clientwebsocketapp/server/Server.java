@@ -49,6 +49,12 @@ public class Server {
         }
     }
 
+    public boolean isServerIsRun(){
+        Log.d(LOG_TAG, "serverState: " + serverState);
+        //socketServerThread.getState().toString();
+        return serverState;
+    }
+
     private class SocketServerThread extends Thread {
         @Override
         public void run() {

@@ -21,7 +21,6 @@ public class NotificationsManager {
     private static NotificationsManager notificationManager;
 
     public static Notification createServerNotification(Context context){
-        PreferenceUtils.saveServerState(true);
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(), 0);
         return new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_phone_network)
@@ -34,7 +33,6 @@ public class NotificationsManager {
     public static void removeServerNotification(Context context){
         android.app.NotificationManager notificationManager = (android.app.NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
-        PreferenceUtils.saveServerState(false);
     }
 
 

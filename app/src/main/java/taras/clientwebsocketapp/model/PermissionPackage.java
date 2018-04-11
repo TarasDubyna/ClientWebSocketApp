@@ -10,6 +10,7 @@ import java.util.List;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 13.03.2018.
@@ -27,7 +28,7 @@ public class PermissionPackage extends Package{
     public PermissionPackage() {
         super(Constants.PACKAGE_TYPE_PERMISSION);
         this.setClientIp(AppApplication.deviceIp);
-        this.setClientName(AppApplication.deviceName);
+        this.setClientName(PreferenceUtils.getDeviceName());
     }
 
     public PermissionPackage(List<String> filesName, String isAllowed) {

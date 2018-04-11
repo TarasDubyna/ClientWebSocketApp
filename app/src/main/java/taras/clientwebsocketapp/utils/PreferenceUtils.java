@@ -23,15 +23,6 @@ public final class PreferenceUtils {
         return Hawk.get(DEVICE_NAME, "");
     }
 
-    public static void saveServerState(@NonNull boolean isRunning) {
-        Hawk.put(SERVER_RUNNING, isRunning);
-    }
-    @NonNull
-    public static boolean isServerRunning() {
-        return Hawk.get(SERVER_RUNNING, false);
-    }
-
-
     public static void saveSavingFolderPath(@NonNull String path){
         Hawk.put(SAVING_FOLDER, path);
     }

@@ -174,9 +174,11 @@ public class MainActivity extends AppCompatActivity
         MenuItem switchItem = menu.findItem(R.id.toolbar_switcher);
         switchItem.setActionView(R.layout.toolbar_layout);
         serverSwitch = menu.findItem(R.id.toolbar_switcher).getActionView().findViewById(R.id.switchServerToolbar);
+        /*
         if (PreferenceUtils.isServerRunning()){
             serverSwitch.setChecked(true);
         }
+        */
         serverSwitch.setOnClickListener(this);
         return super.onCreateOptionsMenu(menu);
     }
@@ -299,9 +301,20 @@ public class MainActivity extends AppCompatActivity
                 case EventBusMsg.PACKAGE_SERVER_STATE:
                     Log.d(LOG_TAG, "PACKAGE_SERVER_STATE");
                     break;
+                case EventBusMsg.CHECK_IS_SERVER_WORK:
+                    setSwitchState((Boolean) ebMessage.getModel());
+                    break;
             }
         }
         EventBus.getDefault().removeStickyEvent(ebMessage);
+    }
+
+    private void setSwitchState(boolean serverIsRun){
+        if (serverIsRun){
+            serverSwitch.setChecked(true);
+        } else {
+            serverSwitch.setChecked(false);
+        }
     }
 
 

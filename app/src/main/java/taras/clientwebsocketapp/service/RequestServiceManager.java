@@ -46,6 +46,7 @@ public class RequestServiceManager {
                 takePermissionFirstStage();
             case EventBusMsg.SERVER_START:
                 startServer();
+                break;
             case EventBusMsg.SERVER_STOP:
                 stopServer();
                 break;

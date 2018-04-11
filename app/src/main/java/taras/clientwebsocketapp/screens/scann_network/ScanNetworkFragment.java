@@ -111,8 +111,9 @@ public class ScanNetworkFragment extends Fragment implements SelectedFileView.Se
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getScanningResult(EventBusMsg<Object> ebMessage) {
-        if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
             if (ebMessage.getCodeType() == EventBusMsg.PACKAGE_SCANNER){
+                Log.d(LOG_TAG, "getScanningResult, message: " + ((ScannerPackage)ebMessage.getModel()).toJson());
                 ScannerPackage scannerPackage = (ScannerPackage) ebMessage.getModel();
                 devicesRecyclerAdapter.addItem(scannerPackage);
                 tvNoDevices.setVisibility(View.GONE);

@@ -14,6 +14,7 @@ import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.GsonUtils;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 17.02.2018.
@@ -80,7 +81,7 @@ public class ServerManager {
 
     private ScannerPackage createScannerPackageResponse(ScannerPackage scannerPackage){
         scannerPackage.setServerIp(AppApplication.deviceIp);
-        scannerPackage.setServerName(AppApplication.deviceName);
+        scannerPackage.setServerName(PreferenceUtils.getDeviceName());
         return scannerPackage;
     }
     private ServerStatePackage createPermissionPackageResponse(PermissionPackage pack){
