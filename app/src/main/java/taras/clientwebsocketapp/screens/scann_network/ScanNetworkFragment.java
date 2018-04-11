@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.custom_views.SelectedFileView;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
@@ -35,7 +36,7 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
  * Created by Taras on 14.02.2018.
  */
 
-public class ScanNetworkFragment extends Fragment {
+public class ScanNetworkFragment extends Fragment implements SelectedFileView.SelectedDeviceViewInterface {
     private static final String LOG_TAG = "myLogs";
 
     private View rootView;
@@ -47,7 +48,7 @@ public class ScanNetworkFragment extends Fragment {
     @BindView(R.id.tvNoDevices)
     TextView tvNoDevices;
 
-    private DevicesRecyclerAdapter devicesRecyclerAdapter;
+    private ScanningDevicesRecyclerAdapter devicesRecyclerAdapter;
 
     private static ScanNetworkFragment scanNetworkFragment;
     public static ScanNetworkFragment getFragment(){
@@ -57,25 +58,10 @@ public class ScanNetworkFragment extends Fragment {
         return scanNetworkFragment;
     }
 
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "ScanNetworkFragment, onCreate");
-        devicesRecyclerAdapter = new DevicesRecyclerAdapter(getContext(), new ArrayList<>());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
+    public void onStart() {
+        super.onStart();
         EventBus.getDefault().register(this);
-        Bundle bundle = getArguments();
-        if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
-            btnScannNetworkDevices.performClick();
-            devicesRecyclerAdapter.addView(((MainActivity) getActivity()).getSelectedFileView());
-        }
-        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
 
     @Override
@@ -83,6 +69,25 @@ public class ScanNetworkFragment extends Fragment {
         super.onStop();
         Log.d(LOG_TAG, "ScanNetworkFragment, onStop");
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "ScanNetworkFragment, onCreate");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "ScanNetworkFragment, onResume");
+        Bundle bundle = getArguments();
+        if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
+            btnScannNetworkDevices.performClick();
+            ((MainActivity) getActivity()).getSelectedFileView().initRemoveAllDeviceFromSelected(this);
+        }
+        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
 
     @Override
@@ -103,12 +108,13 @@ public class ScanNetworkFragment extends Fragment {
         EventBus.getDefault().postSticky(message);
     }
 
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void getDataFromService(EventBusMsg<Object> ebMessage) {
+    public void getScanningResult(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
             if (ebMessage.getCodeType() == EventBusMsg.PACKAGE_SCANNER){
                 ScannerPackage scannerPackage = (ScannerPackage) ebMessage.getModel();
-                devicesRecyclerAdapter.addDevice(scannerPackage);
+                devicesRecyclerAdapter.addItem(scannerPackage);
                 tvNoDevices.setVisibility(View.GONE);
                 rvNetworkDevices.setVisibility(View.VISIBLE);
             }
@@ -117,6 +123,8 @@ public class ScanNetworkFragment extends Fragment {
     }
 
     private void initScanningRecycler(){
+        devicesRecyclerAdapter = new ScanningDevicesRecyclerAdapter(getContext(), null);
+
         rvNetworkDevices.setHasFixedSize(true);
         rvNetworkDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvNetworkDevices.setAdapter(devicesRecyclerAdapter);
@@ -125,7 +133,8 @@ public class ScanNetworkFragment extends Fragment {
         rvNetworkDevices.setVisibility(View.GONE);
     }
 
-    public DevicesRecyclerAdapter getDevicesRecyclerAdapter() {
-        return devicesRecyclerAdapter;
+    @Override
+    public void removeAllFromSelectedDevices() {
+
     }
 }

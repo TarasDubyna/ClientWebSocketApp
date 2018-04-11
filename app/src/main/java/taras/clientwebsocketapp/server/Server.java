@@ -63,6 +63,7 @@ public class Server {
                         @Override
                         public void run() {
                             try {
+                                Log.d(LOG_TAG, "server listen");
                                 InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 

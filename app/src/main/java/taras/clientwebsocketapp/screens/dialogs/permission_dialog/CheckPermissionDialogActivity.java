@@ -36,10 +36,12 @@ public class CheckPermissionDialogActivity extends AppCompatActivity {
 
 
 
+    /*
     @BindView(R.id.accept)
     Button accept;
     @BindView(R.id.deny)
     Button deny;
+    */
 
     private PermissionPackage permissionPackage;
     private CheckPermissionCallback checkPermissionCallback;
