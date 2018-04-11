@@ -164,7 +164,7 @@ public class SelectedFileManager {
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
         EventBusMsg<PermissionPackage> message =
                 new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, permissionPackage);
-        EventBus.getDefault().post(message);
+        EventBus.getDefault().postSticky(message);
 
     }
 

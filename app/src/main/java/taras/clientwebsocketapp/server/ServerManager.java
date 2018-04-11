@@ -88,7 +88,7 @@ public class ServerManager {
         EventBusMsg<ServerStatePackage> message =
                 new EventBusMsg<ServerStatePackage>(EventBusMsg.TO_APP,
                         EventBusMsg.PACKAGE_SERVER_STATE, serverState);
-        EventBus.getDefault().post(message);
+        EventBus.getDefault().postSticky(message);
         return serverState;
     }
 

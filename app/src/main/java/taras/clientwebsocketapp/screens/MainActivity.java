@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity
                     .setAction("Action", null).show();
             message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP, null);
         }
-        EventBus.getDefault().post(message);
+        EventBus.getDefault().postSticky(message);
     }
 
     @Override

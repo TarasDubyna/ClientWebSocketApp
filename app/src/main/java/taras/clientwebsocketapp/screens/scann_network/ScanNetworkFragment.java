@@ -47,7 +47,6 @@ public class ScanNetworkFragment extends Fragment {
     @BindView(R.id.tvNoDevices)
     TextView tvNoDevices;
 
-
     private DevicesRecyclerAdapter devicesRecyclerAdapter;
 
     private static ScanNetworkFragment scanNetworkFragment;
@@ -101,7 +100,7 @@ public class ScanNetworkFragment extends Fragment {
         devicesRecyclerAdapter.clear();
         EventBusMsg<String> message =
                 new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);
-        EventBus.getDefault().post(message);
+        EventBus.getDefault().postSticky(message);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

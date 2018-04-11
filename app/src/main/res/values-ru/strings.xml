@@ -18,7 +18,6 @@
     <string name="server_off_invisible">Ваше устройство не видно в сети!</string>
     <string name="network_manager">Сетевой менеджер</string>
     <string name="file_manager">Файловый менеджер</string>
-    <string name="empty_folder">Папка пуста</string>
     <string name="scanning_network">Сканировать сеть</string>
     <string name="size">"Раземер: "</string>
     <string name="rename_successful">Файл был переименован успешно</string>

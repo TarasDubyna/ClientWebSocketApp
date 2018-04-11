@@ -1,11 +1,8 @@
 <resources>
     <string name="app_name">ClientWebSocketApp</string>
-    <string name="title_activity_main2">Main2Activity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_settings">Settings</string>
 
 
     <string name="server_on_visible">Your device is visible in the network!</string>
@@ -14,7 +11,6 @@
     <string name="network_manager">Network manager</string>
     <string name="file_manager">File manager</string>
     <string name="favorite_files">Favorite files</string>
-    <string name="empty_folder">Folder is empty</string>
 
 
     <string name="scanning_network">Scan network</string>

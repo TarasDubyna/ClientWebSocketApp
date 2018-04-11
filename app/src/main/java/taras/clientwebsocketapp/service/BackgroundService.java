@@ -69,7 +69,7 @@ public class BackgroundService extends Service {
                                     Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
                                     EventBusMsg<PermissionPackage> message =
                                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
-                                    EventBus.getDefault().post(message);
+                                    EventBus.getDefault().postSticky(message);
                                 }
                             }
                             @Override
@@ -84,7 +84,7 @@ public class BackgroundService extends Service {
                                         Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
                                         EventBusMsg<ScannerPackage> message =
                                                 new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
-                                        EventBus.getDefault().post(message);
+                                        EventBus.getDefault().postSticky(message);
                                     }
                                 }
                             }

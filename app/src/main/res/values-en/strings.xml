@@ -5,7 +5,6 @@
     <string name="server_off_invisible">Your device is not visible in the network!</string>
     <string name="network_manager">Network manager</string>
     <string name="file_manager">File manager</string>
-    <string name="empty_folder">Folder is empty</string>
     <string name="scanning_network">Scan network</string>
     <string name="found_devices">Found devices</string>
     <string name="no_devices">No devices</string>
