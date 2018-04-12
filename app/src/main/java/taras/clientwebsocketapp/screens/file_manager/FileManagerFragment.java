@@ -16,6 +16,7 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.manager.FileManager;
@@ -38,10 +39,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
 
-    DirectoryAdapter directoryAdapter;
-    FileManagerAdapter fileManagerAdapter;
+    DirectoryAdapter adapterDirectories;
+    FileManagerAdapter adapterFiles;
 
     private View rootView;
+    private Unbinder unbinder;
 
     private static FileManagerFragment fileManagerFragment;
     public static FileManagerFragment getFragment(){
@@ -55,52 +57,62 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapterDirectories = new DirectoryAdapter(DirectoryAdapter.FILE_MANAGER, this);
+        adapterFiles = new FileManagerAdapter(getContext(), this, FileManager.getManager(getContext()).getStartDirectory());
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, "FileManagerFragment, onCreateView");
         rootView = inflater.inflate(R.layout.fragment_file_manager, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         initDirectoryRecyclers();
         initFileManagerRecyclers();
 
-
-
         return rootView;
     }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unbinder.unbind();
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
         if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-            fileManagerAdapter.setFooterVisible(true);
+            adapterFiles.setFooterVisible(true);
         }
         SelectedFileManager.getSelectedFileManager().setActivity(getActivity()).
-                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {fileManagerAdapter.setFooterVisible(false);});
+                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {adapterFiles.setFooterVisible(false);});
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
     }
 
     private void initFileManagerRecyclers(){
-        fileManagerAdapter = new FileManagerAdapter(getContext(), this, FileManager.getManager(getContext()).getStartDirectory());
         rvFiles.setHasFixedSize(true);
         rvFiles.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rvFiles.setAdapter(fileManagerAdapter);
+        rvFiles.setAdapter(adapterFiles);
     }
-
     private void initDirectoryRecyclers(){
-        directoryAdapter = new DirectoryAdapter(DirectoryAdapter.FILE_MANAGER, getContext(), this);
         rvDirectories.setHasFixedSize(true);
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        rvDirectories.setAdapter(directoryAdapter);
+        rvDirectories.setAdapter(adapterDirectories);
     }
 
     @Override
-    public void returnToPosition(int position) {
-        directoryAdapter.removeListToPosition(position);
-        fileManagerAdapter.setCurrentDirectory(directoryAdapter.getDirectoryLast());
+    public void moveToDirectory(int position) {
+        adapterFiles.setCurrentDirectory(adapterDirectories.getItem(position));
+        adapterFiles.notifyDataSetChanged();
+
+
+        adapterFiles.setCurrentDirectory(adapterDirectory.getDirectoryLast());
         rvFiles.setVisibility(View.VISIBLE);
         tvEmptyFolder.setVisibility(View.GONE);
     }
@@ -108,8 +120,9 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     @Override
     public void moveNextDirectory(String directory) {
         File file = new File(directory);
-        directoryAdapter.addDirectory(directory);
-        fileManagerAdapter.setCurrentDirectory(directory);
+        adapterDirectories.addItem(directory);
+        adapterFiles.setCurrentDirectory(directory);
+
         if (file.listFiles().length > 0){
             rvFiles.setVisibility(View.VISIBLE);
             tvEmptyFolder.setVisibility(View.GONE);
@@ -128,11 +141,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
 
     @Override
     public void updateFileManagerRecyclerAll() {
-        fileManagerAdapter.updateRecycler();
+        adapterFiles.updateRecycler();
     }
 
     @Override
     public void updateAfterFavorite() {
-        fileManagerAdapter.notifyDataSetChanged();
+        adapterFiles.notifyDataSetChanged();
     }
 }

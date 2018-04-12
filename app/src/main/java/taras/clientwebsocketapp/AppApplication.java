@@ -19,6 +19,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
+import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ExternalDataUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
@@ -36,7 +37,6 @@ public class AppApplication extends Application{
     public static String deviceIp;
     public static String networkIp;
     public static String deviceOs;
-    public static String deviceName;
     public static File externalStorageDir;
 
     public static Context appContext;
@@ -53,7 +53,7 @@ public class AppApplication extends Application{
                 .build();
 
         getNetworkParams();
-        deviceName = PreferenceUtils.getDeviceName();
+        getLocalStorage();
 
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
@@ -90,5 +90,9 @@ public class AppApplication extends Application{
     }
     public void setContext(Context context) {
         this.appContext = context;
+    }
+
+    public void getLocalStorage(){
+        PreferenceUtils.saveLocalStorageDirection(FileManager.getManager(getContext()).getStartDirectory());
     }
 }
