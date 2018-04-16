@@ -7,7 +7,8 @@ import java.io.File;
  */
 
 public interface FileManagerInterface {
-    void moveToDirectory(int position);
+    void longItemClick(int position);
+    void shortItemClick(int position);
     void moveNextDirectory(String directory);
     void callFileInfo(File file);
 }

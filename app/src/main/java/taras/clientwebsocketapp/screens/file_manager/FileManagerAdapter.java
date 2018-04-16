@@ -16,13 +16,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.screens.manager.FileManager;
+import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
+import taras.clientwebsocketapp.screens.view_holders.FooterHolder;
 import taras.clientwebsocketapp.utils.FileUtils;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
+
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
 
 /**
  * Created by Taras on 18.02.2018.
@@ -32,142 +36,132 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final String LOG_TAG = "myLogs";
 
+    public static final int CONTENT_USUAL = 0;
+    public static final int CONTENT_FAVORITE = 1;
+
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
 
-    private Context mContext;
-    FileManagerInterface fileManagerInterface;
+    private Context context;
+    private FileManagerAdapterInterface fileManagerAdapterInterface;
 
     private ArrayList<File> fileList;
     private File directoryFile;
 
     private boolean isFooterVisible = false;
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, String externalDirectory) {
-        this.mContext = mContext;
+    public FileManagerAdapter(Context context, FileManagerAdapterInterface fileManagerAdapterInterface) {
         this.fileList = new ArrayList<>();
-        File file = new File(externalDirectory);
-        this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
-        this.fileManagerInterface = fileManagerInterface;
+        this.context = context;
+        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
     }
-    public FileManagerAdapter(Context mContext, FileManagerInterface fileManagerInterface, List<String> favoriteDirectoriesList) {
-        this.mContext = mContext;
+
+    public void setType(int type){
+        if (type == CONTENT_USUAL){
+            File file = new File(FileManager.getManager(context).getStartDirectory());
+            this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
+        }
+        if (type == CONTENT_FAVORITE){
+            List<String> favoriteDirectories = FavoriteFilesManager.getInstance().getAllStringFavorites();
+            for (String directory: favoriteDirectories){
+                this.fileList.add(new File(directory));
+            }
+        }
+        notifyDataSetChanged();
+    }
+    /*
+    public FileManagerAdapter(FileManagerAdapterInterface fileManagerAdapterInterface, List<String> favoriteDirectoriesList) {
         this.fileList = new ArrayList<>();
         for (int i = 0; i < favoriteDirectoriesList.size(); i++){
             fileList.add(new File(favoriteDirectoriesList.get(i)));
         }
-        this.fileManagerInterface = fileManagerInterface;
+        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
     }
+    */
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM){
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.recycler_file_manager_item, parent, false);
-            return new ItemViewHolder(view);
+            return new FileManagerHolder(view);
         } else if(viewType == TYPE_FOOTER) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.recycler_file_manager_footer, parent, false);
-            return new FooterViewHolder(view);
+            return new FooterHolder(view);
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof ItemViewHolder){
-            File file = fileList.get(position);
-            checkIsFavorite(holder, file);
-            setItemType(holder, file);
-            ((ItemViewHolder)holder).tvName.setText(file.getName());
-
-            if (SelectedFileManager.getSelectedFileManager().isFileSelected(file)){
-                ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_500));
-            } else {
-                ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(mContext.getResources().getColor(R.color.blue_grey_300));
-            }
-
-            ((ItemViewHolder)holder).ivMore.setOnClickListener(view -> {
-                fileManagerInterface.callFileInfo(file);
-            });
-            ((ItemViewHolder)holder).cvItem.setOnClickListener(view -> {
-                if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
+        if (holder instanceof FileManagerHolder){
+            ((FileManagerHolder)holder).bind(fileList.get(position));
+            ((FileManagerHolder)holder).onRowClicked(fileList.get(position),new FileManagerInterface() {
+                @Override
+                public void longItemClick(int position) {
                     if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                        setFooterVisible(false);
+                        SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(fileList.get(position));
+                        setFooterVisible(true);
+                        ((FileManagerHolder)holder).fillBackground(true);
+                    } else {
+                        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
                         notifyDataSetChanged();
-                    } else {
-                        notifyItemChanged(position);
-                    }
-                } else {
-                    if (file.listFiles() == null){
-                        //file
-                        Log.d(LOG_TAG, file.getAbsolutePath() + " is file");
-                        FileUtils.openFile(mContext, file);
-                    } else {
-                        Log.d(LOG_TAG, file.getAbsolutePath() + " is folder");
-                        fileManagerInterface.moveNextDirectory(file.getAbsolutePath());
                     }
                 }
-            });
-            ((ItemViewHolder)holder).cvItem.setOnLongClickListener(view -> {
-                if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(file);
-                    setFooterVisible(true);
-                    ((ItemViewHolder)holder).cvItem.setCardBackgroundColor(((ItemViewHolder)holder).cvItem.getContext().getResources().getColor(R.color.blue_grey_500));
-                } else {
-                    SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
-                    notifyDataSetChanged();
+
+                @Override
+                public void shortItemClick(int position) {
+                    if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                        SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(fileList.get(position));
+                        if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                            setFooterVisible(false);
+                            notifyDataSetChanged();
+                        } else {
+                            notifyItemChanged(position);
+                        }
+                    } else {
+                        if (fileList.get(position).listFiles() == null){
+                            //file
+                            Log.d(LOG_TAG, fileList.get(position).getAbsolutePath() + " is file");
+                            FileUtils.openFile(holder.itemView.getContext(), fileList.get(position));
+                        } else {
+                            Log.d(LOG_TAG, fileList.get(position).getAbsolutePath() + " is folder");
+                            fileManagerAdapterInterface.moveNextDirectory(fileList.get(position).getAbsolutePath());
+                        }
+                    }
                 }
-                return true;
+
+                @Override
+                public void moveNextDirectory(String directory) {
+
+                }
+
+                @Override
+                public void callFileInfo(File file) {
+                    fileManagerAdapterInterface.callFileInfo(file);
+                }
             });
         }
-        if (holder instanceof FooterViewHolder){
-            if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                ((FooterViewHolder)holder).View.setVisibility(View.VISIBLE);
-            } else {
-                ((FooterViewHolder)holder).View.setVisibility(View.GONE);
-            }
+        if (holder instanceof FooterHolder){
+            setFooterVisibility(holder, SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty());
         }
     }
 
-    private void checkIsFavorite(RecyclerView.ViewHolder holder, File file){
-        if (FavoriteFilesManager.getInstance().isFavorite(file)){
-            ((ItemViewHolder)holder).ivFavorite.setVisibility(View.VISIBLE);
-        } else {
-            ((ItemViewHolder)holder).ivFavorite.setVisibility(View.INVISIBLE);
-        }
-    }
-    private void setItemType(RecyclerView.ViewHolder holder, File file){
-        String type = FileManager.getTypeFileFolder(file);// is file or folder
-        switch (type){
-            case FileManager.TYPE_FILE:
-                ((ItemViewHolder)holder).ivImage.setVisibility(View.GONE);
-                break;
-            case FileManager.TYPE_FOLDER:
-                ((ItemViewHolder)holder).ivImage.setVisibility(View.VISIBLE);
-                ((ItemViewHolder)holder).ivImage.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_folder));
-                break;
-        }
-    }
 
     public void setFavoritesDirectory(List<String> favoritesDirectories){
         for (int i = 0; i < favoritesDirectories.size(); i++){
             this.fileList.add(new File(favoritesDirectories.get(i)));
         }
-        //notifyDataSetChanged();
+        notifyDataSetChanged();
     }
-    public void setCurrentDirectory(String directory){
-        this.directoryFile = new File(directory);
+
+    public void setNewDirectory(String newDirectory){
+        this.directoryFile = new File(newDirectory);
         this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
         notifyDataSetChanged();
     }
     public void updateRecycler(){
-        //String directory = this.directoryFile.getPath();
         this.fileList = new ArrayList<File>(Arrays.asList(new File(this.directoryFile.getPath()).listFiles()));
-        notifyDataSetChanged();
-    }
-    public void setNewFileList(ArrayList<File> fileList){
-        this.fileList = fileList;
         notifyDataSetChanged();
     }
 
@@ -200,35 +194,11 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return true;
         } else return false;
     }
-
-    public class ItemViewHolder extends RecyclerView.ViewHolder{
-
-        @BindView(R.id.llMain)
-        LinearLayout llMain;
-        @BindView(R.id.cvItem)
-        CardView cvItem;
-        @BindView(R.id.tvName)
-        TextView tvName;
-        @BindView(R.id.ivFavorite)
-        ImageView ivFavorite;
-        @BindView(R.id.ivImage)
-        ImageView ivImage;
-        @BindView(R.id.ivMore)
-        ImageView ivMore;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
+    private void setFooterVisibility(RecyclerView.ViewHolder holder, boolean isFooterVisible){
+        if (isFooterVisible){
+            ((FooterHolder)holder).itemView.setVisibility(View.GONE);
+        } else {
+            ((FooterHolder)holder).itemView.setVisibility(View.VISIBLE);
         }
-    }
-
-    public class FooterViewHolder extends RecyclerView.ViewHolder {
-        public View View;
-        public FooterViewHolder(View v) {
-            super(v);
-            View = v;
-            // Add your UI Components here
-        }
-
     }
 }

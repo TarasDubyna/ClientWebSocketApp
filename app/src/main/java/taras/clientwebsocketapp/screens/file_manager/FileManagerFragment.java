@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.PrimitiveIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,11 +25,13 @@ import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
 
+import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
+
 /**
  * Created by Taras on 17.02.2018.
  */
 
-public class FileManagerFragment extends Fragment implements FileManagerInterface, FileInfoDialogInterface {
+public class FileManagerFragment extends Fragment {
     private static final String LOG_TAG = "myLogs";
 
 
@@ -42,10 +45,13 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     DirectoryAdapter adapterDirectories;
     FileManagerAdapter adapterFiles;
 
+    private int fileManagerType;
+
     private View rootView;
     private Unbinder unbinder;
 
     private static FileManagerFragment fileManagerFragment;
+
     public static FileManagerFragment getFragment(){
         if (fileManagerFragment == null){
             fileManagerFragment = new FileManagerFragment();
@@ -57,20 +63,53 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "FileManagerFragment, onCreate");
+        adapterDirectories = new DirectoryAdapter(new DirectoryInterface() {
+            @Override
+            public void moveToDirectory(String directory) {
+                adapterFiles.setNewDirectory(directory);
+                rvFiles.setVisibility(View.VISIBLE);
+                tvEmptyFolder.setVisibility(View.GONE);
+            }
+        });
+        adapterFiles = new FileManagerAdapter(getContext(), new FileManagerAdapterInterface() {
+            @Override
+            public void callFileInfo(File file) {
+                callInfo(file);
+            }
+
+            @Override
+            public void moveNextDirectory(String newFileDirectory) {
+                File file = new File(newFileDirectory);
+                adapterDirectories.addItem(newFileDirectory);
+                adapterFiles.setNewDirectory(newFileDirectory);
+
+                if (file.listFiles().length > 0){
+                    rvFiles.setVisibility(View.VISIBLE);
+                    tvEmptyFolder.setVisibility(View.GONE);
+                } else {
+                    rvFiles.setVisibility(View.GONE);
+                    tvEmptyFolder.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        adapterDirectories = new DirectoryAdapter(DirectoryAdapter.FILE_MANAGER, this);
-        adapterFiles = new FileManagerAdapter(getContext(), this, FileManager.getManager(getContext()).getStartDirectory());
     }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(LOG_TAG, "FileManagerFragment, onCreateView");
         rootView = inflater.inflate(R.layout.fragment_file_manager, container, false);
         unbinder = ButterKnife.bind(this, rootView);
-
+        if (getArguments() != null){
+            fileManagerType = getArguments().getInt(FILE_MANAGER_TYPE);
+            adapterDirectories.setType(fileManagerType);
+            adapterFiles.setType(fileManagerType);
+        }
         initDirectoryRecyclers();
         initFileManagerRecyclers();
 
@@ -82,7 +121,6 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         unbinder.unbind();
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
@@ -90,9 +128,11 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
             adapterFiles.setFooterVisible(true);
         }
         SelectedFileManager.getSelectedFileManager().setActivity(getActivity()).
-                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {adapterFiles.setFooterVisible(false);});
+                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {
+                    adapterFiles.setFooterVisible(false);
+                });
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
-        ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
+        //((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
     }
 
     private void initFileManagerRecyclers(){
@@ -106,46 +146,19 @@ public class FileManagerFragment extends Fragment implements FileManagerInterfac
         rvDirectories.setAdapter(adapterDirectories);
     }
 
-    @Override
-    public void moveToDirectory(int position) {
-        adapterFiles.setCurrentDirectory(adapterDirectories.getItem(position));
-        adapterFiles.notifyDataSetChanged();
-
-
-        adapterFiles.setCurrentDirectory(adapterDirectory.getDirectoryLast());
-        rvFiles.setVisibility(View.VISIBLE);
-        tvEmptyFolder.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void moveNextDirectory(String directory) {
-        File file = new File(directory);
-        adapterDirectories.addItem(directory);
-        adapterFiles.setCurrentDirectory(directory);
-
-        if (file.listFiles().length > 0){
-            rvFiles.setVisibility(View.VISIBLE);
-            tvEmptyFolder.setVisibility(View.GONE);
-        } else {
-            rvFiles.setVisibility(View.GONE);
-            tvEmptyFolder.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    public void callFileInfo(File file) {
+    private void callInfo(File file){
         FileInfoDialog fileInfoDialog = new FileInfoDialog();
-        fileInfoDialog.setParamsInfo(file, this);
+        fileInfoDialog.setParamsInfo(file, new FileInfoDialogInterface() {
+            @Override
+            public void updateFileManagerRecyclerAll() {
+                adapterFiles.updateRecycler();
+            }
+
+            @Override
+            public void updateAfterFavorite() {
+                adapterFiles.notifyDataSetChanged();
+            }
+        });
         fileInfoDialog.show(getFragmentManager(), "sdf");
-    }
-
-    @Override
-    public void updateFileManagerRecyclerAll() {
-        adapterFiles.updateRecycler();
-    }
-
-    @Override
-    public void updateAfterFavorite() {
-        adapterFiles.notifyDataSetChanged();
     }
 }

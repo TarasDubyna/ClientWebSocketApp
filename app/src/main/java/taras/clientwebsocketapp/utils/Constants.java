@@ -18,7 +18,10 @@ public class Constants {
     public static final String SEND_FILE = "send_file";
 
 
-
+    //FileManager type
+    public static final String FILE_MANAGER_TYPE = "FILE_MANAGER_TYPE";
+    public static final int CONTENT_USUAL = 0;
+    public static final int CONTENT_FAVORITE = 1;
 
     public static final String START_SCANNING_FOR_FILE = "start_scanning_for_file";
 

@@ -30,7 +30,8 @@ import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
  * Created by Taras on 04.03.2018.
  */
 
-public class FavoriteFragment extends Fragment implements FileManagerInterface, FileInfoDialogInterface {
+public class FavoriteFragment extends Fragment {
+    /*
     private static final String LOG_TAG = "myLogs";
 
     @BindView(R.id.rvFiles)
@@ -104,6 +105,16 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
     }
 
     @Override
+    public void longItemClick(int position) {
+
+    }
+
+    @Override
+    public void shortItemClick(int position) {
+
+    }
+
+    @Override
     public void moveNextDirectory(String directory) {
         File file = new File(directory);
         directoryAdapter.addDirectory(directory);
@@ -135,4 +146,5 @@ public class FavoriteFragment extends Fragment implements FileManagerInterface, 
         fileManagerAdapter.setNewFileList(FavoriteFilesManager.getInstance().getAllFilesFavorites());
         fileManagerAdapter.notifyDataSetChanged();
     }
+    */
 }

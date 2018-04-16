@@ -44,6 +44,10 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 import taras.clientwebsocketapp.utils.StorageOptions;
 
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
+import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
@@ -225,11 +229,17 @@ public class MainActivity extends AppCompatActivity
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
             }
+            Bundle fileManagerBundle = new Bundle();
+            fileManagerBundle.putInt(FILE_MANAGER_TYPE, CONTENT_USUAL);
+            fileManagerFragment.setArguments(fileManagerBundle);
             addFragmentToManager(fileManagerFragment);
         } else if (id == R.id.menu_favorite) {
             if (favoriteFragment == null){
                 favoriteFragment = new FavoriteFragment();
             }
+            Bundle fileManagerBundle = new Bundle();
+            fileManagerBundle.putInt(FILE_MANAGER_TYPE, CONTENT_FAVORITE);
+            favoriteFragment.setArguments(fileManagerBundle);
             addFragmentToManager(favoriteFragment);
         } else if (id == R.id.nav_manage) {
 

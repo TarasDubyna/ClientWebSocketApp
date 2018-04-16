@@ -43,7 +43,6 @@ public class ScanningDeviceHolder extends RecyclerView.ViewHolder {
                 cvItem.setCardBackgroundColor(itemView.getContext().getResources().getColor(R.color.blue_grey_300));
             }
         }
-
         tvDeviceName.setText(scannerPackage.getServerName());
         tvDeviceIp.setText(scannerPackage.getServerIp());
     }

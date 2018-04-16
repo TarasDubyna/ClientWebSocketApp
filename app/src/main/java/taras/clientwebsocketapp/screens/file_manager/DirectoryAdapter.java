@@ -1,23 +1,18 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
-import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.view_holders.DirectoryHolder;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
+
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
 
 /**
  * Created by Taras on 18.02.2018.
@@ -26,23 +21,23 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryHolder> {
     private static final String LOG_TAG = "myLogs";
 
-    public static final int FILE_MANAGER = 0;
-    public static final int FAVORITE = 1;
-
     private int type;
-    FileManagerInterface fileManagerInterface;
+    DirectoryInterface directoryInterface;
 
     private ArrayList<String> directoryList;
 
-    public DirectoryAdapter(int type, FileManagerInterface fileManagerInterface) {
-        this.type = type;
-        this.fileManagerInterface = fileManagerInterface;
+    public DirectoryAdapter(DirectoryInterface directoryInterface) {
 
+        this.directoryInterface = directoryInterface;
         this.directoryList = new ArrayList<>();
-        if (type == FILE_MANAGER){
+    }
+
+    public void setType(int type){
+        this.type = type;
+        if (type == CONTENT_USUAL){
             this.directoryList.add(PreferenceUtils.getLocalStorageDirection());
         }
-        if (type == FAVORITE){
+        if (type == CONTENT_FAVORITE){
             this.directoryList.add("favorite");
         }
     }
@@ -58,12 +53,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryHolder> {
     @Override
     public void onBindViewHolder(DirectoryHolder holder, int position) {
         holder.bind(position, directoryList.get(position));
-        holder.listener(getItemCount(), new DirectoryHolder.DirectoryHolderInterface() {
+        holder.listener(getItemCount(), new DirectoryInterface() {
             @Override
-            public void moveOnDirectory() {
+            public void moveToDirectory(String directory) {
+                Log.d(LOG_TAG, "moveToDirectory: " + directory);
+                Log.d(LOG_TAG, "position: " + position);
                 removeListToPosition(position);
+                directoryInterface.moveToDirectory(directory);
                 notifyDataSetChanged();
-                fileManagerInterface.moveToDirectory(0);
             }
         });
     }
