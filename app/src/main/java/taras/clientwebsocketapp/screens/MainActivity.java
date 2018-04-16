@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
     private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
-    private FavoriteFragment favoriteFragment;
+    private FileManagerFragment favoriteFileManagerFragment;
 
 
     @Override
@@ -234,13 +234,13 @@ public class MainActivity extends AppCompatActivity
             fileManagerFragment.setArguments(fileManagerBundle);
             addFragmentToManager(fileManagerFragment);
         } else if (id == R.id.menu_favorite) {
-            if (favoriteFragment == null){
-                favoriteFragment = new FavoriteFragment();
+            if (favoriteFileManagerFragment == null){
+                favoriteFileManagerFragment = new FileManagerFragment();
             }
             Bundle fileManagerBundle = new Bundle();
             fileManagerBundle.putInt(FILE_MANAGER_TYPE, CONTENT_FAVORITE);
-            favoriteFragment.setArguments(fileManagerBundle);
-            addFragmentToManager(favoriteFragment);
+            favoriteFileManagerFragment.setArguments(fileManagerBundle);
+            addFragmentToManager(favoriteFileManagerFragment);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

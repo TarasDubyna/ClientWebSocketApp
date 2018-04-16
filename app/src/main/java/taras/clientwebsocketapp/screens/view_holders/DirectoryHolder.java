@@ -7,11 +7,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
 import taras.clientwebsocketapp.screens.file_manager.DirectoryInterface;
+import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 
 import static taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
@@ -44,18 +47,10 @@ public class DirectoryHolder extends RecyclerView.ViewHolder implements View.OnC
         }
     }
 
-    public void listener(int size, DirectoryInterface listener){
-        if (listener != null){
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (getAdapterPosition() != size - 1){
-                        Log.d(LOG_TAG, "itemView.setOnClickListener: " + directory);
-                        listener.moveToDirectory(directory);
-                    }
-                }
-            });
-        }
+    public void onRowClicked(DirectoryInterface listener){
+        cvItem.setOnClickListener(v -> {
+            Log.d(LOG_TAG, "itemView.setOnClickListener: " + directory);
+            listener.moveToDirectory(directory);});
     }
 
     private static String cutDirectory(String path){

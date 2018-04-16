@@ -53,12 +53,15 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryHolder> {
     @Override
     public void onBindViewHolder(DirectoryHolder holder, int position) {
         holder.bind(position, directoryList.get(position));
-        holder.listener(getItemCount(), new DirectoryInterface() {
+        holder.onRowClicked(new DirectoryInterface() {
             @Override
             public void moveToDirectory(String directory) {
                 Log.d(LOG_TAG, "moveToDirectory: " + directory);
                 Log.d(LOG_TAG, "position: " + position);
                 removeListToPosition(position);
+                if (position == 0){
+                    directory = null;
+                }
                 directoryInterface.moveToDirectory(directory);
                 notifyDataSetChanged();
             }

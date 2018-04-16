@@ -25,6 +25,7 @@ import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
 
+import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
 
 /**
@@ -66,9 +67,13 @@ public class FileManagerFragment extends Fragment {
         adapterDirectories = new DirectoryAdapter(new DirectoryInterface() {
             @Override
             public void moveToDirectory(String directory) {
-                adapterFiles.setNewDirectory(directory);
-                rvFiles.setVisibility(View.VISIBLE);
-                tvEmptyFolder.setVisibility(View.GONE);
+                if (directory != null){
+                    adapterFiles.setNewDirectory(directory);
+                    rvFiles.setVisibility(View.VISIBLE);
+                    tvEmptyFolder.setVisibility(View.GONE);
+                } else {
+                    adapterFiles.setType(CONTENT_FAVORITE);
+                }
             }
         });
         adapterFiles = new FileManagerAdapter(getContext(), new FileManagerAdapterInterface() {
