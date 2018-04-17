@@ -58,9 +58,11 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void setType(int type){
         if (type == CONTENT_USUAL){
             File file = new File(FileManager.getManager(context).getStartDirectory());
+            this.fileList.clear();
             this.fileList = new ArrayList<File>(Arrays.asList(file.listFiles()));
         }
         if (type == CONTENT_FAVORITE){
+            this.fileList.clear();
             List<String> favoriteDirectories = FavoriteFilesManager.getInstance().getAllStringFavorites();
             for (String directory: favoriteDirectories){
                 this.fileList.add(new File(directory));
@@ -68,15 +70,6 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         notifyDataSetChanged();
     }
-    /*
-    public FileManagerAdapter(FileManagerAdapterInterface fileManagerAdapterInterface, List<String> favoriteDirectoriesList) {
-        this.fileList = new ArrayList<>();
-        for (int i = 0; i < favoriteDirectoriesList.size(); i++){
-            fileList.add(new File(favoriteDirectoriesList.get(i)));
-        }
-        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
-    }
-    */
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

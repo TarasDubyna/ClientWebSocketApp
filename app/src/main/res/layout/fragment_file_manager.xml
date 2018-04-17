@@ -18,6 +18,7 @@
                 android:id="@+id/rvDirectories"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
                 tools:listitem="@layout/recycler_directory_item">
             </android.support.v7.widget.RecyclerView>
             <android.support.v7.widget.RecyclerView

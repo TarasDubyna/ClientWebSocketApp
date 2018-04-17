@@ -69,11 +69,11 @@ public class FileManagerFragment extends Fragment {
             public void moveToDirectory(String directory) {
                 if (directory != null){
                     adapterFiles.setNewDirectory(directory);
-                    rvFiles.setVisibility(View.VISIBLE);
-                    tvEmptyFolder.setVisibility(View.GONE);
                 } else {
-                    adapterFiles.setType(CONTENT_FAVORITE);
+                    adapterFiles.setType(fileManagerType);
                 }
+                rvFiles.setVisibility(View.VISIBLE);
+                tvEmptyFolder.setVisibility(View.GONE);
             }
         });
         adapterFiles = new FileManagerAdapter(getContext(), new FileManagerAdapterInterface() {
@@ -86,6 +86,7 @@ public class FileManagerFragment extends Fragment {
             public void moveNextDirectory(String newFileDirectory) {
                 File file = new File(newFileDirectory);
                 adapterDirectories.addItem(newFileDirectory);
+                rvDirectories.scrollToPosition(adapterDirectories.getItemCount() - 1);
                 adapterFiles.setNewDirectory(newFileDirectory);
 
                 if (file.listFiles().length > 0){
@@ -156,7 +157,11 @@ public class FileManagerFragment extends Fragment {
         fileInfoDialog.setParamsInfo(file, new FileInfoDialogInterface() {
             @Override
             public void updateFileManagerRecyclerAll() {
-                adapterFiles.updateRecycler();
+                if (adapterDirectories.getItemCount() == 1){
+                    adapterFiles.setType(fileManagerType);
+                } else {
+                    adapterFiles.updateRecycler();
+                }
             }
 
             @Override
