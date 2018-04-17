@@ -19,6 +19,7 @@ import java.util.List;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
 import taras.clientwebsocketapp.screens.view_holders.FooterHolder;
@@ -44,6 +45,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private Context context;
     private FileManagerAdapterInterface fileManagerAdapterInterface;
+
+    private boolean isPrepareToSend = false;
 
     private ArrayList<File> fileList;
     private File directoryFile;
@@ -93,11 +96,13 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 @Override
                 public void longItemClick(int position) {
                     if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                        SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(fileList.get(position));
+                        SelectedFileManager.getSelectedFileManager()
+                                .insertToSelectedFilesList(fileList.get(position));
                         setFooterVisible(true);
                         ((FileManagerHolder)holder).fillBackground(true);
                     } else {
-                        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+                        SelectedFileManager.getSelectedFileManager()
+                                .removeAllSelectedFiles();
                         notifyDataSetChanged();
                     }
                 }

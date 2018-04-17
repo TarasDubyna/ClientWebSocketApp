@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
+import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.utils.EventBusMsg;
@@ -46,10 +46,12 @@ public class SelectedFileManager {
         this.mActivity = activity;
         return this;
     }
+    /*
     public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
         this.selectedFileView = selectedFileView;
         this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
     }
+    */
     public void setSelectedFileView() {
         //this.selectedFileView.initRemoveAllDeviceFromSelected(selectedDeviceViewInterface);
     }

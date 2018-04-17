@@ -19,6 +19,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
+import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileViewCallback;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
@@ -42,6 +44,8 @@ public class FileManagerFragment extends Fragment {
     RecyclerView rvDirectories;
     @BindView(R.id.tvEmptyFolder)
     TextView tvEmptyFolder;
+    @BindView(R.id.selectedFileView)
+    SelectedFileView selectedFileView;
 
     DirectoryAdapter adapterDirectories;
     FileManagerAdapter adapterFiles;
@@ -52,6 +56,36 @@ public class FileManagerFragment extends Fragment {
     private Unbinder unbinder;
 
     private static FileManagerFragment fileManagerFragment;
+
+    private SelectedFileViewCallback selectedFileViewCallback = new SelectedFileViewCallback() {
+        @Override
+        public void removeAllFromSelectedFiles() {
+
+        }
+
+        @Override
+        public void removeAllFromSelectedDevices() {
+
+        }
+
+        @Override
+        public void showDevices() {
+
+        }
+
+        @Override
+        public void removeAllSelectedFiles() {
+
+        }
+
+        @Override
+        public void removeAllSelectedDevices() {
+
+        }
+    };
+
+
+
 
     public static FileManagerFragment getFragment(){
         if (fileManagerFragment == null){
@@ -116,6 +150,8 @@ public class FileManagerFragment extends Fragment {
             adapterDirectories.setType(fileManagerType);
             adapterFiles.setType(fileManagerType);
         }
+
+        selectedFileView.setCallback(selectedFileViewCallback);
         initDirectoryRecyclers();
         initFileManagerRecyclers();
 
@@ -130,6 +166,7 @@ public class FileManagerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        /*
         if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
             adapterFiles.setFooterVisible(true);
         }
@@ -137,6 +174,7 @@ public class FileManagerFragment extends Fragment {
                 setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {
                     adapterFiles.setFooterVisible(false);
                 });
+                */
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         //((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
     }

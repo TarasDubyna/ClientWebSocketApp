@@ -35,14 +35,11 @@ import butterknife.ButterKnife;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
+import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.screens.favorite.FavoriteFragment;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
-import taras.clientwebsocketapp.utils.StorageOptions;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
@@ -59,8 +56,7 @@ public class MainActivity extends AppCompatActivity
     Toolbar toolbar;
     @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.selectedFileView)
-    SelectedFileView selectedFileView;
+
     ActionBarDrawerToggle toggle;
 
 
@@ -102,15 +98,22 @@ public class MainActivity extends AppCompatActivity
     private FileManagerFragment fileManagerFragment;
     private FileManagerFragment favoriteFileManagerFragment;
 
+    private SelectedFileManager selectedFileManager;
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+        selectedFileManager = new SelectedFileManager();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         startService();
 
-        StorageOptions.determineStorageOptions();
 
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
@@ -135,11 +138,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
+
 
     @Override
     public void onStop() {
@@ -255,12 +254,6 @@ public class MainActivity extends AppCompatActivity
     public void setToolbarTitle(String text){
         getSupportActionBar().setTitle(text);
     }
-
-
-    public SelectedFileView getSelectedFileView(){
-        return selectedFileView;
-    }
-
     public void setDrawerLayoutLocked(){
 
         toggle = new ActionBarDrawerToggle(
@@ -327,9 +320,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     public static Context getContext(){
         return getContext();
     }
 
+    public SelectedFileManager getSelectedFileManager() {
+        return selectedFileManager;
+    }
 }

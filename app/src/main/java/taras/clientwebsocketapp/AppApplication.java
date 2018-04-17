@@ -19,6 +19,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.rx.RealmObservableFactory;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ExternalDataUtils;

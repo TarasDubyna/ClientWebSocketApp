@@ -52,5 +52,6 @@
     <string name="network">Network</string>
     <string name="files">Files</string>
     <string name="select_device">Select a device</string>
+    <string name="devices">Devices</string>
 
 </resources>

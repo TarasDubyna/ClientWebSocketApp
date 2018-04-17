@@ -1,26 +1,15 @@
 package taras.clientwebsocketapp.screens.scann_network;
 
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
-import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
 import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.view_holders.ScanningDeviceHolder;
 

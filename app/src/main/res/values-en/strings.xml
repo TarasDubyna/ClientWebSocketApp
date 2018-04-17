@@ -33,4 +33,5 @@
     <string name="favorites_add">Add to Favorites</string>
     <string name="visibility">Visibility in the network</string>
     <string name="select_device">Select a device</string>
+    <string name="devices">Devices</string>
 </resources>

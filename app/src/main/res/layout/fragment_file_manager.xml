@@ -1,50 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/blue_grey_400"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvDirectories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        tools:listitem="@layout/recycler_directory_item">
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvFiles"
+        android:visibility="gone"
+        android:layout_below="@+id/rvDirectories"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvDirectories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="5dp"
-                tools:listitem="@layout/recycler_directory_item">
-            </android.support.v7.widget.RecyclerView>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvFiles"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:listitem="@layout/recycler_file_manager_item">
-            </android.support.v7.widget.RecyclerView>
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/tvEmptyFolder"
-                android:layout_width="match_parent"
-                android:gravity="center"
-                android:textColor="@color/white"
-                android:layout_height="match_parent"
-                android:text="Empty folder"/>
-        </LinearLayout>
-        <!--
-        <taras.clientwebsocketapp.custom_views.SelectedFileView
-            android:id="@+id/selectedFileView"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_height="60dp">
-        </taras.clientwebsocketapp.custom_views.SelectedFileView>
-        -->
-    </RelativeLayout>
+        tools:listitem="@layout/recycler_file_manager_item">
+    </android.support.v7.widget.RecyclerView>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tvEmptyFolder"
+        android:layout_below="@+id/rvDirectories"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:layout_height="match_parent"
+        android:text="Empty folder"/>
+
+    <taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView
+        android:id="@+id/selectedFileView"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="60dp">
+    </taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView>
+
+</RelativeLayout>

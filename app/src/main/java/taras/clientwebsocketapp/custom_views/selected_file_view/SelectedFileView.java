@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.custom_views;
+package taras.clientwebsocketapp.custom_views.selected_file_view;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import butterknife.OnClick;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.Constants;
 
@@ -25,13 +26,6 @@ import taras.clientwebsocketapp.utils.Constants;
 
 public class SelectedFileView extends LinearLayout {
 
-    public interface SelectedFileViewInterface{
-        void removeAllFromSelectedFiles();
-    }
-    public interface SelectedDeviceViewInterface{
-        void removeAllFromSelectedDevices();
-    }
-
     @BindView(R.id.tvSelectedNum)
     TextView tvSelectedNum;
     @BindView(R.id.ivShare)
@@ -40,8 +34,7 @@ public class SelectedFileView extends LinearLayout {
     ImageView ivCancel;
 
     private View rootView;
-    private SelectedFileViewInterface selectedFileViewInterface;
-    private SelectedDeviceViewInterface selectedDeviceViewInterface;
+    private SelectedFileViewCallback selectedFileViewCallback;
 
     public SelectedFileView(Context context) {
         super(context);
@@ -69,11 +62,8 @@ public class SelectedFileView extends LinearLayout {
         ButterKnife.bind(this, rootView);
     }
 
-    public void initRemoveAllFilesFromSelected(SelectedFileViewInterface selectedFileViewInterface){
-        this.selectedFileViewInterface = selectedFileViewInterface;
-    }
-    public void initRemoveAllDeviceFromSelected(SelectedDeviceViewInterface selectedDeviceViewInterface){
-        this.selectedDeviceViewInterface = selectedDeviceViewInterface;
+    public void setCallback(SelectedFileViewCallback selectedFileViewCallback){
+        this.selectedFileViewCallback = selectedFileViewCallback;
     }
 
     public void setSelectedNum(int count){
@@ -84,25 +74,30 @@ public class SelectedFileView extends LinearLayout {
     void clickShare(){
         if (SelectedFileManager.getSelectedFileManager().isSelectedDevicesListEmpty()){
             tvSelectedNum.setText(R.string.select_device);
+            selectedFileViewCallback.showDevices();
+            /*
             ivShare.setVisibility(INVISIBLE);
+            ScanningForSendingDialog dialog = new ScanningForSendingDialog();
+            dialog.show(this.getFra);
             ScanNetworkFragment scanNetworkFragment = new ScanNetworkFragment();
             Bundle bundle = new Bundle();
             bundle.putBoolean(Constants.START_SCANNING_FOR_FILE, true);
             scanNetworkFragment.setArguments(bundle);
             ((MainActivity) getContext()).addFragmentToManager(scanNetworkFragment);
+            */
         } else {
             SelectedFileManager.getSelectedFileManager().sendDataToService();
-            selectedFileViewInterface.removeAllFromSelectedFiles();
+            selectedFileViewCallback.removeAllFromSelectedFiles();
         }
     }
     @OnClick(R.id.ivCancel)
     void clickCancel(){
         SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
-        selectedFileViewInterface.removeAllFromSelectedFiles();
+        selectedFileViewCallback.removeAllSelectedFiles();
         ivShare.setVisibility(VISIBLE);
         if (!SelectedFileManager.getSelectedFileManager().isSelectedDevicesListEmpty()){
             SelectedFileManager.getSelectedFileManager().removeAllSelectedDevices();
-            selectedDeviceViewInterface.removeAllFromSelectedDevices();
+            selectedFileViewCallback.removeAllSelectedDevices();
         }
     }
 

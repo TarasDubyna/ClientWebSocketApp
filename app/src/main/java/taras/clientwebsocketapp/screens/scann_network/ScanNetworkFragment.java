@@ -16,19 +16,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.SelectedFileView;
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.service.RequestServiceManager;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 
@@ -36,7 +30,7 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
  * Created by Taras on 14.02.2018.
  */
 
-public class ScanNetworkFragment extends Fragment implements SelectedFileView.SelectedDeviceViewInterface {
+public class ScanNetworkFragment extends Fragment {
     private static final String LOG_TAG = "myLogs";
 
     private View rootView;
@@ -85,7 +79,7 @@ public class ScanNetworkFragment extends Fragment implements SelectedFileView.Se
         Bundle bundle = getArguments();
         if (bundle != null && bundle.getBoolean(Constants.START_SCANNING_FOR_FILE, false)){
             btnScannNetworkDevices.performClick();
-            ((MainActivity) getActivity()).getSelectedFileView().initRemoveAllDeviceFromSelected(this);
+            //((MainActivity) getActivity()).getSelectedFileView().initRemoveAllDeviceFromSelected(this);
         }
         ((MainActivity) getActivity()).setToolbarTitle(getString(R.string.network));
     }
@@ -132,10 +126,5 @@ public class ScanNetworkFragment extends Fragment implements SelectedFileView.Se
 
         tvNoDevices.setVisibility(View.VISIBLE);
         rvNetworkDevices.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void removeAllFromSelectedDevices() {
-
     }
 }

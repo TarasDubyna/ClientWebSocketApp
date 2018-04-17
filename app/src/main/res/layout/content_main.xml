@@ -18,12 +18,5 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </FrameLayout>
-        <taras.clientwebsocketapp.custom_views.SelectedFileView
-            android:id="@+id/selectedFileView"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_height="60dp">
-        </taras.clientwebsocketapp.custom_views.SelectedFileView>
     </RelativeLayout>
 </LinearLayout>
