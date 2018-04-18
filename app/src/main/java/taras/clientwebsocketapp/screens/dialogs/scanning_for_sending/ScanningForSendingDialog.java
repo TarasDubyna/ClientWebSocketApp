@@ -61,6 +61,14 @@ public class ScanningForSendingDialog extends DialogFragment {
         unbinder.unbind();
     }
 
+    private void initScanningRecycler(){
+        adapter = new ScanningDevicesRecyclerAdapter(getContext(), null);
+        rvDevices.setHasFixedSize(true);
+        rvDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        rvDevices.setAdapter(adapter);
+    }
+
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getScanningResult(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
@@ -72,13 +80,6 @@ public class ScanningForSendingDialog extends DialogFragment {
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }
 
-
-    private void initScanningRecycler(){
-        adapter = new ScanningDevicesRecyclerAdapter(getContext(), null);
-        rvDevices.setHasFixedSize(true);
-        rvDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rvDevices.setAdapter(adapter);
-    }
     private void scanningNetwork(){
         EventBusMsg<String> message =
                 new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);

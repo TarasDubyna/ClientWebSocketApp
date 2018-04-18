@@ -21,39 +21,18 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
 
 public class SelectedFileManager {
 
-    private Activity mActivity;
+    private static final int MAX_SELECTED_DEVICES = 1;
 
     private ArrayList<File> selectedDirectoriesFilesList;
     private ArrayList<String> selectedDevicesIp;
-    private int maxSelectedDevices = 1;
 
     private static SelectedFileManager selectedFileManager;
     private SelectedFileView selectedFileView;
 
-    public static SelectedFileManager getSelectedFileManager(){
-        if (selectedFileManager == null){
-            selectedFileManager = new SelectedFileManager();
-        }
-        return selectedFileManager;
-    }
-
-    public SelectedFileManager() {
+    public SelectedFileManager(SelectedFileView selectedFileView) {
+        this.selectedFileView = selectedFileView;
         selectedDirectoriesFilesList = new ArrayList<>();
         selectedDevicesIp = new ArrayList<>();
-    }
-
-    public SelectedFileManager setActivity(Activity activity){
-        this.mActivity = activity;
-        return this;
-    }
-    /*
-    public void setSelectedFileView(SelectedFileView selectedFileView, SelectedFileView.SelectedFileViewInterface selectedFileViewInterface) {
-        this.selectedFileView = selectedFileView;
-        this.selectedFileView.initRemoveAllFilesFromSelected(selectedFileViewInterface);
-    }
-    */
-    public void setSelectedFileView() {
-        //this.selectedFileView.initRemoveAllDeviceFromSelected(selectedDeviceViewInterface);
     }
 
     //work with selected files;
@@ -61,39 +40,21 @@ public class SelectedFileManager {
         if (selectedDirectoriesFilesList.contains(file)){
             removeFromSelectedFiles(file);
         } else {
-            if ( selectedDevicesIp.size() <= maxSelectedDevices){
+            if ( selectedDevicesIp.size() <= MAX_SELECTED_DEVICES){
                 addToSelectedFiles(file);
             }
         }
         return this;
     }
-    public List<File> getAllSelectedDirectoriesFilesList(){
+
+    //work with selected files
+    public List<File> getAllSelectedDirectories(){
         return this.selectedDirectoriesFilesList;
-    }
-    public int getSelectedFilesListSize(){
-        return selectedDirectoriesFilesList.size();
     }
     public void removeAllSelectedFiles(){
         selectedDirectoriesFilesList.clear();
-        ((MainActivity)mActivity).setDrawerLayoutOpened();
         selectedFileView.setSelectedNum(0);
         selectedFileView.setVisibility(View.GONE);
-    }
-    private void addToSelectedFiles(File file){
-        selectedDirectoriesFilesList.add(file);
-        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
-        if (selectedDirectoriesFilesList.size() > 0){
-            ((MainActivity)mActivity).setDrawerLayoutLocked();
-            selectedFileView.setVisibility(View.VISIBLE);
-        }
-    }
-    private void removeFromSelectedFiles(File file){
-        selectedDirectoriesFilesList.remove(file);
-        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
-        if (selectedDirectoriesFilesList.size() == 0){
-            ((MainActivity)mActivity).setDrawerLayoutOpened();
-            selectedFileView.setVisibility(View.GONE);
-        }
     }
     public boolean isSelectedFilesListEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){
@@ -110,6 +71,22 @@ public class SelectedFileManager {
         }
     }
 
+    private void addToSelectedFiles(File file){
+        selectedDirectoriesFilesList.add(file);
+        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        if (selectedDirectoriesFilesList.size() > 0){
+            selectedFileView.setVisibility(View.VISIBLE);
+        }
+    }
+    private void removeFromSelectedFiles(File file){
+        selectedDirectoriesFilesList.remove(file);
+        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        if (selectedDirectoriesFilesList.size() == 0){
+            selectedFileView.setVisibility(View.GONE);
+        }
+    }
+
+
     //work with selected devices
     public SelectedFileManager insertToSelectedDevicesList(String deviceIp){
         if (selectedDevicesIp.contains(deviceIp)){
@@ -118,18 +95,6 @@ public class SelectedFileManager {
             addToSelectedDevices(deviceIp);
         }
         return this;
-    }
-    private void addToSelectedDevices(String deviceIp){
-        selectedDevicesIp.add(deviceIp);
-        if (selectedDevicesIp.size() > 0){
-            selectedFileView.getIvShare().setVisibility(View.VISIBLE);
-        }
-    }
-    private void removeFromSelectedDevices(String deviceIp){
-        selectedDevicesIp.remove(deviceIp);
-        if (selectedDevicesIp.size() == 0){
-            selectedFileView.getIvShare().setVisibility(View.INVISIBLE);
-        }
     }
     public boolean isSelectedDevicesListEmpty(){
         if (selectedDevicesIp.size() == 0){
@@ -149,6 +114,19 @@ public class SelectedFileManager {
         selectedDevicesIp.clear();
     }
 
+    private void addToSelectedDevices(String deviceIp){
+        selectedDevicesIp.add(deviceIp);
+        if (selectedDevicesIp.size() > 0){
+            selectedFileView.getIvShare().setVisibility(View.VISIBLE);
+        }
+    }
+    private void removeFromSelectedDevices(String deviceIp){
+        selectedDevicesIp.remove(deviceIp);
+        if (selectedDevicesIp.size() == 0){
+            selectedFileView.getIvShare().setVisibility(View.INVISIBLE);
+        }
+    }
+
 
     //work with service
     public void sendDataToService(){
@@ -163,7 +141,7 @@ public class SelectedFileManager {
 
         Log.d("myLogs", "sendDataToService: " + permissionPackage.toJson());
 
-        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+        removeAllSelectedFiles();
         EventBusMsg<PermissionPackage> message =
                 new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, permissionPackage);
         EventBus.getDefault().postSticky(message);

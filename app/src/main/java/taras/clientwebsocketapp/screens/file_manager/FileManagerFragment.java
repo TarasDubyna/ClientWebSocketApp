@@ -22,10 +22,12 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileViewCallback;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
+import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
@@ -57,32 +59,9 @@ public class FileManagerFragment extends Fragment {
 
     private static FileManagerFragment fileManagerFragment;
 
-    private SelectedFileViewCallback selectedFileViewCallback = new SelectedFileViewCallback() {
-        @Override
-        public void removeAllFromSelectedFiles() {
+    private SelectedFileManager selectedFileManager;
 
-        }
 
-        @Override
-        public void removeAllFromSelectedDevices() {
-
-        }
-
-        @Override
-        public void showDevices() {
-
-        }
-
-        @Override
-        public void removeAllSelectedFiles() {
-
-        }
-
-        @Override
-        public void removeAllSelectedDevices() {
-
-        }
-    };
 
 
 
@@ -115,7 +94,6 @@ public class FileManagerFragment extends Fragment {
             public void callFileInfo(File file) {
                 callInfo(file);
             }
-
             @Override
             public void moveNextDirectory(String newFileDirectory) {
                 File file = new File(newFileDirectory);
@@ -131,12 +109,31 @@ public class FileManagerFragment extends Fragment {
                     tvEmptyFolder.setVisibility(View.VISIBLE);
                 }
             }
+
+            @Override
+            public void longClick(int position) {
+                if (selectedFileManager.isSelectedFilesListEmpty()){
+                    selectedFileManager.insertToSelectedFilesList(adapterFiles.getItem(position));
+                    adapterFiles.setFooterVisible(true);
+                    //((FileManagerHolder)holder).fillBackground(true);
+                } else {
+                    selectedFileManager.removeAllSelectedFiles();
+                    adapterFiles.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void shortClick(int position) {
+
+            }
         });
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        selectedFileManager = new SelectedFileManager(selectedFileView);
+        selectedFileView.setCallback(selectedFileViewCallback);
     }
 
 
@@ -166,17 +163,7 @@ public class FileManagerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        /*
-        if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-            adapterFiles.setFooterVisible(true);
-        }
-        SelectedFileManager.getSelectedFileManager().setActivity(getActivity()).
-                setSelectedFileView(((MainActivity)getActivity()).getSelectedFileView(), () -> {
-                    adapterFiles.setFooterVisible(false);
-                });
-                */
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
-        //((MainActivity) getActivity()).setToolbarTitle(getString(R.string.files));
     }
 
     private void initFileManagerRecyclers(){
@@ -209,4 +196,39 @@ public class FileManagerFragment extends Fragment {
         });
         fileInfoDialog.show(getFragmentManager(), "sdf");
     }
+
+    private SelectedFileViewCallback selectedFileViewCallback = new SelectedFileViewCallback() {
+        @Override
+        public void removeAllFromSelectedFiles() {
+
+        }
+
+        @Override
+        public void removeAllSelectedFiles() {
+
+        }
+
+        @Override
+        public void removeAllSelectedDevices() {
+
+        }
+
+        @Override
+        public void clickShare() {
+            if (selectedFileManager.isSelectedDevicesListEmpty()){
+                ScanningForSendingDialog dialog = new ScanningForSendingDialog();
+                dialog.show(getFragmentManager(), ScanningForSendingDialog.class.getSimpleName());
+            } else {
+                selectedFileManager.sendDataToService();
+            }
+        }
+
+        @Override
+        public void clickCancel() {
+            selectedFileManager.removeAllSelectedDevices();
+        }
+    };
+
+
+
 }

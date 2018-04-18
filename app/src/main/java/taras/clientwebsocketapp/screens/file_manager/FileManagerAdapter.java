@@ -95,6 +95,8 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((FileManagerHolder)holder).onRowClicked(fileList.get(position),new FileManagerInterface() {
                 @Override
                 public void longItemClick(int position) {
+                    fileManagerAdapterInterface.longClick(position);
+
                     if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
                         SelectedFileManager.getSelectedFileManager()
                                 .insertToSelectedFilesList(fileList.get(position));
@@ -176,6 +178,10 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         } else {
             return fileList.size();
         }
+    }
+
+    public File getItem(int position){
+        return fileList.get(position);
     }
 
     @Override
