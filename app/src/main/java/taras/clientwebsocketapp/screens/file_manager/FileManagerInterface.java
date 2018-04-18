@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
+import android.support.v7.widget.RecyclerView;
+
 import java.io.File;
 
 /**

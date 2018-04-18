@@ -22,12 +22,14 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileViewCallback;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
 import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
 import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
+import taras.clientwebsocketapp.utils.FileUtils;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
@@ -59,13 +61,6 @@ public class FileManagerFragment extends Fragment {
 
     private static FileManagerFragment fileManagerFragment;
 
-    private SelectedFileManager selectedFileManager;
-
-
-
-
-
-
     public static FileManagerFragment getFragment(){
         if (fileManagerFragment == null){
             fileManagerFragment = new FileManagerFragment();
@@ -89,51 +84,17 @@ public class FileManagerFragment extends Fragment {
                 tvEmptyFolder.setVisibility(View.GONE);
             }
         });
-        adapterFiles = new FileManagerAdapter(getContext(), new FileManagerAdapterInterface() {
-            @Override
-            public void callFileInfo(File file) {
-                callInfo(file);
-            }
-            @Override
-            public void moveNextDirectory(String newFileDirectory) {
-                File file = new File(newFileDirectory);
-                adapterDirectories.addItem(newFileDirectory);
-                rvDirectories.scrollToPosition(adapterDirectories.getItemCount() - 1);
-                adapterFiles.setNewDirectory(newFileDirectory);
-
-                if (file.listFiles().length > 0){
-                    rvFiles.setVisibility(View.VISIBLE);
-                    tvEmptyFolder.setVisibility(View.GONE);
-                } else {
-                    rvFiles.setVisibility(View.GONE);
-                    tvEmptyFolder.setVisibility(View.VISIBLE);
-                }
-            }
-
-            @Override
-            public void longClick(int position) {
-                if (selectedFileManager.isSelectedFilesListEmpty()){
-                    selectedFileManager.insertToSelectedFilesList(adapterFiles.getItem(position));
-                    adapterFiles.setFooterVisible(true);
-                    //((FileManagerHolder)holder).fillBackground(true);
-                } else {
-                    selectedFileManager.removeAllSelectedFiles();
-                    adapterFiles.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void shortClick(int position) {
-
-            }
-        });
+        adapterFiles = new FileManagerAdapter(getContext(), fileManagerHolderClickCallback);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        selectedFileManager = new SelectedFileManager(selectedFileView);
         selectedFileView.setCallback(selectedFileViewCallback);
+
+        adapterFiles.setType(fileManagerType);
+        rvFiles.setVisibility(View.VISIBLE);
+        tvEmptyFolder.setVisibility(View.GONE);
     }
 
 
@@ -158,6 +119,7 @@ public class FileManagerFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         unbinder.unbind();
+        SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
     }
 
     @Override
@@ -176,7 +138,6 @@ public class FileManagerFragment extends Fragment {
         rvDirectories.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         rvDirectories.setAdapter(adapterDirectories);
     }
-
     private void callInfo(File file){
         FileInfoDialog fileInfoDialog = new FileInfoDialog();
         fileInfoDialog.setParamsInfo(file, new FileInfoDialogInterface() {
@@ -197,35 +158,69 @@ public class FileManagerFragment extends Fragment {
         fileInfoDialog.show(getFragmentManager(), "sdf");
     }
 
+
+
     private SelectedFileViewCallback selectedFileViewCallback = new SelectedFileViewCallback() {
         @Override
-        public void removeAllFromSelectedFiles() {
-
-        }
-
-        @Override
-        public void removeAllSelectedFiles() {
-
-        }
-
-        @Override
-        public void removeAllSelectedDevices() {
-
-        }
-
-        @Override
         public void clickShare() {
-            if (selectedFileManager.isSelectedDevicesListEmpty()){
+            Log.d(LOG_TAG, "SelectedFileViewCallback, clickShare");
+            if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
                 ScanningForSendingDialog dialog = new ScanningForSendingDialog();
                 dialog.show(getFragmentManager(), ScanningForSendingDialog.class.getSimpleName());
+            }
+        }
+        @Override
+        public void clickCancel() {
+            Log.d(LOG_TAG, "SelectedFileViewCallback, clickCancel");
+            SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+            selectedFileView.setSelectedNum(SelectedFileManager
+                    .getSelectedFileManager()
+                    .getAllSelectedDirectories().size());
+            selectedFileView.setVisibility(View.GONE);
+            adapterFiles.setFooterVisible(false);
+        }
+    };
+    private FileManagerHolderClickCallback fileManagerHolderClickCallback = new FileManagerHolderClickCallback() {
+        @Override
+        public void longClick(int position) {
+            if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
+                adapterFiles.setFooterVisible(true);
+                selectedFileView.setVisibility(View.VISIBLE);
             } else {
-                selectedFileManager.sendDataToService();
+                SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
+                adapterFiles.notifyDataSetChanged();
+            }
+            selectedFileView.setSelectedNum(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectories().size());
+        }
+
+        @Override
+        public void shortClick(int position) {
+            if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                File file = adapterFiles.getItem(position);
+                adapterDirectories.addItem(file.getAbsolutePath());
+                rvDirectories.scrollToPosition(adapterDirectories.getItemCount() - 1);
+                adapterFiles.setNewDirectory(file.getAbsolutePath());
+                if (file.listFiles().length > 0){
+                    rvFiles.setVisibility(View.VISIBLE);
+                    tvEmptyFolder.setVisibility(View.GONE);
+                } else {
+                    rvFiles.setVisibility(View.GONE);
+                    tvEmptyFolder.setVisibility(View.VISIBLE);
+                }
+            } else {
+                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
+                selectedFileView.setSelectedNum(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectories().size());
+                adapterFiles.notifyItemChanged(position);
+                if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                    selectedFileView.setVisibility(View.GONE);
+                }
             }
         }
 
         @Override
-        public void clickCancel() {
-            selectedFileManager.removeAllSelectedDevices();
+        public void moreInfoClick(File file) {
+            callInfo(file);
         }
     };
 

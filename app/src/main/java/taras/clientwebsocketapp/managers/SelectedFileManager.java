@@ -27,13 +27,25 @@ public class SelectedFileManager {
     private ArrayList<String> selectedDevicesIp;
 
     private static SelectedFileManager selectedFileManager;
-    private SelectedFileView selectedFileView;
+    //private SelectedFileView selectedFileView;
 
-    public SelectedFileManager(SelectedFileView selectedFileView) {
-        this.selectedFileView = selectedFileView;
+    public SelectedFileManager() {
         selectedDirectoriesFilesList = new ArrayList<>();
         selectedDevicesIp = new ArrayList<>();
     }
+
+    public static SelectedFileManager getSelectedFileManager(){
+        if (selectedFileManager == null){
+            selectedFileManager = new SelectedFileManager();
+        }
+        return selectedFileManager;
+    }
+
+    /*
+    public void setSelectedFileView(SelectedFileView selectedFileView){
+        this.selectedFileView = selectedFileView;
+    }
+    */
 
     //work with selected files;
     public SelectedFileManager insertToSelectedFilesList(File file){
@@ -53,8 +65,8 @@ public class SelectedFileManager {
     }
     public void removeAllSelectedFiles(){
         selectedDirectoriesFilesList.clear();
-        selectedFileView.setSelectedNum(0);
-        selectedFileView.setVisibility(View.GONE);
+        //selectedFileView.setSelectedNum(0);
+        //selectedFileView.setVisibility(View.GONE);
     }
     public boolean isSelectedFilesListEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){
@@ -73,16 +85,16 @@ public class SelectedFileManager {
 
     private void addToSelectedFiles(File file){
         selectedDirectoriesFilesList.add(file);
-        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        //selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
         if (selectedDirectoriesFilesList.size() > 0){
-            selectedFileView.setVisibility(View.VISIBLE);
+            //selectedFileView.setVisibility(View.VISIBLE);
         }
     }
     private void removeFromSelectedFiles(File file){
         selectedDirectoriesFilesList.remove(file);
-        selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
+        //selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
         if (selectedDirectoriesFilesList.size() == 0){
-            selectedFileView.setVisibility(View.GONE);
+            //selectedFileView.setVisibility(View.GONE);
         }
     }
 
@@ -117,13 +129,13 @@ public class SelectedFileManager {
     private void addToSelectedDevices(String deviceIp){
         selectedDevicesIp.add(deviceIp);
         if (selectedDevicesIp.size() > 0){
-            selectedFileView.getIvShare().setVisibility(View.VISIBLE);
+            //selectedFileView.getIvShare().setVisibility(View.VISIBLE);
         }
     }
     private void removeFromSelectedDevices(String deviceIp){
         selectedDevicesIp.remove(deviceIp);
         if (selectedDevicesIp.size() == 0){
-            selectedFileView.getIvShare().setVisibility(View.INVISIBLE);
+            //selectedFileView.getIvShare().setVisibility(View.INVISIBLE);
         }
     }
 

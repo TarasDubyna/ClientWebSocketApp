@@ -34,4 +34,5 @@
     <string name="visibility">Видимость в сети</string>
     <string name="select_device">Выберите устройство</string>
     <string name="devices">Устройства</string>
+    <string name="send">Отправить</string>
 </resources>

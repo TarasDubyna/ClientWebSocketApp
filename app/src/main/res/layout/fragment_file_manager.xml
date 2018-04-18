@@ -35,7 +35,7 @@
 
     <taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView
         android:id="@+id/selectedFileView"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="60dp">

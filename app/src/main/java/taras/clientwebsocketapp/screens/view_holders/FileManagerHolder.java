@@ -14,11 +14,8 @@ import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
-import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
+import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
 import taras.clientwebsocketapp.screens.manager.FileManager;
-import taras.clientwebsocketapp.utils.FileUtils;
 
 public class FileManagerHolder extends RecyclerView.ViewHolder{
 
@@ -49,24 +46,14 @@ public class FileManagerHolder extends RecyclerView.ViewHolder{
         tvName.setText(file.getName());
     }
 
-    public void onRowClicked(File file, FileManagerInterface listener){
-        ivMore.setOnClickListener(v -> { listener.callFileInfo(file);});
-        itemView.setOnClickListener(v -> { listener.shortItemClick(getAdapterPosition());});
+    public void onRowClicked(File file, FileManagerHolderClickCallback listener){
+        ivMore.setOnClickListener(v -> { listener.moreInfoClick(file);});
+        itemView.setOnClickListener(v -> { listener.shortClick(getAdapterPosition());});
         itemView.setOnLongClickListener(v -> {
-            listener.longItemClick(getAdapterPosition());
+            listener.longClick(getAdapterPosition());
             return false;
         });
     }
-
-    public void fillBackground(boolean isSelected){
-        if (isSelected){
-            cvItem.setCardBackgroundColor(itemView.getContext().getResources().getColor(R.color.blue_grey_500));
-        } else {
-
-        }
-    }
-
-
 
     private void checkIsFavorite(File file){
         if (FavoriteFilesManager.getInstance().isFavorite(file)){
@@ -87,6 +74,8 @@ public class FileManagerHolder extends RecyclerView.ViewHolder{
                 break;
         }
     }
+
+
     private void fillBackgroundColor(File file){
         if (SelectedFileManager.getSelectedFileManager().isFileSelected(file)){
             cvItem.setCardBackgroundColor(itemView.getContext().getResources().getColor(R.color.blue_grey_500));

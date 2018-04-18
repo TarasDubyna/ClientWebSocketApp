@@ -19,6 +19,7 @@ import java.util.List;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
 import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
@@ -44,18 +45,18 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private static final int TYPE_FOOTER = 1;
 
     private Context context;
-    private FileManagerAdapterInterface fileManagerAdapterInterface;
-
-    private boolean isPrepareToSend = false;
+    private FileManagerHolderClickCallback itemClickCallback;
 
     private ArrayList<File> fileList;
     private File directoryFile;
 
     private boolean isFooterVisible = false;
-    public FileManagerAdapter(Context context, FileManagerAdapterInterface fileManagerAdapterInterface) {
+
+
+    public FileManagerAdapter(Context context, FileManagerHolderClickCallback itemClickCallback) {
         this.fileList = new ArrayList<>();
         this.context = context;
-        this.fileManagerAdapterInterface = fileManagerAdapterInterface;
+        this.itemClickCallback = itemClickCallback;
     }
 
     public void setType(int type){
@@ -92,6 +93,32 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof FileManagerHolder){
             ((FileManagerHolder)holder).bind(fileList.get(position));
+            ((FileManagerHolder)holder).onRowClicked(fileList.get(position), new FileManagerHolderClickCallback() {
+                @Override
+                public void longClick(int position) {
+                    itemClickCallback.longClick(position);
+                }
+                @Override
+                public void shortClick(int position) {
+                    if (getItem(position).listFiles() == null && SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                        //file
+                        Log.d(LOG_TAG, getItem(position).getAbsolutePath() + " is file");
+                        FileUtils.openFile(holder.itemView.getContext(), fileList.get(position));
+                    } else {
+                        Log.d(LOG_TAG, fileList.get(position).getAbsolutePath() + " is folder");
+                        itemClickCallback.shortClick(position);
+                    }
+                }
+
+                @Override
+                public void moreInfoClick(File file) {
+                    if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                        itemClickCallback.moreInfoClick(file);
+                    }
+                }
+            });
+
+            /*
             ((FileManagerHolder)holder).onRowClicked(fileList.get(position),new FileManagerInterface() {
                 @Override
                 public void longItemClick(int position) {
@@ -141,9 +168,10 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     fileManagerAdapterInterface.callFileInfo(file);
                 }
             });
+            */
         }
         if (holder instanceof FooterHolder){
-            setFooterVisibility(holder, SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty());
+            setFooterVisibility(holder, isFooterVisible);
         }
     }
 
@@ -194,7 +222,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private boolean isPositionFooter(int position) {
-        if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty() && (position == getItemCount() - 1)){
+        if (isFooterVisible && (position == getItemCount() - 1)){
             return true;
         } else return false;
     }
