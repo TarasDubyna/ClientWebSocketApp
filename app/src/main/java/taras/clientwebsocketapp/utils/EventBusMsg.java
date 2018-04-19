@@ -18,6 +18,8 @@ public class EventBusMsg<T> {
     public static final int SERVER_START = 4;
     public static final int SERVER_STOP = 5;
 
+    public static final int SCANNING_NETWORK_END = 100;
+
     private int codeDirection;
     private int codeType;
     private T model;

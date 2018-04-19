@@ -15,6 +15,7 @@ import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.server.ServerManager;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.ConverterUtils;
 import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
@@ -68,9 +69,10 @@ public class NetworkOperations {
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
+                scanningInterface.errorScanning(e1);
             }
             e.printStackTrace();
-            scanningInterface.errorResponse(e);
+            scanningInterface.errorScanning(e);
         } catch (Exception e) {
             Log.d(LOG_TAG, "WatchSocket: Exception - " + ip);
             try {
@@ -79,9 +81,10 @@ public class NetworkOperations {
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
+                scanningInterface.errorScanning(e1);
             }
             e.printStackTrace();
-            scanningInterface.errorResponse(e);
+            scanningInterface.errorScanning(e);
         }
     }
 

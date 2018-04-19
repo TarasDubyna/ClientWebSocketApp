@@ -23,6 +23,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.IllegalFormatCodePointException;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -30,9 +33,13 @@ import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
+import taras.clientwebsocketapp.utils.AnimationUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
+import taras.clientwebsocketapp.utils.NetworkUtils;
 
 public class ScanningForSendingDialog extends DialogFragment {
+
+    private static final String LOG_TAG = ScanningForSendingDialog.class.getSimpleName();
 
     @BindView(R.id.rvDevices) RecyclerView rvDevices;
     @BindView(R.id.ivRefresh) ImageView ivRefresh;
@@ -57,14 +64,14 @@ public class ScanningForSendingDialog extends DialogFragment {
             dialog.getWindow().setAttributes(lWindowParams);
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
+        initScanningRecycler();
+        scanningNetwork();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View dialogView = inflater.inflate(R.layout.dialog_scanning_for_sending,container, false);
         unbinder = ButterKnife.bind(this, dialogView);
-        initScanningRecycler();
-        scanningNetwork();
         return dialogView;
     }
 
@@ -72,6 +79,7 @@ public class ScanningForSendingDialog extends DialogFragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        ivRefresh.clearAnimation();
     }
 
     @Override
@@ -112,13 +120,28 @@ public class ScanningForSendingDialog extends DialogFragment {
                 tvNoDevices.setVisibility(View.GONE);
                 rvDevices.setVisibility(View.VISIBLE);
             }
+            if (ebMessage.getCodeType() == EventBusMsg.SCANNING_NETWORK_END){
+                ivRefresh.clearAnimation();
+                ivRefresh.setClickable(true);
+                Log.d(LOG_TAG, "End scanning network");
+            }
         }
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }
 
     private void scanningNetwork(){
+        Log.d(LOG_TAG, "Start scanning network");
+        ivRefresh.setClickable(false);
+        ivRefresh.post(new Runnable() {
+            @Override
+            public void run() {
+                AnimationUtils.rotation(ivRefresh);
+            }
+        });
         EventBusMsg<String> message =
                 new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);
         EventBus.getDefault().postSticky(message);
     }
+
+
 }

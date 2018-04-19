@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.network;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import taras.clientwebsocketapp.model.PermissionPackage;
@@ -13,9 +14,22 @@ import taras.clientwebsocketapp.utils.NetworkUtils;
 public class NetworkDataRepository implements ConnectionRepository {
     @Override
     public void scanNetwork(RequestServiceInterface requestServiceInterface, String networkIP) throws IOException {
-        for (String address: NetworkUtils.getAllNetworkAddresses()){
-            new Thread(() -> NetworkOperations.scanNetwork(address, requestServiceInterface)).start();
+        try {
+            ArrayList<Thread> arrThreads = new ArrayList<Thread>();
+            for (String address: NetworkUtils.getAllNetworkAddresses()){
+                Thread scanningThread = new Thread(() -> NetworkOperations.scanNetwork(address, requestServiceInterface));
+                scanningThread.start();
+                arrThreads.add(scanningThread);
+            }
+            for (Thread scanningThread: arrThreads){
+                scanningThread.join();
+            }
+            requestServiceInterface.scanningNetworkEnd();
+        } catch (Exception  ex) {
+            ex.printStackTrace();
+            requestServiceInterface.errorScanning(ex);
         }
+
     }
 
     @Override

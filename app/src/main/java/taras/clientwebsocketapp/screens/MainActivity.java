@@ -40,6 +40,7 @@ import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
 import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.EventBusMsg;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
@@ -183,6 +184,7 @@ public class MainActivity extends AppCompatActivity
         }
         */
         serverSwitch.setOnClickListener(this);
+        serverSwitch.setChecked(PreferenceUtils.getRunningServerState());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -313,10 +315,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setSwitchState(boolean serverIsRun){
-        if (serverIsRun){
-            serverSwitch.setChecked(true);
-        } else {
-            serverSwitch.setChecked(false);
+        if (serverSwitch != null){
+            if (serverIsRun){
+                serverSwitch.setChecked(true);
+            } else {
+                serverSwitch.setChecked(false);
+            }
         }
     }
 

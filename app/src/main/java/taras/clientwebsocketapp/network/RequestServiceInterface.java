@@ -9,11 +9,16 @@ import taras.clientwebsocketapp.model.ScannerPackage;
 
 public interface RequestServiceInterface {
 
-    void successfulScanningResponse(ScannerPackage scannerPackage);
+
     void successfulGetPermissionFirstStage(PermissionPackage permissionPackage);
     void successfulGetPermissionSecondStage(PermissionPackage permissionPackage);
 
 
     void errorGetPermission(PermissionPackage permissionPackage);
     void errorResponse(Throwable throwable);
+
+
+    void successfulScanningResponse(ScannerPackage scannerPackage);
+    void scanningNetworkEnd();
+    void errorScanning(Throwable throwable);
 }

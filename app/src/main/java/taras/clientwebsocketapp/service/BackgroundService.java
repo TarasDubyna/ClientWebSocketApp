@@ -19,6 +19,7 @@ import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
+import taras.clientwebsocketapp.utils.ConverterUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
@@ -92,6 +93,21 @@ public class BackgroundService extends Service {
                                     }
                                 }
                             }
+
+                            @Override
+                            public void scanningNetworkEnd() {
+                                Log.d(LOG_TAG, "scanningNetworkEnd");
+                                EventBusMsg<String> message =
+                                        new EventBusMsg<String>(EventBusMsg.TO_APP, EventBusMsg.SCANNING_NETWORK_END, null);
+                                EventBus.getDefault().postSticky(message);
+                            }
+
+                            @Override
+                            public void errorScanning(Throwable throwable) {
+                                Log.d(LOG_TAG, "Error: " + throwable.getMessage());
+                                throwable.printStackTrace();
+                            }
+
                             @Override
                             public void errorResponse(Throwable throwable) {
 
