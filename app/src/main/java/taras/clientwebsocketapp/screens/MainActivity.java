@@ -122,7 +122,14 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         initServiceReceiver();
-        addFragmentToManager(ScanNetworkFragment.getFragment());
+
+        if (fileManagerFragment == null){
+            fileManagerFragment = new FileManagerFragment();
+        }
+        Bundle fileManagerBundle = new Bundle();
+        fileManagerBundle.putInt(FILE_MANAGER_TYPE, CONTENT_USUAL);
+        fileManagerFragment.setArguments(fileManagerBundle);
+        addFragmentToManager(fileManagerFragment);
 
 
         toggle = new ActionBarDrawerToggle(
@@ -132,7 +139,8 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setCheckedItem(R.id.menu_network_manager);
+        //navigationView.setCheckedItem(R.id.menu_network_manager);
+        navigationView.setCheckedItem(R.id.menu_file_manager);
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
@@ -178,11 +186,6 @@ public class MainActivity extends AppCompatActivity
         MenuItem switchItem = menu.findItem(R.id.toolbar_switcher);
         switchItem.setActionView(R.layout.toolbar_layout);
         serverSwitch = menu.findItem(R.id.toolbar_switcher).getActionView().findViewById(R.id.switchServerToolbar);
-        /*
-        if (PreferenceUtils.isServerRunning()){
-            serverSwitch.setChecked(true);
-        }
-        */
         serverSwitch.setOnClickListener(this);
         serverSwitch.setChecked(PreferenceUtils.getRunningServerState());
         return super.onCreateOptionsMenu(menu);
@@ -220,13 +223,14 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.menu_network_manager) {
+        /*if (id == R.id.menu_network_manager) {
             if (scanNetworkFragment == null){
                 scanNetworkFragment = new ScanNetworkFragment();
             }
             addFragmentToManager(scanNetworkFragment);
             // Handle the camera action
-        } else if (id == R.id.menu_file_manager) {
+        } else */
+        if (id == R.id.menu_file_manager) {
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
             }

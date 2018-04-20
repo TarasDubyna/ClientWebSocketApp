@@ -63,64 +63,70 @@ public class BackgroundService extends Service {
     public void getDataFromApp(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
             RequestServiceManager requestServiceManager = new RequestServiceManager(this);
-            try {
-                requestServiceManager
-                        .getMessage(ebMessage)
-                        .setServer(server)
-                        .takeRequest(new RequestServiceInterface() {
-                            @Override
-                            public void successfulGetPermissionFirstStage(PermissionPackage permissionPackage) {
-                                if (applicationInForeground()){
-                                    Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                                    EventBusMsg<PermissionPackage> message =
-                                            new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
-                                    EventBus.getDefault().postSticky(message);
-                                }
-                            }
-                            @Override
-                            public void successfulGetPermissionSecondStage(PermissionPackage permissionPackage) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        requestServiceManager
+                                .getMessage(ebMessage)
+                                .setServer(server)
+                                .takeRequest(new RequestServiceInterface() {
+                                    @Override
+                                    public void successfulGetPermissionFirstStage(PermissionPackage permissionPackage) {
+                                        if (applicationInForeground()){
+                                            Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
+                                            EventBusMsg<PermissionPackage> message =
+                                                    new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
+                                            EventBus.getDefault().postSticky(message);
+                                        }
+                                    }
+                                    @Override
+                                    public void successfulGetPermissionSecondStage(PermissionPackage permissionPackage) {
 
-                            }
-                            @Override
-                            public void successfulScanningResponse(ScannerPackage scannerPackage) {
-                                Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
-                                if (applicationInForeground()){
-                                    if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
-                                        Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                                        EventBusMsg<ScannerPackage> message =
-                                                new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
+                                    }
+                                    @Override
+                                    public void successfulScanningResponse(ScannerPackage scannerPackage) {
+                                        Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
+                                        if (applicationInForeground()){
+                                            if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
+                                                Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
+                                                EventBusMsg<ScannerPackage> message =
+                                                        new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
+                                                EventBus.getDefault().postSticky(message);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void scanningNetworkEnd() {
+                                        Log.d(LOG_TAG, "scanningNetworkEnd");
+                                        EventBusMsg<String> message =
+                                                new EventBusMsg<String>(EventBusMsg.TO_APP, EventBusMsg.SCANNING_NETWORK_END, null);
                                         EventBus.getDefault().postSticky(message);
                                     }
-                                }
-                            }
 
-                            @Override
-                            public void scanningNetworkEnd() {
-                                Log.d(LOG_TAG, "scanningNetworkEnd");
-                                EventBusMsg<String> message =
-                                        new EventBusMsg<String>(EventBusMsg.TO_APP, EventBusMsg.SCANNING_NETWORK_END, null);
-                                EventBus.getDefault().postSticky(message);
-                            }
+                                    @Override
+                                    public void errorScanning(Throwable throwable) {
+                                        Log.d(LOG_TAG, "Error: " + throwable.getMessage());
+                                        throwable.printStackTrace();
+                                    }
 
-                            @Override
-                            public void errorScanning(Throwable throwable) {
-                                Log.d(LOG_TAG, "Error: " + throwable.getMessage());
-                                throwable.printStackTrace();
-                            }
+                                    @Override
+                                    public void errorResponse(Throwable throwable) {
 
-                            @Override
-                            public void errorResponse(Throwable throwable) {
+                                    }
+                                    @Override
+                                    public void errorGetPermission(PermissionPackage permissionPackage) {
 
-                            }
-                            @Override
-                            public void errorGetPermission(PermissionPackage permissionPackage) {
+                                    }
+                                });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
+                    }
+                }
+            }).start();
 
-                            }
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
-            }
         }
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }

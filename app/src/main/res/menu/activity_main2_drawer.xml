@@ -4,10 +4,10 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item
+        <!--<item
             android:id="@+id/menu_network_manager"
             android:icon="@drawable/ic_phone_network"
-            android:title="@string/network_manager" />
+            android:title="@string/network_manager" />-->
         <item
             android:id="@+id/menu_file_manager"
             android:icon="@drawable/ic_full_folder"

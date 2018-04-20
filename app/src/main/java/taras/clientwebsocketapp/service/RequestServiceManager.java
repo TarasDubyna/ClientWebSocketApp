@@ -13,7 +13,7 @@ import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
-public class RequestServiceManager {
+public class RequestServiceManager implements Runnable {
 
     private static final String LOG_TAG = "myLogs";
 
@@ -84,4 +84,8 @@ public class RequestServiceManager {
     }
 
 
+    @Override
+    public void run() {
+
+    }
 }
