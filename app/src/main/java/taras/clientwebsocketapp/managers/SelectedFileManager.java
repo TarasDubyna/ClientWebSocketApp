@@ -63,6 +63,15 @@ public class SelectedFileManager {
     public List<File> getAllSelectedDirectories(){
         return this.selectedDirectoriesFilesList;
     }
+    public List<String> getAllSelectedFilesNames(){
+        List<String> filesName = new ArrayList<>();
+        for (File file: selectedDirectoriesFilesList){
+            filesName.add(file.getName());
+        }
+        return filesName;
+    }
+
+
     public void removeAllSelectedFiles(){
         selectedDirectoriesFilesList.clear();
         //selectedFileView.setSelectedNum(0);

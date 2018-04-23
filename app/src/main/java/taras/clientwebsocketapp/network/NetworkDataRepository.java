@@ -56,5 +56,4 @@ public class NetworkDataRepository implements ConnectionRepository {
     public void getPermission(RequestServiceInterface requestServiceInterface, PermissionPackage permissionPackage) throws IOException {
         new Thread(() -> NetworkOperations.getPermission(permissionPackage, requestServiceInterface)).start();
     }
-
 }

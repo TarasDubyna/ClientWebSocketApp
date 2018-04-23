@@ -23,6 +23,7 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.MainActivity;
+import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 
@@ -30,7 +31,7 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
  * Created by Taras on 14.02.2018.
  */
 
-public class ScanNetworkFragment extends Fragment {
+public class ScanNetworkFragment extends Fragment implements RecyclerClickListener {
     private static final String LOG_TAG = "myLogs";
 
     private View rootView;
@@ -118,7 +119,7 @@ public class ScanNetworkFragment extends Fragment {
     }
 
     private void initScanningRecycler(){
-        devicesRecyclerAdapter = new ScanningDevicesRecyclerAdapter(getContext(), null);
+        devicesRecyclerAdapter = new ScanningDevicesRecyclerAdapter(getContext(), this, null);
 
         rvNetworkDevices.setHasFixedSize(true);
         rvNetworkDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
@@ -126,5 +127,10 @@ public class ScanNetworkFragment extends Fragment {
 
         tvNoDevices.setVisibility(View.VISIBLE);
         rvNetworkDevices.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRowClicked(int position) {
+
     }
 }

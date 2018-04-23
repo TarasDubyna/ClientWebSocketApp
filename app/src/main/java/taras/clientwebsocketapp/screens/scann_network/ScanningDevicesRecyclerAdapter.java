@@ -19,12 +19,18 @@ import taras.clientwebsocketapp.screens.view_holders.ScanningDeviceHolder;
 
 public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<ScanningDeviceHolder> implements RecyclerClickListener {
 
+    private static final int MAX_SELECTED_ITEMS = 1;
+
     private Context mContext;
     private List<ScannerPackage> scannerPackagesList;
+    private RecyclerClickListener clickListener;
+
+    private List<ScannerPackage> selectedDevices;
 
 
-    public ScanningDevicesRecyclerAdapter(Context mContext, List<ScannerPackage> scannerPackagesList) {
+    public ScanningDevicesRecyclerAdapter(Context mContext, RecyclerClickListener clickListener ,List<ScannerPackage> scannerPackagesList) {
         this.mContext = mContext;
+        this.clickListener = clickListener;
         initDataList(scannerPackagesList);
     }
 
@@ -47,7 +53,10 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
 
     @Override
     public void onRowClicked(int position) {
-        notifyItemChanged(position);
+        this.clickListener.onRowClicked(position);
+        insertToSelectedDevices(scannerPackagesList.get(position));
+        //notifyItemChanged(position);
+        notifyDataSetChanged();
     }
 
     public void clear(){
@@ -60,11 +69,39 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
         notifyDataSetChanged();
     }
 
+    public boolean isEmpty(){
+        if(selectedDevices.size() == 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+
+
     private void initDataList(List<ScannerPackage> scannerPackagesList){
         if (scannerPackagesList == null){
             this.scannerPackagesList = new ArrayList<>();
         } else {
             this.scannerPackagesList = scannerPackagesList;
+        }
+    }
+
+    private void insertToSelectedDevices(ScannerPackage scannerPackage){
+        if (selectedDevices == null){
+            selectedDevices = new ArrayList<>();
+        }
+        if (MAX_SELECTED_ITEMS == 1){
+            selectedDevices.clear();
+            selectedDevices.add(scannerPackage);
+        } else {
+            if (selectedDevices.contains(scannerPackage)){
+                selectedDevices.remove(scannerPackage);
+            } else {
+                selectedDevices.add(scannerPackage);
+            }
         }
     }
 

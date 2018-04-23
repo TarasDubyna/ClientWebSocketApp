@@ -31,13 +31,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
 import taras.clientwebsocketapp.utils.AnimationUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.NetworkUtils;
 
-public class ScanningForSendingDialog extends DialogFragment {
+public class ScanningForSendingDialog extends DialogFragment implements RecyclerClickListener {
 
     private static final String LOG_TAG = ScanningForSendingDialog.class.getSimpleName();
 
@@ -65,7 +68,9 @@ public class ScanningForSendingDialog extends DialogFragment {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         initScanningRecycler();
-        scanningNetwork();
+        testData();
+        //scanningNetwork();
+
     }
 
     @Override
@@ -89,7 +94,7 @@ public class ScanningForSendingDialog extends DialogFragment {
     }
 
     private void initScanningRecycler(){
-        adapter = new ScanningDevicesRecyclerAdapter(getContext(), null);
+        adapter = new ScanningDevicesRecyclerAdapter(getContext(), this,null);
         rvDevices.setHasFixedSize(true);
         rvDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvDevices.setAdapter(adapter);
@@ -140,6 +145,35 @@ public class ScanningForSendingDialog extends DialogFragment {
         });
         EventBusMsg<String> message =
                 new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);
+        EventBus.getDefault().postSticky(message);
+    }
+
+    private void testData(){
+        tvNoDevices.setVisibility(View.GONE);
+        rvDevices.setVisibility(View.VISIBLE);
+        for (int i = 0; i < 6; i ++){
+            ScannerPackage scannerPackage = new ScannerPackage();
+            scannerPackage.setServerIp("192.168.1." + i);
+            scannerPackage.setServerName("server name");
+            adapter.addItem(scannerPackage);
+        }
+    }
+
+    @Override
+    public void onRowClicked(int position) {
+        if (!adapter.isEmpty()){
+            llSend.setVisibility(View.VISIBLE);
+        } else {
+            llSend.setVisibility(View.GONE);
+        }
+    }
+
+    @OnClick(R.id.llSend)
+    void sendPermission(View view){
+        PermissionPackage permissionPackage = new PermissionPackage();
+        permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
+        EventBusMsg<PermissionPackage> message =
+                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
         EventBus.getDefault().postSticky(message);
     }
 
