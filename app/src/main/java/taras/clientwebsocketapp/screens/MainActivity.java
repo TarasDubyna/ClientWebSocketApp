@@ -32,7 +32,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.screens.dialogs.permission_dialog.CheckPermissionDialog;
 import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
+        PermissionManager.getPermissionManager();
     }
 
 
@@ -307,9 +311,14 @@ public class MainActivity extends AppCompatActivity
     public void onNewPostCreated(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
             switch (ebMessage.getCodeType()){
-                case EventBusMsg.PACKAGE_PERMISSION_FIRST:
+                case EventBusMsg.PACKAGE_PERMISSION:
                     Toast.makeText(this, "PACKAGE_PERMISSION_FIRST", Toast.LENGTH_SHORT).show();
                     Log.d(LOG_TAG, "PACKAGE_PERMISSION_FIRST");
+
+
+                    CheckPermissionDialog checkPermissionDialog = new CheckPermissionDialog();
+                    checkPermissionDialog.setPermissionPackage((PermissionPackage) ebMessage.getModel());
+                    checkPermissionDialog.show(getSupportFragmentManager(), CheckPermissionDialog.class.getSimpleName());
                     break;
                 case EventBusMsg.CHECK_IS_SERVER_WORK:
                     setSwitchState((Boolean) ebMessage.getModel());

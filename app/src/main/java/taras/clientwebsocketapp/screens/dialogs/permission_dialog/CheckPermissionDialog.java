@@ -1,5 +1,4 @@
-package taras.clientwebsocketapp.screens.dialogs.scanning_for_sending;
-
+package taras.clientwebsocketapp.screens.dialogs.permission_dialog;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -13,13 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
+
+import java.security.acl.Permission;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,21 +29,22 @@ import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
 import taras.clientwebsocketapp.utils.AnimationUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 
-public class ScanningForSendingDialog extends DialogFragment implements RecyclerClickListener {
+public class CheckPermissionDialog extends DialogFragment {
 
-    private static final String LOG_TAG = ScanningForSendingDialog.class.getSimpleName();
+    @BindView(R.id.tvName) TextView tvName;
+    @BindView(R.id.tvIp) TextView tvIp;
+    @BindView(R.id.rvFilesToSend) RecyclerView rvFilesToSend;
+    @BindView(R.id.tvAccept) TextView tvAccept;
+    @BindView(R.id.tvDeny) TextView tvDeny;
 
-    @BindView(R.id.rvDevices) RecyclerView rvDevices;
-    @BindView(R.id.ivRefresh) ImageView ivRefresh;
-    @BindView(R.id.tvNoDevices) TextView tvNoDevices;
-    @BindView(R.id.llSend) LinearLayout llSend;
 
     private ScanningDevicesRecyclerAdapter adapter;
+
+    private PermissionPackage permissionPackage;
 
     private Unbinder unbinder;
 
@@ -63,14 +64,15 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         }
         initScanningRecycler();
         //testData();
-        scanningNetwork();
+        //scanningNetwork();
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View dialogView = inflater.inflate(R.layout.dialog_scanning_for_sending,container, false);
+        View dialogView = inflater.inflate(R.layout.dialog_check_permission,container, false);
         unbinder = ButterKnife.bind(this, dialogView);
+
         return dialogView;
     }
 
@@ -78,7 +80,6 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
-        ivRefresh.clearAnimation();
     }
 
     @Override
@@ -88,27 +89,27 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     }
 
     private void initScanningRecycler(){
-        adapter = new ScanningDevicesRecyclerAdapter(getContext(), this,null);
-        rvDevices.setHasFixedSize(true);
-        rvDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
-        rvDevices.setAdapter(adapter);
+        rvFilesToSend.setHasFixedSize(true);
+        rvFilesToSend.setLayoutManager(new GridLayoutManager(getContext(), 1));
+        rvFilesToSend.setAdapter(adapter);
     }
 
-    @OnClick({R.id.ivRefresh, R.id.llSend})
+    public void setPermissionPackage(PermissionPackage permissionPackage) {
+        this.permissionPackage = permissionPackage;
+    }
+
+    @OnClick({R.id.tvAccept, R.id.tvDeny})
     void onClick(View view){
         switch (view.getId()){
-            case R.id.ivRefresh:
-                rvDevices.setVisibility(View.GONE);
-                tvNoDevices.setVisibility(View.VISIBLE);
-                adapter.clear();
-                scanningNetwork();
+            case R.id.tvAccept:
                 break;
-            case R.id.llSend:
+            case R.id.tvDeny:
                 break;
         }
     }
 
 
+    /*
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getScanningResult(EventBusMsg<Object> ebMessage) {
         Log.d("myLogs", "getScanningResult in dialog");
@@ -172,6 +173,8 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
                 new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
         EventBus.getDefault().postSticky(message);
     }
+    */
+
 
 
 }

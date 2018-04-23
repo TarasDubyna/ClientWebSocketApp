@@ -1,6 +1,6 @@
 package taras.clientwebsocketapp.network;
 
-import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -10,11 +10,9 @@ import taras.clientwebsocketapp.model.ScannerPackage;
 public interface RequestServiceInterface {
 
 
-    void successfulGetPermissionFirstStage(PermissionPackageFirst permissionPackageFirst);
-    void successfulGetPermissionSecondStage(PermissionPackageFirst permissionPackageFirst);
+    void successfulGetPermission(PermissionPackage permissionPackage);
+    void errorGetPermission(PermissionPackage permissionPackage);
 
-
-    void errorGetPermission(PermissionPackageFirst permissionPackageFirst);
     void errorResponse(Throwable throwable);
 
 

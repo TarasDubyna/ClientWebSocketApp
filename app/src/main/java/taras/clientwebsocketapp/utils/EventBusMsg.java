@@ -10,8 +10,7 @@ public class EventBusMsg<T> {
     public static final int TO_APP = 1;
 
     public static final int PACKAGE_SCANNER = 0;
-    public static final int PACKAGE_PERMISSION_FIRST = 1;
-    public static final int PACKAGE_PERMISSION_SECOND = 2;
+    public static final int PACKAGE_PERMISSION = 1;
     public static final int PACKAGE_SERVER_STATE = 3;
     public static final int CHECK_IS_SERVER_WORK = 4;
 

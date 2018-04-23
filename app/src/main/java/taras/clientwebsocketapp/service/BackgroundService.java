@@ -16,8 +16,9 @@ import java.io.IOException;
 import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
@@ -72,56 +73,7 @@ public class BackgroundService extends Service {
                         requestServiceManager
                                 .getMessage(ebMessage)
                                 .setServer(server)
-                                .takeRequest(new RequestServiceInterface() {
-                                    @Override
-                                    public void successfulGetPermissionFirstStage(PermissionPackageFirst permissionPackageFirst) {
-                                        if (applicationInForeground()){
-                                            Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                                            EventBusMsg<PermissionPackageFirst> message =
-                                                    new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackageFirst);
-                                            EventBus.getDefault().postSticky(message);
-                                        }
-                                    }
-                                    @Override
-                                    public void successfulGetPermissionSecondStage(PermissionPackageFirst permissionPackageFirst) {
-
-                                    }
-                                    @Override
-                                    public void successfulScanningResponse(ScannerPackage scannerPackage) {
-                                        Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
-                                        if (applicationInForeground()){
-                                            if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
-                                                Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                                                EventBusMsg<ScannerPackage> message =
-                                                        new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
-                                                EventBus.getDefault().postSticky(message);
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void scanningNetworkEnd() {
-                                        Log.d(LOG_TAG, "scanningNetworkEnd");
-                                        EventBusMsg<String> message =
-                                                new EventBusMsg<String>(EventBusMsg.TO_APP, EventBusMsg.SCANNING_NETWORK_END, null);
-                                        EventBus.getDefault().postSticky(message);
-                                    }
-
-                                    @Override
-                                    public void errorScanning(Throwable throwable) {
-                                        Log.d(LOG_TAG, "Error: " + throwable.getMessage());
-                                        throwable.printStackTrace();
-                                    }
-
-                                    @Override
-                                    public void errorResponse(Throwable throwable) {
-
-                                    }
-                                    @Override
-                                    public void errorGetPermission(PermissionPackageFirst permissionPackageFirst) {
-
-                                    }
-                                });
+                                .takeRequest(requestServiceCallback);
                     } catch (IOException e) {
                         e.printStackTrace();
                         Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
@@ -132,6 +84,65 @@ public class BackgroundService extends Service {
         }
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }
+
+    private RequestServiceInterface requestServiceCallback = new RequestServiceInterface() {
+        @Override
+        public void successfulScanningResponse(ScannerPackage scannerPackage) {
+            Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
+            if (applicationInForeground()){
+                if (!scannerPackage.getServerIp().equals(AppApplication.deviceIp)){
+                    Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
+                    EventBusMsg<ScannerPackage> message =
+                            new EventBusMsg<ScannerPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_SCANNER, scannerPackage);
+                    EventBus.getDefault().postSticky(message);
+                }
+            }
+        }
+        @Override
+        public void scanningNetworkEnd() {
+            Log.d(LOG_TAG, "scanningNetworkEnd");
+            EventBusMsg<String> message =
+                    new EventBusMsg<String>(EventBusMsg.TO_APP, EventBusMsg.SCANNING_NETWORK_END, null);
+            EventBus.getDefault().postSticky(message);
+        }
+
+        @Override
+        public void errorScanning(Throwable throwable) {
+            Log.d(LOG_TAG, "Error: " + throwable.getMessage());
+            throwable.printStackTrace();
+        }
+
+        @Override
+        public void errorResponse(Throwable throwable) {
+
+        }
+
+        @Override
+        public void successfulGetPermission(PermissionPackage permissionPackage) {
+            if (permissionPackage.getIsAllowed() == null){
+                try {
+                    Thread.sleep(1000);
+                    Log.d(LOG_TAG, "Did not got permission");
+                    NetworkConnection.getConnectionRepository().getPermission(requestServiceCallback, permissionPackage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.d(LOG_TAG, "Got permission");
+                EventBusMsg<PermissionPackage> message =
+                        new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
+                EventBus.getDefault().postSticky(message);
+            }
+        }
+
+        @Override
+        public void errorGetPermission(PermissionPackage permissionPackage) {
+
+        }
+    };
+
 
     public boolean applicationInForeground() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

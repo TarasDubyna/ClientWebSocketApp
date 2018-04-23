@@ -22,23 +22,6 @@ public class TimeUtils {
     public static void startTimer(int milliseconds, TimerTask timerTaskCallback){
         Timer timer = new Timer();
         timer.schedule(timerTaskCallback, milliseconds);
-
-        /*
-        timer.scheduleAtFixedRate(new TimerTask() {
-
-            @Override
-            public void run() {
-                final float value = Utils.randInt(-10, 35);
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i("Info", "Value: " + value);
-                    }
-                });
-            }
-        }, 0, milliseconds);
-        */
     }
 
 }

@@ -6,12 +6,13 @@ import java.io.IOException;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
-import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
+import taras.clientwebsocketapp.utils.TimeUtils;
 
 public class RequestServiceManager implements Runnable {
 
@@ -43,8 +44,8 @@ public class RequestServiceManager implements Runnable {
             case EventBusMsg.PACKAGE_SCANNER:
                 scanningNetwork();
                 break;
-            case EventBusMsg.PACKAGE_PERMISSION_FIRST:
-                takePermissionFirstStage();
+            case EventBusMsg.PACKAGE_PERMISSION:
+                takePermission();
 
 
 
@@ -73,9 +74,13 @@ public class RequestServiceManager implements Runnable {
     }
 
 
-    private void takePermissionFirstStage() throws IOException {
-        Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackageFirst)message.getModel()).toJson());
-        NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, (PermissionPackageFirst) message.getModel());
+    private void takePermission() throws IOException {
+        Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackage)message.getModel()).toJson());
+        PermissionPackage permissionPackage = (PermissionPackage) message.getModel();
+        if (permissionPackage.getStartTimestamp() == null){
+            permissionPackage.setStartTimestamp(String.valueOf(TimeUtils.getCurrentTime()));
+        }
+        NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, permissionPackage);
     }
 
     private void scanningNetwork() throws IOException {

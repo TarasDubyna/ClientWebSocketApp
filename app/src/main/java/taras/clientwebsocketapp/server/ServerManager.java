@@ -8,8 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import taras.clientwebsocketapp.AppApplication;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.Package;
-import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.utils.Constants;
@@ -64,7 +65,7 @@ public class ServerManager {
     }
     private Package getPackageFromJson(){
         switch (packageType){
-            case Constants.PACKAGE_TYPE_PERMISSION_FIRST_STAGE:
+            case Constants.PACKAGE_TYPE_PERMISSION:
                 return GsonUtils.parsePermissionPackageFirst(requestJson);
             case Constants.PACKAGE_TYPE_SCANNING:
                 return GsonUtils.parseScannerPackage(requestJson);
@@ -76,8 +77,8 @@ public class ServerManager {
         switch (packageType){
             case Constants.PACKAGE_TYPE_SCANNING:
                 return createScannerPackageResponse((ScannerPackage) requestPackage).toJson();
-            case Constants.PACKAGE_TYPE_PERMISSION_FIRST_STAGE:
-                return createPackagePermissionFirstResponse((PermissionPackageFirst) requestPackage).toJson();
+            case Constants.PACKAGE_TYPE_PERMISSION:
+                return createPackagePermissionResponse((PermissionPackage) requestPackage).toJson();
 
         }
         return null;
@@ -88,18 +89,19 @@ public class ServerManager {
         scannerPackage.setServerName(PreferenceUtils.getDeviceName());
         return scannerPackage;
     }
-    private ServerStatePackage createPackagePermissionFirstResponse(PermissionPackageFirst pack){
-        ServerStatePackage serverState = new ServerStatePackage(pack);
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                EventBusMsg<PermissionPackageFirst> message =
-                        new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_APP,
-                                EventBusMsg.PACKAGE_PERMISSION_FIRST, pack);
-                EventBus.getDefault().postSticky(message);
-            }
-        });
-        return serverState;
+    private PermissionPackage createPackagePermissionResponse(PermissionPackage pack){
+        if (!PermissionManager.getPermissionManager().isPermissionConsist(pack)){
+            mainHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    EventBusMsg<PermissionPackage> message =
+                            new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP,
+                                    EventBusMsg.PACKAGE_PERMISSION, pack);
+                    EventBus.getDefault().postSticky(message);
+                }
+            });
+        }
+        return pack;
     }
 
 }

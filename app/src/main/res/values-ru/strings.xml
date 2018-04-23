@@ -35,4 +35,7 @@
     <string name="select_device">Выберите устройство</string>
     <string name="devices">Устройства</string>
     <string name="send">Отправить</string>
+    <string name="permission_title">Разрешение на передачу данных</string>
+    <string name="accept">Подтвердить</string>
+    <string name="cancel">Отменить</string>
 </resources>

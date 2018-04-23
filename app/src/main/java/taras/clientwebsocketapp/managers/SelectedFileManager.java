@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 
 /**
@@ -152,15 +152,15 @@ public class SelectedFileManager {
             filesName.add(file.getName());
         }
 
-        PermissionPackageFirst permissionPackageFirst = new PermissionPackageFirst();
-        permissionPackageFirst.setFilesName(filesName);
-        permissionPackageFirst.setServerIp(selectedDevicesIp.get(0));
+        PermissionPackage permissionPackage = new PermissionPackage();
+        permissionPackage.setFilesName(filesName);
+        permissionPackage.setServerIp(selectedDevicesIp.get(0));
 
-        Log.d("myLogs", "sendDataToService: " + permissionPackageFirst.toJson());
+        Log.d("myLogs", "sendDataToService: " + permissionPackage.toJson());
 
         removeAllSelectedFiles();
-        EventBusMsg<PermissionPackageFirst> message =
-                new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, permissionPackageFirst);
+        EventBusMsg<PermissionPackage> message =
+                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, permissionPackage);
         EventBus.getDefault().postSticky(message);
 
     }
