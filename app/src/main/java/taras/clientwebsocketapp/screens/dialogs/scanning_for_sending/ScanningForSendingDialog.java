@@ -12,7 +12,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,10 +20,6 @@ import android.widget.TextView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.IllegalFormatCodePointException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,13 +27,12 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
 import taras.clientwebsocketapp.utils.AnimationUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.NetworkUtils;
 
 public class ScanningForSendingDialog extends DialogFragment implements RecyclerClickListener {
 
@@ -68,8 +62,8 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         initScanningRecycler();
-        testData();
-        //scanningNetwork();
+        //testData();
+        scanningNetwork();
 
     }
 
@@ -162,18 +156,20 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     @Override
     public void onRowClicked(int position) {
         if (!adapter.isEmpty()){
-            llSend.setVisibility(View.VISIBLE);
-        } else {
             llSend.setVisibility(View.GONE);
+        } else {
+            llSend.setVisibility(View.VISIBLE);
         }
     }
 
     @OnClick(R.id.llSend)
     void sendPermission(View view){
-        PermissionPackage permissionPackage = new PermissionPackage();
-        permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
-        EventBusMsg<PermissionPackage> message =
-                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
+        PermissionPackageFirst permissionPackageFirst = new PermissionPackageFirst();
+        permissionPackageFirst.setServerIp(adapter.getSelectedDevices().get(0).getServerIp());
+        permissionPackageFirst.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
+
+        EventBusMsg<PermissionPackageFirst> message =
+                new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackageFirst);
         EventBus.getDefault().postSticky(message);
     }
 

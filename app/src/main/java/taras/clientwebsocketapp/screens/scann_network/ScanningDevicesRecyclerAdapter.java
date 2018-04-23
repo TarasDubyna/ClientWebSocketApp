@@ -2,6 +2,7 @@ package taras.clientwebsocketapp.screens.scann_network;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -70,6 +71,10 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
     }
 
     public boolean isEmpty(){
+        if (selectedDevices == null){
+            selectedDevices = new ArrayList<>();
+        }
+        Log.d("myLogs", "selectedDevices.size: " + selectedDevices.size());
         if(selectedDevices.size() == 0){
             return true;
         } else {
@@ -93,17 +98,15 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
         if (selectedDevices == null){
             selectedDevices = new ArrayList<>();
         }
-        if (MAX_SELECTED_ITEMS == 1){
-            selectedDevices.clear();
-            selectedDevices.add(scannerPackage);
+
+        if (selectedDevices.contains(scannerPackage)){
+            selectedDevices.remove(scannerPackage);
         } else {
-            if (selectedDevices.contains(scannerPackage)){
-                selectedDevices.remove(scannerPackage);
-            } else {
-                selectedDevices.add(scannerPackage);
-            }
+            selectedDevices.add(scannerPackage);
         }
     }
 
-
+    public List<ScannerPackage> getSelectedDevices() {
+        return selectedDevices;
+    }
 }

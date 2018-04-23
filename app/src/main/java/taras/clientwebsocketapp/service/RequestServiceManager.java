@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
@@ -45,15 +45,16 @@ public class RequestServiceManager implements Runnable {
                 break;
             case EventBusMsg.PACKAGE_PERMISSION_FIRST:
                 takePermissionFirstStage();
+
+
+
             case EventBusMsg.SERVER_START:
                 startServer();
                 break;
             case EventBusMsg.SERVER_STOP:
                 stopServer();
                 break;
-
             case EventBusMsg.PACKAGE_SERVER_STATE:
-
                 break;
         }
     }
@@ -73,8 +74,8 @@ public class RequestServiceManager implements Runnable {
 
 
     private void takePermissionFirstStage() throws IOException {
-        Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackage)message.getModel()).toJson());
-        NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, (PermissionPackage) message.getModel());
+        Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackageFirst)message.getModel()).toJson());
+        NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, (PermissionPackageFirst) message.getModel());
     }
 
     private void scanningNetwork() throws IOException {

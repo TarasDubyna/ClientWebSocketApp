@@ -3,7 +3,8 @@ package taras.clientwebsocketapp.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
+import taras.clientwebsocketapp.model.PermissionPackageSecond;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
 
@@ -19,10 +20,15 @@ public class GsonUtils {
         ScannerPackage scannerPackage = gson.fromJson(json, ScannerPackage.class);
         return scannerPackage;
     }
-    public static PermissionPackage parsePermissionPackage(String json){
+    public static PermissionPackageFirst parsePermissionPackageFirst(String json){
         Gson gson = new Gson();
-        PermissionPackage permissionPackage = gson.fromJson(json, PermissionPackage.class);
-        return permissionPackage;
+        PermissionPackageFirst permissionPackageFirst = gson.fromJson(json, PermissionPackageFirst.class);
+        return permissionPackageFirst;
+    }
+    public static PermissionPackageSecond parsePermissionPackageSecond(String json){
+        Gson gson = new Gson();
+        PermissionPackageSecond permissionPackageSecond = gson.fromJson(json, PermissionPackageSecond.class);
+        return permissionPackageSecond;
     }
     public static ServerStatePackage parseServerStatePackage(String json){
         Gson gson = new Gson();
@@ -36,10 +42,15 @@ public class GsonUtils {
                 .excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(scannerPackage);
     }
-    public static String createJsonPermissionPackage(PermissionPackage permissionPackage){
+    public static String createJsonPermissionPackageFirst(PermissionPackageFirst permissionPackageFirst){
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
-        return gson.toJson(permissionPackage);
+        return gson.toJson(permissionPackageFirst);
+    }
+    public static String createJsonPermissionPackageSecond(PermissionPackageSecond permissionPackageSecond){
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(permissionPackageSecond);
     }
     public static String createJsonServerStatePackage(ServerStatePackage serverStatePackage){
         Gson gson = new GsonBuilder()

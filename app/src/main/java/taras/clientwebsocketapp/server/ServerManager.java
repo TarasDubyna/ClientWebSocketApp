@@ -1,5 +1,6 @@
 package taras.clientwebsocketapp.server;
 
+import android.os.Handler;
 import android.util.Log;
 
 import org.greenrobot.eventbus.EventBus;
@@ -8,7 +9,7 @@ import org.json.JSONObject;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.model.Package;
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.utils.Constants;
@@ -23,6 +24,7 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
 public class ServerManager {
     private static final String LOG_TAG = ServerManager.class.getName();
 
+    private Handler mainHandler;
 
     private String requestJson;
 
@@ -30,7 +32,8 @@ public class ServerManager {
     private Package requestPackage;
 
 
-    public ServerManager() {
+    public ServerManager(Handler mainHandler) {
+        this.mainHandler = mainHandler;
     }
 
     public ServerManager getRequest(String requestJson){
@@ -61,8 +64,8 @@ public class ServerManager {
     }
     private Package getPackageFromJson(){
         switch (packageType){
-            case Constants.PACKAGE_TYPE_PERMISSION:
-                return GsonUtils.parsePermissionPackage(requestJson);
+            case Constants.PACKAGE_TYPE_PERMISSION_FIRST_STAGE:
+                return GsonUtils.parsePermissionPackageFirst(requestJson);
             case Constants.PACKAGE_TYPE_SCANNING:
                 return GsonUtils.parseScannerPackage(requestJson);
         }
@@ -73,8 +76,9 @@ public class ServerManager {
         switch (packageType){
             case Constants.PACKAGE_TYPE_SCANNING:
                 return createScannerPackageResponse((ScannerPackage) requestPackage).toJson();
-            case Constants.PACKAGE_TYPE_PERMISSION:
-                return createPermissionPackageResponse((PermissionPackage) requestPackage).toJson();
+            case Constants.PACKAGE_TYPE_PERMISSION_FIRST_STAGE:
+                return createPackagePermissionFirstResponse((PermissionPackageFirst) requestPackage).toJson();
+
         }
         return null;
     }
@@ -84,12 +88,17 @@ public class ServerManager {
         scannerPackage.setServerName(PreferenceUtils.getDeviceName());
         return scannerPackage;
     }
-    private ServerStatePackage createPermissionPackageResponse(PermissionPackage pack){
+    private ServerStatePackage createPackagePermissionFirstResponse(PermissionPackageFirst pack){
         ServerStatePackage serverState = new ServerStatePackage(pack);
-        EventBusMsg<ServerStatePackage> message =
-                new EventBusMsg<ServerStatePackage>(EventBusMsg.TO_APP,
-                        EventBusMsg.PACKAGE_SERVER_STATE, serverState);
-        EventBus.getDefault().postSticky(message);
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                EventBusMsg<PermissionPackageFirst> message =
+                        new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_APP,
+                                EventBusMsg.PACKAGE_PERMISSION_FIRST, pack);
+                EventBus.getDefault().postSticky(message);
+            }
+        });
         return serverState;
     }
 

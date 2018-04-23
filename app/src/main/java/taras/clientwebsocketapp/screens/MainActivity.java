@@ -307,8 +307,9 @@ public class MainActivity extends AppCompatActivity
     public void onNewPostCreated(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
             switch (ebMessage.getCodeType()){
-                case EventBusMsg.PACKAGE_SERVER_STATE:
-                    Log.d(LOG_TAG, "PACKAGE_SERVER_STATE");
+                case EventBusMsg.PACKAGE_PERMISSION_FIRST:
+                    Toast.makeText(this, "PACKAGE_PERMISSION_FIRST", Toast.LENGTH_SHORT).show();
+                    Log.d(LOG_TAG, "PACKAGE_PERMISSION_FIRST");
                     break;
                 case EventBusMsg.CHECK_IS_SERVER_WORK:
                     setSwitchState((Boolean) ebMessage.getModel());

@@ -2,11 +2,9 @@ package taras.clientwebsocketapp.network;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TimerTask;
 
-import taras.clientwebsocketapp.model.PermissionPackage;
-import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.utils.NetworkUtils;
 import taras.clientwebsocketapp.utils.TimeUtils;
 
@@ -53,7 +51,7 @@ public class NetworkDataRepository implements ConnectionRepository {
     }
 
     @Override
-    public void getPermission(RequestServiceInterface requestServiceInterface, PermissionPackage permissionPackage) throws IOException {
-        new Thread(() -> NetworkOperations.getPermission(permissionPackage, requestServiceInterface)).start();
+    public void getPermission(RequestServiceInterface requestServiceInterface, PermissionPackageFirst permissionPackageFirst) throws IOException {
+        new Thread(() -> NetworkOperations.getPermission(permissionPackageFirst, requestServiceInterface)).start();
     }
 }

@@ -2,7 +2,6 @@ package taras.clientwebsocketapp.network;
 
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,12 +10,8 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.model.PermissionPackage;
-import taras.clientwebsocketapp.server.ServerManager;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.ConverterUtils;
-import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
 /**
@@ -88,18 +83,18 @@ public class NetworkOperations {
         }
     }
 
-    public static void getPermission(PermissionPackage permissionPackage, RequestServiceInterface scanningInterface) {
+    public static void getPermission(PermissionPackageFirst permissionPackageFirst, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
-            socket = new Socket(InetAddress.getByName(permissionPackage.getServerIp()), Constants.SERVER_PORT);
+            socket = new Socket(InetAddress.getByName(permissionPackageFirst.getServerIp()), Constants.SERVER_PORT);
             while (true) {
-                Log.d(LOG_TAG, "WatchSocket: open socket - " + permissionPackage.getServerIp());
+                Log.d(LOG_TAG, "WatchSocket: open socket - " + permissionPackageFirst.getServerIp());
 
                 // request to server
                 try {
-                    Log.d(LOG_TAG, "WatchSocket: send message - " + permissionPackage.getServerIp());
+                    Log.d(LOG_TAG, "WatchSocket: send message - " + permissionPackageFirst.getServerIp());
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(permissionPackage.toJson());
+                    out.println(permissionPackageFirst.toJson());
                 } catch (Exception e) {}
 
                 // check thread, rake response
@@ -108,17 +103,17 @@ public class NetworkOperations {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     char[] buffer = new char[4096];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + permissionPackage.getServerIp());
+                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + permissionPackageFirst.getServerIp());
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
-                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + permissionPackage.getServerIp());
-                        scanningInterface.successfulGetPermissionFirstStage(permissionPackage);
+                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + permissionPackageFirst.getServerIp());
+                        scanningInterface.successfulGetPermissionFirstStage(permissionPackageFirst);
                     }
                 }
             }
         } catch (IOException e) {
-            Log.d(LOG_TAG, "WatchSocket: IOException - " + permissionPackage.getServerIp());
+            Log.d(LOG_TAG, "WatchSocket: IOException - " + permissionPackageFirst.getServerIp());
             try {
                 if (socket != null){
                     socket.close();
@@ -129,7 +124,7 @@ public class NetworkOperations {
             e.printStackTrace();
             scanningInterface.errorResponse(e);
         } catch (Exception e) {
-            Log.d(LOG_TAG, "WatchSocket: Exception - " + permissionPackage.getServerIp());
+            Log.d(LOG_TAG, "WatchSocket: Exception - " + permissionPackageFirst.getServerIp());
             try {
                 if (socket != null){
                     socket.close();

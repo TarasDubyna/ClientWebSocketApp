@@ -5,23 +5,22 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.ExpandableListView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.IOException;
 import java.util.List;
+
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.PermissionPackageFirst;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
-import taras.clientwebsocketapp.utils.ConverterUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 04.02.2018.
@@ -33,6 +32,9 @@ public class BackgroundService extends Service {
     public static final String SERVICE_ACTION = "SERVICE_ACTION";
 
     private Server server;
+
+    final Handler mainHandler = new Handler();
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -47,7 +49,7 @@ public class BackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-        server = Server.getInstance();
+        server = Server.getInstance(mainHandler);
 
         EventBusMsg<Boolean> message = new EventBusMsg<Boolean>(EventBusMsg.TO_APP, EventBusMsg.CHECK_IS_SERVER_WORK, server.isServerIsRun());
         EventBus.getDefault().postSticky(message);
@@ -72,16 +74,16 @@ public class BackgroundService extends Service {
                                 .setServer(server)
                                 .takeRequest(new RequestServiceInterface() {
                                     @Override
-                                    public void successfulGetPermissionFirstStage(PermissionPackage permissionPackage) {
+                                    public void successfulGetPermissionFirstStage(PermissionPackageFirst permissionPackageFirst) {
                                         if (applicationInForeground()){
                                             Log.d(LOG_TAG, "successfulScanningResponse, send data to activity");
-                                            EventBusMsg<PermissionPackage> message =
-                                                    new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackage);
+                                            EventBusMsg<PermissionPackageFirst> message =
+                                                    new EventBusMsg<PermissionPackageFirst>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION_FIRST, permissionPackageFirst);
                                             EventBus.getDefault().postSticky(message);
                                         }
                                     }
                                     @Override
-                                    public void successfulGetPermissionSecondStage(PermissionPackage permissionPackage) {
+                                    public void successfulGetPermissionSecondStage(PermissionPackageFirst permissionPackageFirst) {
 
                                     }
                                     @Override
@@ -116,7 +118,7 @@ public class BackgroundService extends Service {
 
                                     }
                                     @Override
-                                    public void errorGetPermission(PermissionPackage permissionPackage) {
+                                    public void errorGetPermission(PermissionPackageFirst permissionPackageFirst) {
 
                                     }
                                 });

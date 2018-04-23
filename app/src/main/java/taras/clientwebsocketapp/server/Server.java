@@ -1,9 +1,7 @@
 package taras.clientwebsocketapp.server;
 
+import android.os.Handler;
 import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import taras.clientwebsocketapp.utils.Constants;
-import taras.clientwebsocketapp.utils.GsonUtils;
 
 public class Server {
     private static final String LOG_TAG = "myLogs";
@@ -23,13 +20,16 @@ public class Server {
 
     private static Server server;
 
+    private Handler mainHandler;
 
-    public Server() {
+
+    public Server(Handler mainHandler) {
+        this.mainHandler = mainHandler;
     }
 
-    public static Server getInstance(){
+    public static Server getInstance(Handler mainHandler){
         if (server == null){
-            server = new Server();
+            server = new Server(mainHandler);
         }
         return server;
     }
@@ -73,7 +73,7 @@ public class Server {
                                 InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 
-                                ServerManager serverManager = new ServerManager();
+                                ServerManager serverManager = new ServerManager(mainHandler);
                                 serverManager.getRequest(getRequestFromClient(inputStreamReader));
 
                                 sendResponse(outputStreamWriter, serverManager.returnResponse());

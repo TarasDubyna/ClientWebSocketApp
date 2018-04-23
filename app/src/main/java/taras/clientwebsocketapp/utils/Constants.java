@@ -10,7 +10,8 @@ public class Constants {
     public static final int SERVER_PORT = 20000;
 
     public static final String PACKAGE_TYPE_SCANNING = "package_type_scanning";
-    public static final String PACKAGE_TYPE_PERMISSION = "package_type_permission";
+    public static final String PACKAGE_TYPE_PERMISSION_FIRST_STAGE = "package_type_permission_first_stage";
+    public static final String PACKAGE_TYPE_PERMISSION_SECOND_STAGE = "package_type_permission_second_stage";
     public static final String PACKAGE_TYPE_SERVER_STATE = "package_type_server_state";
 
     //EventBus
