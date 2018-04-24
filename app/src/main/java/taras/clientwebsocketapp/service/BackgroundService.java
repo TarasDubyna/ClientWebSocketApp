@@ -22,6 +22,7 @@ import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 04.02.2018.
@@ -59,6 +60,7 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         server.stopServer();
+        PreferenceUtils.saveRunningServerState(false);
         EventBus.getDefault().unregister(this);
     }
 
@@ -119,6 +121,7 @@ public class BackgroundService extends Service {
 
         @Override
         public void successfulGetPermission(PermissionPackage permissionPackage) {
+            Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.getIsAllowed() == null){
                 try {
                     Thread.sleep(1000);

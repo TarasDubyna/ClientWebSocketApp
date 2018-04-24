@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
@@ -30,7 +31,8 @@ public class NotificationsManager {
                 .setAutoCancel(false)
                 .build();
     }
-    public static void removeServerNotification(Context context){
+    public static void removeServerNotification(){
+        Context context = AppApplication.appContext;
         android.app.NotificationManager notificationManager = (android.app.NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
     }

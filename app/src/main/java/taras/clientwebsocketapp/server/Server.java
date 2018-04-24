@@ -9,7 +9,9 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class Server {
     private static final String LOG_TAG = "myLogs";
@@ -43,9 +45,12 @@ public class Server {
     public void stopServer(){
         serverState = false;
         try {
+            NotificationsManager.removeServerNotification();
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException ex){
+            PreferenceUtils.saveRunningServerState(false);
         }
     }
 

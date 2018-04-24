@@ -20,6 +20,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.w3c.dom.Text;
 
 import java.security.acl.Permission;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,11 +37,15 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
 
 public class CheckPermissionDialog extends DialogFragment {
 
+    private static final int PERMISSION_TIME = 10000;
+    private int time = 10;
+
     @BindView(R.id.tvName) TextView tvName;
     @BindView(R.id.tvIp) TextView tvIp;
     @BindView(R.id.rvFilesToSend) RecyclerView rvFilesToSend;
     @BindView(R.id.tvAccept) TextView tvAccept;
     @BindView(R.id.tvDeny) TextView tvDeny;
+    @BindView(R.id.tvTimer) TextView tvTimer;
 
 
     private ScanningDevicesRecyclerAdapter adapter;
@@ -51,7 +57,6 @@ public class CheckPermissionDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
         Dialog dialog = getDialog();
         if (dialog != null) {
             WindowManager.LayoutParams lWindowParams = new WindowManager.LayoutParams();
@@ -63,8 +68,21 @@ public class CheckPermissionDialog extends DialogFragment {
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
         initScanningRecycler();
-        //testData();
-        //scanningNetwork();
+        tvTimer.setText(String.valueOf(10));
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                time = time - 1;
+                tvTimer.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        tvTimer.setText(String.valueOf(time));
+                    }
+                });
+            }
+        },1000, PERMISSION_TIME);
 
     }
 
@@ -73,13 +91,13 @@ public class CheckPermissionDialog extends DialogFragment {
         View dialogView = inflater.inflate(R.layout.dialog_check_permission,container, false);
         unbinder = ButterKnife.bind(this, dialogView);
 
+
         return dialogView;
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
