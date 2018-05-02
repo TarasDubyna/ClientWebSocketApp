@@ -33,6 +33,21 @@ public class PermissionManager {
             }
         }
     }
+
+    public void setAcceptPermission(PermissionPackage permissionPackage, boolean isAllowed){
+        for (PermissionPackage pack: permissionPackageList){
+            if (pack.getFilesName().equals(permissionPackage.getFilesName())
+                    && pack.getClientIp().equals(permissionPackage.getClientIp())){
+                if (isAllowed){
+                    permissionPackage.setIsAllowed("true");
+                } else {
+                    permissionPackage.setIsAllowed("false");
+                }
+
+                break;
+            }
+        }
+    }
     public boolean isPermissionConsist(PermissionPackage permissionPackage){
         for (PermissionPackage pack: permissionPackageList){
             if (pack.getFilesName().equals(permissionPackage.getFilesName())

@@ -68,7 +68,7 @@ public class RequestServiceManager implements Runnable {
     }
     private void stopServer(){
         server.stopServer();
-        NotificationsManager.removeServerNotification(this.service);
+        NotificationsManager.removeServerNotification();
         PreferenceUtils.saveRunningServerState(false);
         service.stopForeground(true);
     }

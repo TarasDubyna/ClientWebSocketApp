@@ -7,6 +7,7 @@
     android:orientation="vertical">
     <android.support.v7.widget.CardView
         android:layout_width="300dp"
+        android:layout_gravity="center"
         android:layout_height="wrap_content"
         app:cardElevation="3dp">
         <LinearLayout
@@ -29,7 +30,12 @@
                         android:gravity="center_horizontal"
                         android:text="@string/permission_title"
                         android:textColor="@color/white"
+                        android:layout_marginBottom="5dp"
                         android:textSize="20sp" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/white"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -53,9 +59,11 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="5dp">
+
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="242dp"
                             android:layout_height="wrap_content"
                             android:gravity="start"
                             android:text="IP:"
@@ -69,7 +77,10 @@
                             android:textColor="@color/white"
                             android:textSize="16sp" />
                     </LinearLayout>
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/white"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -87,7 +98,10 @@
                         android:layout_marginBottom="5dp"
                         android:layout_height="150dp">
                     </android.support.v7.widget.RecyclerView>
-
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/white"/>
                     <TextView
                         android:id="@+id/tvTimer"
                         android:layout_width="match_parent"
@@ -95,7 +109,7 @@
                         android:layout_margin="5dp"
                         android:textStyle="bold"
                         android:gravity="center_horizontal"
-                        tools:text="10"
+                        android:text="10"
                         android:textColor="@color/white"
                         android:textSize="20sp" />
                     <View
@@ -106,22 +120,38 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-                        <TextView
+                        <!--<TextView
                             android:id="@+id/tvAccept"
                             android:text="@string/accept"
                             android:gravity="center"
-                            android:textColor="@drawable/selector_color_w_b"
+                            android:textColor="@color/white"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="40dp" />-->
+                        <Button
+                            android:id="@+id/tvAccept"
+                            android:text="@string/accept"
+                            android:gravity="center"
+                            android:textColor="@color/white"
                             android:layout_width="0dp"
                             android:layout_weight="1"
                             android:layout_height="40dp" />
-                        <TextView
+                        <Button
                             android:id="@+id/tvDeny"
                             android:gravity="center"
                             android:text="@string/cancel"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:textColor="@drawable/selector_color_w_b"
+                            android:textColor="@color/white"
                             android:layout_height="40dp" />
+                        <!--<TextView
+                            android:id="@+id/tvDeny"
+                            android:gravity="center"
+                            android:text="@string/cancel"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:textColor="@color/white"
+                            android:layout_height="40dp" />-->
                     </LinearLayout>
 
                 </LinearLayout>

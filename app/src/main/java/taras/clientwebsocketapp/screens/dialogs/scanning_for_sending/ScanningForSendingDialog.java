@@ -2,6 +2,7 @@ package taras.clientwebsocketapp.screens.dialogs.scanning_for_sending;
 
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -26,6 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -88,7 +90,7 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     }
 
     private void initScanningRecycler(){
-        adapter = new ScanningDevicesRecyclerAdapter(getContext(), this,null);
+        adapter = new ScanningDevicesRecyclerAdapter(this,null);
         rvDevices.setHasFixedSize(true);
         rvDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvDevices.setAdapter(adapter);
@@ -108,6 +110,11 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         }
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        adapter.clear();
+        super.onDismiss(dialog);
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getScanningResult(EventBusMsg<Object> ebMessage) {
@@ -167,6 +174,9 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         PermissionPackage permissionPackage = new PermissionPackage();
         permissionPackage.setServerIp(adapter.getSelectedDevices().get(0).getServerIp());
         permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
+
+        PermissionManager.getPermissionManager().addToPermissionManager(permissionPackage);
+        dismiss();
 
         EventBusMsg<PermissionPackage> message =
                 new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);

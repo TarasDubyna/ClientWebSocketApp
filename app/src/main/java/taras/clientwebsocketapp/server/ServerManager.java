@@ -91,6 +91,7 @@ public class ServerManager {
     }
     private PermissionPackage createPackagePermissionResponse(PermissionPackage pack){
         if (!PermissionManager.getPermissionManager().isPermissionConsist(pack)){
+            PermissionManager.getPermissionManager().addToPermissionManager(pack);
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {

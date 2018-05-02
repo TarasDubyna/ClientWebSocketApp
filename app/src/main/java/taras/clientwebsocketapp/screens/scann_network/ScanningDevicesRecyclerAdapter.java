@@ -22,15 +22,13 @@ public class ScanningDevicesRecyclerAdapter extends RecyclerView.Adapter<Scannin
 
     private static final int MAX_SELECTED_ITEMS = 1;
 
-    private Context mContext;
     private List<ScannerPackage> scannerPackagesList;
     private RecyclerClickListener clickListener;
 
     private List<ScannerPackage> selectedDevices;
 
 
-    public ScanningDevicesRecyclerAdapter(Context mContext, RecyclerClickListener clickListener ,List<ScannerPackage> scannerPackagesList) {
-        this.mContext = mContext;
+    public ScanningDevicesRecyclerAdapter(RecyclerClickListener clickListener ,List<ScannerPackage> scannerPackagesList) {
         this.clickListener = clickListener;
         initDataList(scannerPackagesList);
     }

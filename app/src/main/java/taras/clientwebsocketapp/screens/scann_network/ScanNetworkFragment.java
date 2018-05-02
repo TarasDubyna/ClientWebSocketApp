@@ -119,7 +119,7 @@ public class ScanNetworkFragment extends Fragment implements RecyclerClickListen
     }
 
     private void initScanningRecycler(){
-        devicesRecyclerAdapter = new ScanningDevicesRecyclerAdapter(getContext(), this, null);
+        devicesRecyclerAdapter = new ScanningDevicesRecyclerAdapter(this, null);
 
         rvNetworkDevices.setHasFixedSize(true);
         rvNetworkDevices.setLayoutManager(new GridLayoutManager(getContext(), 1));

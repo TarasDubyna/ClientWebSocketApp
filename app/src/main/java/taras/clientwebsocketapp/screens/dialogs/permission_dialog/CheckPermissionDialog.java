@@ -1,7 +1,9 @@
 package taras.clientwebsocketapp.screens.dialogs.permission_dialog;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -22,12 +24,14 @@ import org.w3c.dom.Text;
 import java.security.acl.Permission;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -37,8 +41,8 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
 
 public class CheckPermissionDialog extends DialogFragment {
 
+    private static final String LOG_TAG = CheckPermissionDialog.class.getSimpleName();
     private static final int PERMISSION_TIME = 10000;
-    private int time = 10;
 
     @BindView(R.id.tvName) TextView tvName;
     @BindView(R.id.tvIp) TextView tvIp;
@@ -47,8 +51,10 @@ public class CheckPermissionDialog extends DialogFragment {
     @BindView(R.id.tvDeny) TextView tvDeny;
     @BindView(R.id.tvTimer) TextView tvTimer;
 
+    private CountDownTimer countDownTimer;
 
-    private ScanningDevicesRecyclerAdapter adapter;
+
+    private PermissionFilesRecyclerAdapter adapter;
 
     private PermissionPackage permissionPackage;
 
@@ -67,31 +73,27 @@ public class CheckPermissionDialog extends DialogFragment {
             dialog.getWindow().setAttributes(lWindowParams);
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
-        initScanningRecycler();
-        tvTimer.setText(String.valueOf(10));
-
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                time = time - 1;
-                tvTimer.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        tvTimer.setText(String.valueOf(time));
-                    }
-                });
+        fillData();
+        countDownTimer = new CountDownTimer(PERMISSION_TIME, 1000) { // adjust the milli seconds here
+            public void onTick(long millisUntilFinished) {
+                String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
+                tvTimer.setText(seconds);
             }
-        },1000, PERMISSION_TIME);
 
+            public void onFinish() {
+                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                dismiss();
+                Log.d(LOG_TAG, "countDownTimer, onFinish");
+                //todo end time to send permission
+            }
+        }.start();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View dialogView = inflater.inflate(R.layout.dialog_check_permission,container, false);
         unbinder = ButterKnife.bind(this, dialogView);
-
-
         return dialogView;
     }
 
@@ -112,6 +114,13 @@ public class CheckPermissionDialog extends DialogFragment {
         rvFilesToSend.setAdapter(adapter);
     }
 
+    private void fillData(){
+        tvName.setText(permissionPackage.getClientName());
+        tvIp.setText(permissionPackage.getClientIp());
+        adapter = new PermissionFilesRecyclerAdapter(permissionPackage.getFilesName());
+        initScanningRecycler();
+    }
+
     public void setPermissionPackage(PermissionPackage permissionPackage) {
         this.permissionPackage = permissionPackage;
     }
@@ -120,12 +129,19 @@ public class CheckPermissionDialog extends DialogFragment {
     void onClick(View view){
         switch (view.getId()){
             case R.id.tvAccept:
+                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, true);
                 break;
             case R.id.tvDeny:
+                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
                 break;
         }
     }
 
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+        super.onDismiss(dialog);
+    }
 
     /*
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
