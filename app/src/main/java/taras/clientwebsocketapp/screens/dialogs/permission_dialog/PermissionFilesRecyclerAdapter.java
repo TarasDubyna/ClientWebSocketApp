@@ -12,9 +12,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.screens.view_holders.PermissionFileHolder;
 import taras.clientwebsocketapp.screens.view_holders.ScanningDeviceHolder;
 
-public class PermissionFilesRecyclerAdapter extends RecyclerView.Adapter<PermissionFilesRecyclerAdapter.PermissionFileHolder> {
+public class PermissionFilesRecyclerAdapter extends RecyclerView.Adapter<PermissionFileHolder> {
 
     private List<String> filesList;
 
@@ -37,20 +38,4 @@ public class PermissionFilesRecyclerAdapter extends RecyclerView.Adapter<Permiss
     public int getItemCount() {
         return filesList.size();
     }
-
-    class PermissionFileHolder extends RecyclerView.ViewHolder{
-
-        @BindView(R.id.tvFileName) TextView tvFileName;
-
-        public PermissionFileHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-        }
-
-        public void bind(String fileName){
-            tvFileName.setText(fileName);
-        }
-
-    }
-
 }

@@ -22,10 +22,10 @@ public class PermissionManager {
         return permissionManager;
     }
 
-    public void addToPermissionManager(PermissionPackage permissionPackage){
+    public synchronized void addToPermissionManager(PermissionPackage permissionPackage){
         this.permissionPackageList.add(permissionPackage);
     }
-    public void removeFromPermissionManager(PermissionPackage permissionPackage){
+    public synchronized void removeFromPermissionManager(PermissionPackage permissionPackage){
         for (PermissionPackage pack: permissionPackageList){
             if (isPermissionConsist(permissionPackage)){
                 permissionPackageList.remove(pack);
@@ -34,7 +34,7 @@ public class PermissionManager {
         }
     }
 
-    public void setAcceptPermission(PermissionPackage permissionPackage, boolean isAllowed){
+    public synchronized void setAcceptPermission(PermissionPackage permissionPackage, boolean isAllowed){
         for (PermissionPackage pack: permissionPackageList){
             if (pack.getFilesName().equals(permissionPackage.getFilesName())
                     && pack.getClientIp().equals(permissionPackage.getClientIp())){
@@ -48,7 +48,7 @@ public class PermissionManager {
             }
         }
     }
-    public boolean isPermissionConsist(PermissionPackage permissionPackage){
+    public synchronized boolean isPermissionConsist(PermissionPackage permissionPackage){
         for (PermissionPackage pack: permissionPackageList){
             if (pack.getFilesName().equals(permissionPackage.getFilesName())
                     && pack.getClientIp().equals(permissionPackage.getClientIp())){

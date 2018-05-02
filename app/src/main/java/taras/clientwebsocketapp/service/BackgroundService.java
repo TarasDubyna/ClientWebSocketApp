@@ -8,6 +8,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
@@ -122,21 +124,35 @@ public class BackgroundService extends Service {
         @Override
         public void successfulGetPermission(PermissionPackage permissionPackage) {
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
-            if (permissionPackage.getIsAllowed() == null){
-                try {
-                    Thread.sleep(1000);
-                    Log.d(LOG_TAG, "Did not got permission");
-                    NetworkConnection.getConnectionRepository().getPermission(requestServiceCallback, permissionPackage);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (permissionPackage.isPermissionTimeout()){
+                Log.d(LOG_TAG, "successful permission timeout");
+                PermissionManager.getPermissionManager().removeFromPermissionManager(permissionPackage);
             } else {
-                Log.d(LOG_TAG, "Got permission");
-                EventBusMsg<PermissionPackage> message =
-                        new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-                EventBus.getDefault().postSticky(message);
+                if (permissionPackage.getIsAllowed() == null){
+                    try {
+                        Thread.sleep(1000);
+                        Log.d(LOG_TAG, "Did not got permission");
+                        NetworkConnection.getConnectionRepository().getPermission(requestServiceCallback, permissionPackage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (permissionPackage.getIsAllowed().equals("true")){
+                    //todo successful permission
+                    Log.d(LOG_TAG, "successful permission");
+                    EventBusMsg<PermissionPackage> message =
+                            new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
+                    EventBus.getDefault().postSticky(message);
+                }
+                if (permissionPackage.getIsAllowed().equals("false")){
+                    //todo not successful permission
+                    Log.d(LOG_TAG, "not successful permission");
+                    EventBusMsg<PermissionPackage> message =
+                            new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
+                    EventBus.getDefault().postSticky(message);
+                }
             }
         }
 

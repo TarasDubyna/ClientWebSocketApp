@@ -63,7 +63,7 @@
                         android:layout_marginBottom="5dp">
 
                         <TextView
-                            android:layout_width="242dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="start"
                             android:text="IP:"
@@ -96,7 +96,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
                         android:layout_marginBottom="5dp"
-                        android:layout_height="150dp">
+                        android:layout_height="wrap_content">
                     </android.support.v7.widget.RecyclerView>
                     <View
                         android:layout_width="match_parent"
@@ -115,7 +115,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@color/white"/>
+                        android:background="@color/white"
+                        android:layout_marginBottom="5dp"/>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -46,9 +46,7 @@ public class RequestServiceManager implements Runnable {
                 break;
             case EventBusMsg.PACKAGE_PERMISSION:
                 takePermission();
-
-
-
+                break;
             case EventBusMsg.SERVER_START:
                 startServer();
                 break;
@@ -77,8 +75,8 @@ public class RequestServiceManager implements Runnable {
     private void takePermission() throws IOException {
         Log.d(LOG_TAG, "permissionPackage: " + ((PermissionPackage)message.getModel()).toJson());
         PermissionPackage permissionPackage = (PermissionPackage) message.getModel();
-        if (permissionPackage.getStartTimestamp() == null){
-            permissionPackage.setStartTimestamp(String.valueOf(TimeUtils.getCurrentTime()));
+        if (permissionPackage.getStartTimestamp() == 0){
+            permissionPackage.setStartTimestamp(TimeUtils.getCurrentTime());
         }
         NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, permissionPackage);
     }

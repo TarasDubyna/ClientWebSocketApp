@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.model;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,12 +11,15 @@ import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
+import taras.clientwebsocketapp.utils.TimeUtils;
 
 /**
  * Created by Taras on 13.03.2018.
  */
 
 public class PermissionPackage extends Package{
+
+    private static final long PERMISSION_TIMEOUT = 15000;
 
     @SerializedName("files_name")
     @Expose
@@ -30,7 +35,7 @@ public class PermissionPackage extends Package{
     private String pass;
     @SerializedName("start_timestamp")
     @Expose
-    private String startTimestamp;
+    private long startTimestamp = 0;
 
     public PermissionPackage() {
         super(Constants.PACKAGE_TYPE_PERMISSION);
@@ -71,10 +76,10 @@ public class PermissionPackage extends Package{
         this.pass = pass;
     }
 
-    public String getStartTimestamp() {
+    public long getStartTimestamp() {
         return startTimestamp;
     }
-    public void setStartTimestamp(String startTimestamp) {
+    public void setStartTimestamp(long startTimestamp) {
         this.startTimestamp = startTimestamp;
     }
 
@@ -83,5 +88,15 @@ public class PermissionPackage extends Package{
     }
     public static PermissionPackage parse(String json){
         return GsonUtils.parsePermissionPackageFirst(json);
+    }
+
+    public boolean isPermissionTimeout(){
+        Log.d("myLogs", "TimeUtils.getCurrentTime(): " + TimeUtils.getCurrentTime() + " ,startTimestamp: " +startTimestamp);
+        if (startTimestamp != 0){
+            if (TimeUtils.getCurrentTime() - startTimestamp > PERMISSION_TIMEOUT){
+                Log.d("myLogs", "PermissionTimeout");
+               return true;
+            } else return false;
+        } else return false;
     }
 }
