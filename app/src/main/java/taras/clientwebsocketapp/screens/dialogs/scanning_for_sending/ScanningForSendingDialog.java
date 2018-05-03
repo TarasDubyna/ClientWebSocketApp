@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.PermissionManagerClient;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -35,6 +35,7 @@ import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
 import taras.clientwebsocketapp.utils.AnimationUtils;
 import taras.clientwebsocketapp.utils.EventBusMsg;
+import taras.clientwebsocketapp.utils.GeneratorKey;
 
 public class ScanningForSendingDialog extends DialogFragment implements RecyclerClickListener {
 
@@ -174,8 +175,9 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         PermissionPackage permissionPackage = new PermissionPackage();
         permissionPackage.setServerIp(adapter.getSelectedDevices().get(0).getServerIp());
         permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
+        permissionPackage.setToken(GeneratorKey.generateToken());
 
-        PermissionManager.getPermissionManager().addToPermissionManager(permissionPackage);
+        PermissionManagerClient.getPermissionManager().addToPermissionManager(permissionPackage);
         dismiss();
 
         EventBusMsg<PermissionPackage> message =

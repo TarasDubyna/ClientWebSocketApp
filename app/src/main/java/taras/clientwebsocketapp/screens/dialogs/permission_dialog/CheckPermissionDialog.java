@@ -2,6 +2,7 @@ package taras.clientwebsocketapp.screens.dialogs.permission_dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
@@ -14,48 +15,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
-
-import java.security.acl.Permission;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.PermissionManager;
-import taras.clientwebsocketapp.managers.SelectedFileManager;
+import taras.clientwebsocketapp.managers.PermissionManagerServer;
 import taras.clientwebsocketapp.model.PermissionPackage;
-import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
-import taras.clientwebsocketapp.utils.AnimationUtils;
-import taras.clientwebsocketapp.utils.EventBusMsg;
+import taras.clientwebsocketapp.utils.ConstatsLogTag;
 
 public class CheckPermissionDialog extends DialogFragment {
 
-    private static final String LOG_TAG = CheckPermissionDialog.class.getSimpleName();
     private static final int PERMISSION_TIME = 10000;
 
     @BindView(R.id.tvName) TextView tvName;
     @BindView(R.id.tvIp) TextView tvIp;
     @BindView(R.id.rvFilesToSend) RecyclerView rvFilesToSend;
     @BindView(R.id.tvAccept) TextView tvAccept;
+    @BindView(R.id.pbTimeout) ProgressBar pbTimeout;
     @BindView(R.id.tvDeny) TextView tvDeny;
     @BindView(R.id.tvTimer) TextView tvTimer;
 
     private CountDownTimer countDownTimer;
-
+    private int progressCount = 0;
 
     private PermissionFilesRecyclerAdapter adapter;
-
     private PermissionPackage permissionPackage;
 
     private Unbinder unbinder;
@@ -79,12 +66,14 @@ public class CheckPermissionDialog extends DialogFragment {
                 String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
                 tvTimer.setText(seconds);
+                progressCount++;
+                pbTimeout.setProgress(progressCount);
             }
-
             public void onFinish() {
-                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                pbTimeout.setProgress(progressCount);
+                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                Log.d(ConstatsLogTag.CheckPermissionDialog, "countDownTimer, onFinish");
                 dismiss();
-                Log.d(LOG_TAG, "countDownTimer, onFinish");
                 //todo end time to send permission
             }
         }.start();
@@ -99,12 +88,14 @@ public class CheckPermissionDialog extends DialogFragment {
 
     @Override
     public void onStop() {
+        Log.d(ConstatsLogTag.CheckPermissionDialog, "onStop");
         super.onStop();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        Log.d(ConstatsLogTag.CheckPermissionDialog, "onDetach");
         unbinder.unbind();
     }
 
@@ -119,6 +110,10 @@ public class CheckPermissionDialog extends DialogFragment {
         tvIp.setText(permissionPackage.getClientIp());
         adapter = new PermissionFilesRecyclerAdapter(permissionPackage.getFilesName());
         initScanningRecycler();
+
+        pbTimeout.setMax(10);
+        pbTimeout.setBackgroundColor(getResources().getColor(R.color.white));
+        pbTimeout.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.blue_grey_400), PorterDuff.Mode.MULTIPLY);
     }
 
     public void setPermissionPackage(PermissionPackage permissionPackage) {
@@ -129,86 +124,19 @@ public class CheckPermissionDialog extends DialogFragment {
     void onClick(View view){
         switch (view.getId()){
             case R.id.tvAccept:
-                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                Log.d(ConstatsLogTag.CheckPermissionDialog, "Accept");
+                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, true);
                 break;
             case R.id.tvDeny:
-                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                Log.d(ConstatsLogTag.CheckPermissionDialog, "Deny");
+                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
                 break;
         }
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+        PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
         super.onDismiss(dialog);
     }
-
-    /*
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void getScanningResult(EventBusMsg<Object> ebMessage) {
-        Log.d("myLogs", "getScanningResult in dialog");
-        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
-            if (ebMessage.getCodeType() == EventBusMsg.PACKAGE_SCANNER){
-                ScannerPackage scannerPackage = (ScannerPackage) ebMessage.getModel();
-                adapter.addItem(scannerPackage);
-                tvNoDevices.setVisibility(View.GONE);
-                rvDevices.setVisibility(View.VISIBLE);
-            }
-            if (ebMessage.getCodeType() == EventBusMsg.SCANNING_NETWORK_END){
-                ivRefresh.clearAnimation();
-                ivRefresh.setClickable(true);
-                Log.d(LOG_TAG, "End scanning network");
-            }
-        }
-        EventBus.getDefault().removeStickyEvent(ebMessage);
-    }
-
-    private void scanningNetwork(){
-        Log.d(LOG_TAG, "Start scanning network");
-        ivRefresh.setClickable(false);
-        ivRefresh.post(new Runnable() {
-            @Override
-            public void run() {
-                AnimationUtils.rotation(ivRefresh);
-            }
-        });
-        EventBusMsg<String> message =
-                new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_SCANNER, null);
-        EventBus.getDefault().postSticky(message);
-    }
-
-    private void testData(){
-        tvNoDevices.setVisibility(View.GONE);
-        rvDevices.setVisibility(View.VISIBLE);
-        for (int i = 0; i < 6; i ++){
-            ScannerPackage scannerPackage = new ScannerPackage();
-            scannerPackage.setServerIp("192.168.1." + i);
-            scannerPackage.setServerName("server name");
-            adapter.addItem(scannerPackage);
-        }
-    }
-
-    @Override
-    public void onRowClicked(int position) {
-        if (!adapter.isEmpty()){
-            llSend.setVisibility(View.GONE);
-        } else {
-            llSend.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @OnClick(R.id.llSend)
-    void sendPermission(View view){
-        PermissionPackage permissionPackage = new PermissionPackage();
-        permissionPackage.setServerIp(adapter.getSelectedDevices().get(0).getServerIp());
-        permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
-
-        EventBusMsg<PermissionPackage> message =
-                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-        EventBus.getDefault().postSticky(message);
-    }
-    */
-
-
-
 }

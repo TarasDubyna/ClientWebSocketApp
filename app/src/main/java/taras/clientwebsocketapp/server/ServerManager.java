@@ -8,12 +8,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.PermissionManagerClient;
+import taras.clientwebsocketapp.managers.PermissionManagerServer;
 import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.GsonUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
@@ -23,8 +25,6 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
  */
 
 public class ServerManager {
-    private static final String LOG_TAG = ServerManager.class.getName();
-
     private Handler mainHandler;
 
     private String requestJson;
@@ -39,7 +39,7 @@ public class ServerManager {
 
     public ServerManager getRequest(String requestJson){
         this.requestJson = requestJson;
-        Log.d(LOG_TAG, "requestJson: " + requestJson);
+        Log.d(ConstatsLogTag.Socket, "server requestJson: " + requestJson);
         return this;
     }
 
@@ -47,7 +47,7 @@ public class ServerManager {
         packageType = getPackageType();
         requestPackage = getPackageFromJson();
         String response = createResponse();
-        Log.d(LOG_TAG, "returnResponse: " + response);
+        Log.d(ConstatsLogTag.Socket, "server returnResponse: " + response);
         return response;
     }
 
@@ -56,7 +56,6 @@ public class ServerManager {
         try {
             JSONObject requestJsonObject = new JSONObject(requestJson);
             String packageType = requestJsonObject.getString("type");
-            Log.d(LOG_TAG, "packageType: " + packageType);
             return packageType;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -64,6 +63,7 @@ public class ServerManager {
         return null;
     }
     private Package getPackageFromJson(){
+        Log.d(ConstatsLogTag.Server, "server listen: " + packageType);
         switch (packageType){
             case Constants.PACKAGE_TYPE_PERMISSION:
                 return GsonUtils.parsePermissionPackageFirst(requestJson);
@@ -90,8 +90,8 @@ public class ServerManager {
         return scannerPackage;
     }
     private PermissionPackage createPackagePermissionResponse(PermissionPackage pack){
-        if (!PermissionManager.getPermissionManager().isPermissionConsist(pack)){
-            PermissionManager.getPermissionManager().addToPermissionManager(pack);
+        if (!PermissionManagerServer.getPermissionManager().isPermissionConsist(pack)){
+            PermissionManagerServer.getPermissionManager().addToPermissionManager(pack);
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -101,6 +101,8 @@ public class ServerManager {
                     EventBus.getDefault().postSticky(message);
                 }
             });
+        } else {
+            return PermissionManagerServer.getPermissionManager().getPermissionFromManager(pack);
         }
         return pack;
     }

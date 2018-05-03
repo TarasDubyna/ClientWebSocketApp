@@ -9,154 +9,138 @@
         android:layout_width="300dp"
         android:layout_gravity="center"
         android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/blue_grey_200"
         app:cardElevation="3dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-            <android.support.v7.widget.CardView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/blue_grey_200"
-                app:cardElevation="3dp">
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/permission_title"
+                    android:textColor="@color/white"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="20sp" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:orientation="vertical">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/permission_title"
+                        android:gravity="start"
+                        android:text="@string/name"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="5dp"
-                        android:textSize="20sp" />
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white"/>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:text="@string/name"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-                        <TextView
-                            android:id="@+id/tvName"
-                            android:layout_marginStart="5dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="16sp"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="5dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="start"
-                            android:text="IP:"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-                        <TextView
-                            android:id="@+id/tvIp"
-                            android:layout_marginStart="5dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/white"
-                            android:textSize="16sp" />
-                    </LinearLayout>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white"/>
+                        android:textSize="16sp" />
                     <TextView
-                        android:layout_width="match_parent"
+                        android:id="@+id/tvName"
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
-                        android:text="@string/files"
-                        android:layout_marginTop="5dp"
                         android:textColor="@color/white"
-                        android:textSize="18sp" />
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/rvFilesToSend"
-                        tools:listitem="@layout/recycler_file_to_send_item"
-                        android:layout_width="match_parent"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_height="wrap_content">
-                    </android.support.v7.widget.RecyclerView>
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white"/>
-                    <TextView
-                        android:id="@+id/tvTimer"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:textStyle="bold"
-                        android:gravity="center_horizontal"
-                        android:text="10"
-                        android:textColor="@color/white"
-                        android:textSize="20sp" />
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white"
-                        android:layout_marginBottom="5dp"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <!--<TextView
-                            android:id="@+id/tvAccept"
-                            android:text="@string/accept"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="40dp" />-->
-                        <Button
-                            android:id="@+id/tvAccept"
-                            android:text="@string/accept"
-                            android:gravity="center"
-                            android:textColor="@color/white"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="40dp" />
-                        <Button
-                            android:id="@+id/tvDeny"
-                            android:gravity="center"
-                            android:text="@string/cancel"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:layout_height="40dp" />
-                        <!--<TextView
-                            android:id="@+id/tvDeny"
-                            android:gravity="center"
-                            android:text="@string/cancel"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:textColor="@color/white"
-                            android:layout_height="40dp" />-->
-                    </LinearLayout>
-
+                        android:textSize="16sp"/>
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="IP:"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                    <TextView
+                        android:id="@+id/tvIp"
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="@string/files"
+                    android:layout_marginTop="5dp"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvFilesToSend"
+                    tools:listitem="@layout/recycler_file_to_send_item"
+                    android:layout_width="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_height="wrap_content">
+                </android.support.v7.widget.RecyclerView>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"/>
+                <TextView
+                    android:id="@+id/tvTimer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:textStyle="bold"
+                    android:gravity="center_horizontal"
+                    android:text="10"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
+            </LinearLayout>
+            <ProgressBar
+                android:id="@+id/pbTimeout"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                style="@style/CustomProgressBarHorizontal" />
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tvAccept"
+                    android:background="@drawable/button_onclick"
+                    android:text="@string/accept"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="40dp" />
+                <TextView
+                    android:id="@+id/tvDeny"
+                    android:background="@drawable/button_onclick"
+                    android:gravity="center"
+                    android:text="@string/cancel"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:layout_height="40dp" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </LinearLayout>

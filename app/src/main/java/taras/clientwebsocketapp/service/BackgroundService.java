@@ -8,7 +8,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -17,12 +16,13 @@ import java.io.IOException;
 import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.PermissionManagerClient;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
+import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
@@ -112,7 +112,7 @@ public class BackgroundService extends Service {
 
         @Override
         public void errorScanning(Throwable throwable) {
-            Log.d(LOG_TAG, "Error: " + throwable.getMessage());
+            Log.d(ConstatsLogTag.Scanning, "Error: " + throwable.getMessage());
             throwable.printStackTrace();
         }
 
@@ -126,12 +126,12 @@ public class BackgroundService extends Service {
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");
-                PermissionManager.getPermissionManager().removeFromPermissionManager(permissionPackage);
+                PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, false);
             } else {
                 if (permissionPackage.getIsAllowed() == null){
                     try {
                         Thread.sleep(1000);
-                        Log.d(LOG_TAG, "Did not got permission");
+                        Log.d(ConstatsLogTag.CheckPermission, "Did not got permission");
                         NetworkConnection.getConnectionRepository().getPermission(requestServiceCallback, permissionPackage);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -139,19 +139,24 @@ public class BackgroundService extends Service {
                         e.printStackTrace();
                     }
                 }
+
                 if (permissionPackage.getIsAllowed().equals("true")){
-                    //todo successful permission
-                    Log.d(LOG_TAG, "successful permission");
-                    EventBusMsg<PermissionPackage> message =
+                    Log.d(ConstatsLogTag.CheckPermission, "successful permission for client");
+                    PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                    //todo successful permission, start send file
+
+                    /*EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-                    EventBus.getDefault().postSticky(message);
+                    EventBus.getDefault().postSticky(message);*/
                 }
+
                 if (permissionPackage.getIsAllowed().equals("false")){
                     //todo not successful permission
-                    Log.d(LOG_TAG, "not successful permission");
-                    EventBusMsg<PermissionPackage> message =
+                    Log.d(ConstatsLogTag.CheckPermission, "not successful permission for client");
+                    PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                    /*EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-                    EventBus.getDefault().postSticky(message);
+                    EventBus.getDefault().postSticky(message);*/
                 }
             }
         }

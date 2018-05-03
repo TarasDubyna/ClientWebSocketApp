@@ -32,7 +32,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.PermissionManagerClient;
+import taras.clientwebsocketapp.managers.PermissionManagerServer;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.dialogs.permission_dialog.CheckPermissionDialog;
@@ -147,7 +148,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
-        PermissionManager.getPermissionManager();
+        PermissionManagerClient.getPermissionManager();
+        PermissionManagerServer.getPermissionManager();
     }
 
 

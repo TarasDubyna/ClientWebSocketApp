@@ -11,11 +11,10 @@ import java.net.Socket;
 
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.utils.Constants;
+import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class Server {
-    private static final String LOG_TAG = "myLogs";
-
     private ServerSocket serverSocket;
     private Thread socketServerThread;
     private boolean serverState = false;
@@ -39,6 +38,7 @@ public class Server {
     public void startServer(){
         socketServerThread = new Thread(new SocketServerThread());
         socketServerThread.start();
+        Log.d(ConstatsLogTag.Server, "server started");
         serverState = true;
     }
 
@@ -47,6 +47,7 @@ public class Server {
         try {
             NotificationsManager.removeServerNotification();
             serverSocket.close();
+            Log.d(ConstatsLogTag.Server, "server stopped");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException ex){
@@ -55,7 +56,7 @@ public class Server {
     }
 
     public boolean isServerIsRun(){
-        Log.d(LOG_TAG, "serverState: " + serverState);
+        Log.d(ConstatsLogTag.Server, "serverState: " + serverState);
         //socketServerThread.getState().toString();
         return serverState;
     }
@@ -74,7 +75,6 @@ public class Server {
                         @Override
                         public void run() {
                             try {
-                                Log.d(LOG_TAG, "server listen");
                                 InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 
