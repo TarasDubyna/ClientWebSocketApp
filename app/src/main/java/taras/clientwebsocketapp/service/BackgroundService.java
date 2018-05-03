@@ -123,6 +123,7 @@ public class BackgroundService extends Service {
 
         @Override
         public void successfulGetPermission(PermissionPackage permissionPackage) {
+            Log.d("test", "hello");
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");

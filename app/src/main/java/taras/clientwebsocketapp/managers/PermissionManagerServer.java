@@ -44,14 +44,16 @@ public class PermissionManagerServer {
         synchronized (lock){
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
-                    if (isAllowed){
-                        Log.d("test", "setIsAllowed: true");
-                        pack.setIsAllowed("true");
-                        break;
-                    } else {
-                        Log.d("test", "setIsAllowed: false");
-                        pack.setIsAllowed("false");
-                        break;
+                    if (pack.getIsAllowed() == null){
+                        if (isAllowed){
+                            Log.d("test", "setIsAllowed: true");
+                            pack.setIsAllowed("true");
+                            break;
+                        } else {
+                            Log.d("test", "setIsAllowed: false");
+                            pack.setIsAllowed("false");
+                            break;
+                        }
                     }
                 }
             }

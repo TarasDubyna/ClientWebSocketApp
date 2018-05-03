@@ -103,12 +103,15 @@ public class NetworkOperations {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     char[] buffer = new char[4096];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + permissionPackage.getServerIp());
+
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
+                    PermissionPackage responsePermissionPackage = PermissionPackage.parse(stringBuilder.toString());
+                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + responsePermissionPackage.getServerIp());
+
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
-                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + permissionPackage.getServerIp());
-                        scanningInterface.successfulGetPermission(permissionPackage);
+                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + responsePermissionPackage.getServerIp());
+                        scanningInterface.successfulGetPermission(responsePermissionPackage);
                     }
                 }
             }

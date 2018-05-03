@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.managers;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,12 +46,17 @@ public class PermissionManagerClient {
         synchronized (lock){
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
-                    if (isAllowed){
-                        permissionPackage.setIsAllowed("true");
-                    } else {
-                        permissionPackage.setIsAllowed("false");
+                    if (pack.getIsAllowed() == null){
+                        if (isAllowed){
+                            Log.d("test", "setIsAllowed: true");
+                            pack.setIsAllowed("true");
+                            break;
+                        } else {
+                            Log.d("test", "setIsAllowed: false");
+                            pack.setIsAllowed("false");
+                            break;
+                        }
                     }
-                    break;
                 }
             }
         }
