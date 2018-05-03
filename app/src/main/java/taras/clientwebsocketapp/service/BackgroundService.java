@@ -54,37 +54,39 @@ public class BackgroundService extends Service {
         super.onCreate();
         EventBus.getDefault().register(this);
         server = Server.getInstance(mainHandler);
-
-        EventBusMsg<Boolean> message = new EventBusMsg<Boolean>(EventBusMsg.TO_APP, EventBusMsg.CHECK_IS_SERVER_WORK, server.isServerIsRun());
-        EventBus.getDefault().postSticky(message);
     }
     @Override
     public void onDestroy() {
         super.onDestroy();
         server.stopServer();
-        PreferenceUtils.saveRunningServerState(false);
+        //PreferenceUtils.saveRunningServerState(false);
         EventBus.getDefault().unregister(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void getDataFromApp(EventBusMsg<Object> ebMessage) {
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_SERVICE){
-            RequestServiceManager requestServiceManager = new RequestServiceManager(this);
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        requestServiceManager
-                                .getMessage(ebMessage)
-                                .setServer(server)
-                                .takeRequest(requestServiceCallback);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
+            if (ebMessage.getCodeType() == EventBusMsg.CHECK_IS_SERVER_WORK){
+                Log.d(LOG_TAG, "CHECK_IS_SERVER_WORK");
+                EventBusMsg<Boolean> message = new EventBusMsg<Boolean>(EventBusMsg.TO_APP, EventBusMsg.CHECK_IS_SERVER_WORK, server.isServerIsRun());
+                EventBus.getDefault().postSticky(message);
+            } else {
+                RequestServiceManager requestServiceManager = new RequestServiceManager(this);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            requestServiceManager
+                                    .getMessage(ebMessage)
+                                    .setServer(server)
+                                    .takeRequest(requestServiceCallback);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
+                        }
                     }
-                }
-            }).start();
-
+                }).start();
+            }
         }
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }
@@ -168,7 +170,13 @@ public class BackgroundService extends Service {
         }
     };
 
-
+    private boolean isServerRunning(){
+        if (server != null){
+            return server.isServerIsRun();
+        } else {
+            return false;
+        }
+    }
     public boolean applicationInForeground() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> services = activityManager.getRunningAppProcesses();

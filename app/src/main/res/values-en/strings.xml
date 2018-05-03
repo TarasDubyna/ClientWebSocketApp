@@ -38,4 +38,5 @@
     <string name="permission_title">Permission to transfer data</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
+    <string name="txt_message_close_app">Double tap to exit!</string>
 </resources>

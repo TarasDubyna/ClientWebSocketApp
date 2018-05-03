@@ -46,8 +46,7 @@
     <string name="selected_files_num">Selected files: %1$d</string>
     <string name="visibility">Visibility in the network</string>
 
-
-    //title
+    <!--titles-->
     <string name="favorite">Favorite</string>
     <string name="network">Network</string>
     <string name="files">Files</string>
@@ -57,5 +56,7 @@
     <string name="permission_title">Permission to transfer data</string>
     <string name="accept">Accept</string>
     <string name="cancel">Cancel</string>
+
+    <string name="txt_message_close_app">Double tap to exit!</string>
 
 </resources>

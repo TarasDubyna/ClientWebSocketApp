@@ -38,4 +38,5 @@
     <string name="permission_title">Разрешение на передачу данных</string>
     <string name="accept">Подтвердить</string>
     <string name="cancel">Отменить</string>
+    <string name="txt_message_close_app">Нажмите дважды для выхода!</string>
 </resources>

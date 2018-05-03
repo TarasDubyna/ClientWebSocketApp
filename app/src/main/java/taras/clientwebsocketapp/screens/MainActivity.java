@@ -64,42 +64,26 @@ public class MainActivity extends AppCompatActivity
 
     ActionBarDrawerToggle toggle;
 
-
     private Drawable navigationIcon;
 
     private NavigationView navigationView;
     private Switch serverSwitch;
     private TextView toolbarTitle;
 
-    boolean bound = false;
-
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(LOG_TAG, "MainActivity onServiceConnected");
-            bound = true;
-        }
-
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(LOG_TAG, "MainActivity onServiceDisconnected");
-            bound = false;
-        }
-    };
     MyReceiver myReceiver;
+
+    private long lastTimeCallExit = System.currentTimeMillis();
 
 
     private class MyReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context arg0, Intent arg1) {
             // TODO Auto-generated method stub
             String responseData = arg1.getStringExtra("string");
-            Toast.makeText(MainActivity.this,"Message: " + responseData, Toast.LENGTH_SHORT).show();
+            Log.d(LOG_TAG, "onReceive: " + responseData);
         }
     }
 
-
-    private ScanNetworkFragment scanNetworkFragment;
     private FileManagerFragment fileManagerFragment;
     private FileManagerFragment favoriteFileManagerFragment;
 
@@ -117,6 +101,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(LOG_TAG, "MainActivity onCreate");
         startService();
 
 
@@ -125,7 +110,7 @@ public class MainActivity extends AppCompatActivity
         navigationIcon = toolbar.getNavigationIcon();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        initServiceReceiver();
+
 
         if (fileManagerFragment == null){
             fileManagerFragment = new FileManagerFragment();
@@ -179,21 +164,23 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            System.out.println();
-            //super.onBackPressed();
+            if (lastTimeCallExit + 2000L > System.currentTimeMillis())
+                MainActivity.this.finish();
+            else {
+                lastTimeCallExit = System.currentTimeMillis();
+                Toast.makeText(MainActivity.this, getString(R.string.txt_message_close_app), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         MenuItem switchItem = menu.findItem(R.id.toolbar_switcher);
         switchItem.setActionView(R.layout.toolbar_layout);
         serverSwitch = menu.findItem(R.id.toolbar_switcher).getActionView().findViewById(R.id.switchServerToolbar);
         serverSwitch.setOnClickListener(this);
-        serverSwitch.setChecked(PreferenceUtils.getRunningServerState());
+        //serverSwitch.setChecked(PreferenceUtils.getRunningServerState());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -226,16 +213,8 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        /*if (id == R.id.menu_network_manager) {
-            if (scanNetworkFragment == null){
-                scanNetworkFragment = new ScanNetworkFragment();
-            }
-            addFragmentToManager(scanNetworkFragment);
-            // Handle the camera action
-        } else */
         if (id == R.id.menu_file_manager) {
             if (fileManagerFragment == null){
                 fileManagerFragment = new FileManagerFragment();
@@ -291,19 +270,7 @@ public class MainActivity extends AppCompatActivity
         return navigationView;
     }
 
-    //work with service
-    private void initServiceReceiver(){
-        if (myReceiver == null){
-            myReceiver = new MainActivity.MyReceiver();
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(BackgroundService.SERVICE_ACTION);
-            registerReceiver(myReceiver, intentFilter);
-        }
-    }
-    private void startService(){
-        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
-        startService(intent);
-    }
+
 
 
 
@@ -314,10 +281,7 @@ public class MainActivity extends AppCompatActivity
         if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP){
             switch (ebMessage.getCodeType()){
                 case EventBusMsg.PACKAGE_PERMISSION:
-                    Toast.makeText(this, "PACKAGE_PERMISSION_FIRST", Toast.LENGTH_SHORT).show();
                     Log.d(LOG_TAG, "PACKAGE_PERMISSION_FIRST");
-
-
                     CheckPermissionDialog checkPermissionDialog = new CheckPermissionDialog();
                     checkPermissionDialog.setPermissionPackage((PermissionPackage) ebMessage.getModel());
                     checkPermissionDialog.show(getSupportFragmentManager(), CheckPermissionDialog.class.getSimpleName());
@@ -332,13 +296,31 @@ public class MainActivity extends AppCompatActivity
 
     private void setSwitchState(boolean serverIsRun){
         if (serverSwitch != null){
-            if (serverIsRun){
-                serverSwitch.setChecked(true);
-            } else {
-                serverSwitch.setChecked(false);
-            }
+            Log.d(LOG_TAG, "setSwitchState: " + serverIsRun);
+            serverSwitch.setChecked(serverIsRun);
         }
     }
+
+    //work with service
+    private void startService(){
+        Intent intent = new Intent(MainActivity.this, BackgroundService.class);
+        startService(intent);
+        initServiceReceiver();
+        checkServerIsRunning();
+    }
+    private void initServiceReceiver(){
+        if (myReceiver == null){
+            myReceiver = new MainActivity.MyReceiver();
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(BackgroundService.SERVICE_ACTION);
+            registerReceiver(myReceiver, intentFilter);
+        }
+    }
+    private void checkServerIsRunning(){
+        EventBusMsg<String> message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.CHECK_IS_SERVER_WORK, null);
+        EventBus.getDefault().postSticky(message);
+    }
+    //----------------------------------------------------------------------------------------------
 
     public static Context getContext(){
         return getContext();

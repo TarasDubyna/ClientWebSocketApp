@@ -37,27 +37,27 @@ public class Server {
 
     public void startServer(){
         socketServerThread = new Thread(new SocketServerThread());
+        serverState = true;
         socketServerThread.start();
         Log.d(ConstatsLogTag.Server, "server started");
-        serverState = true;
+
     }
 
     public void stopServer(){
-        serverState = false;
         try {
             NotificationsManager.removeServerNotification();
+            serverState = false;
             serverSocket.close();
             Log.d(ConstatsLogTag.Server, "server stopped");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException ex){
-            PreferenceUtils.saveRunningServerState(false);
+            //PreferenceUtils.saveRunningServerState(false);
         }
     }
 
     public boolean isServerIsRun(){
         Log.d(ConstatsLogTag.Server, "serverState: " + serverState);
-        //socketServerThread.getState().toString();
         return serverState;
     }
 
