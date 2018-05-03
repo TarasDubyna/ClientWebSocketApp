@@ -101,10 +101,10 @@ public class ServerManager {
                     EventBus.getDefault().postSticky(message);
                 }
             });
+            return pack;
         } else {
             return PermissionManagerServer.getPermissionManager().getPermissionFromManager(pack);
         }
-        return pack;
     }
 
 }

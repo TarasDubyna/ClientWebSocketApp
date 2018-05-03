@@ -19,7 +19,7 @@ import taras.clientwebsocketapp.utils.TimeUtils;
 
 public class PermissionPackage extends Package{
 
-    private static final long PERMISSION_TIMEOUT = 15000;
+    private static final long PERMISSION_TIMEOUT = 10500;
 
     @SerializedName("files_name")
     @Expose

@@ -89,6 +89,7 @@ public class CheckPermissionDialog extends DialogFragment {
     @Override
     public void onStop() {
         Log.d(ConstatsLogTag.CheckPermissionDialog, "onStop");
+        PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
         super.onStop();
     }
 

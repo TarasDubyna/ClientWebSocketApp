@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.managers;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,16 +70,22 @@ public class PermissionManagerServer {
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
                     PermissionPackage returnPack = pack;
-                    if (pack.getToken().equals("true")){
+                    Log.d("getPermission: ", returnPack.getIsAllowed());
+                    if (returnPack.getIsAllowed() == null){
                         return returnPack;
+                    } else {
+                        if (pack.getIsAllowed().equals("true")){
+                            return returnPack;
+                        }
+                        if (pack.getIsAllowed().equals("false")){
+                            removeFromPermissionManager(permissionPackage);
+                            return returnPack;
+                        }
                     }
-                    if (pack.getToken().equals("false")){
-                        removeFromPermissionManager(permissionPackage);
-                        return returnPack;
-                    }
+
                 }
             }
+            return permissionPackage;
         }
-        return null;
     }
 }
