@@ -37,7 +37,7 @@ public class CheckPermissionDialog extends DialogFragment {
     @BindView(R.id.tvAccept) TextView tvAccept;
     @BindView(R.id.pbTimeout) ProgressBar pbTimeout;
     @BindView(R.id.tvDeny) TextView tvDeny;
-    @BindView(R.id.tvTimer) TextView tvTimer;
+    //@BindView(R.id.tvTimer) TextView tvTimer;
 
     private CountDownTimer countDownTimer;
     private int progressCount = 0;
@@ -65,13 +65,15 @@ public class CheckPermissionDialog extends DialogFragment {
             public void onTick(long millisUntilFinished) {
                 String seconds = String.valueOf(TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
-                tvTimer.setText(seconds);
+                //tvTimer.setText(seconds);
                 progressCount++;
                 pbTimeout.setProgress(progressCount);
             }
             public void onFinish() {
                 pbTimeout.setProgress(progressCount);
-                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                if (permissionPackage.getIsAllowed() == null){
+                    PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                }
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "countDownTimer, onFinish");
                 dismiss();
                 //todo end time to send permission
@@ -89,7 +91,6 @@ public class CheckPermissionDialog extends DialogFragment {
     @Override
     public void onStop() {
         Log.d(ConstatsLogTag.CheckPermissionDialog, "onStop");
-        PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
         super.onStop();
     }
 
@@ -127,10 +128,14 @@ public class CheckPermissionDialog extends DialogFragment {
             case R.id.tvAccept:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Accept");
                 PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                countDownTimer.cancel();
+                dismiss();
                 break;
             case R.id.tvDeny:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Deny");
                 PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                countDownTimer.cancel();
+                dismiss();
                 break;
         }
     }

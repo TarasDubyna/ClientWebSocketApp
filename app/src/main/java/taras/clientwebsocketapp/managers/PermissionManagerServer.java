@@ -45,11 +45,14 @@ public class PermissionManagerServer {
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
                     if (isAllowed){
-                        permissionPackage.setIsAllowed("true");
+                        Log.d("test", "setIsAllowed: true");
+                        pack.setIsAllowed("true");
+                        break;
                     } else {
-                        permissionPackage.setIsAllowed("false");
+                        Log.d("test", "setIsAllowed: false");
+                        pack.setIsAllowed("false");
+                        break;
                     }
-                    break;
                 }
             }
         }
@@ -69,20 +72,8 @@ public class PermissionManagerServer {
         synchronized (lock){
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
-                    PermissionPackage returnPack = pack;
-                    Log.d("getPermission: ", returnPack.getIsAllowed());
-                    if (returnPack.getIsAllowed() == null){
-                        return returnPack;
-                    } else {
-                        if (pack.getIsAllowed().equals("true")){
-                            return returnPack;
-                        }
-                        if (pack.getIsAllowed().equals("false")){
-                            removeFromPermissionManager(permissionPackage);
-                            return returnPack;
-                        }
-                    }
-
+                    Log.d("test","getToken(), true");
+                    return pack;
                 }
             }
             return permissionPackage;
