@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.PermissionManagerServer;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 
@@ -72,7 +72,7 @@ public class CheckPermissionDialog extends DialogFragment {
             public void onFinish() {
                 pbTimeout.setProgress(progressCount);
                 if (permissionPackage.getIsAllowed() == null){
-                    PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                    PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
                 }
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "countDownTimer, onFinish");
                 dismiss();
@@ -127,13 +127,13 @@ public class CheckPermissionDialog extends DialogFragment {
         switch (view.getId()){
             case R.id.tvAccept:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Accept");
-                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, true);
                 countDownTimer.cancel();
                 dismiss();
                 break;
             case R.id.tvDeny:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Deny");
-                PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
                 countDownTimer.cancel();
                 dismiss();
                 break;
@@ -142,7 +142,7 @@ public class CheckPermissionDialog extends DialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        PermissionManagerServer.getPermissionManager().setAcceptPermission(permissionPackage, false);
+        PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
         super.onDismiss(dialog);
     }
 }

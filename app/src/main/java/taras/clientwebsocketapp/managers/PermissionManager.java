@@ -7,35 +7,60 @@ import java.util.List;
 
 import taras.clientwebsocketapp.model.PermissionPackage;
 
-public class PermissionManagerServer {
-    private List<PermissionPackage> permissionPackageList;
+public class PermissionManager {
 
-    private static PermissionManagerServer permissionManager;
+    public static final int CLIENT = 0;
+    public static final int SERVER = 1;
+
+    //private List<PermissionPackage> permissionPackageList;
+    private List<PermissionPackage> permissionPackageListClient;
+    private List<PermissionPackage> permissionPackageListServer;
+
+
+    private static PermissionManager permissionManager;
     private final Object lock = new Object();
 
-    public PermissionManagerServer() {
-        this.permissionPackageList = new ArrayList<>();
+    public PermissionManager() {
+        this.permissionPackageListClient = new ArrayList<>();
+        this.permissionPackageListServer = new ArrayList<>();
     }
 
-    public static PermissionManagerServer getPermissionManager(){
+    public static PermissionManager getPermissionManager(){
         if (permissionManager == null){
-            permissionManager = new PermissionManagerServer();
+            permissionManager = new PermissionManager();
         }
         return permissionManager;
     }
 
-    public void addToPermissionManager(PermissionPackage permissionPackage){
+
+
+    public void addToPermissionManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            this.permissionPackageList.add(permissionPackage);
+            if (typeManager == CLIENT){
+                this.permissionPackageListClient.add(permissionPackage);
+            }
+            if (typeManager == SERVER){
+                this.permissionPackageListServer.add(permissionPackage);
+            }
         }
     }
-    public void removeFromPermissionManager(PermissionPackage permissionPackage){
+
+    public void removeFromPermissionManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            for (PermissionPackage pack: permissionPackageList){
-                if (isPermissionConsist(permissionPackage)){
-                    permissionPackageList.remove(pack);
-                    break;
-                }
+            if (typeManager == CLIENT){
+                removeFromList(this.permissionPackageListClient, permissionPackage);
+            }
+            if (typeManager == SERVER){
+                removeFromList(this.permissionPackageListServer, permissionPackage);
+            }
+        }
+    }
+
+    private void removeFromList(List<PermissionPackage> list, PermissionPackage pack){
+        for (PermissionPackage permissionPackage: list){
+            if (isPermissionConsist(permissionPackage)){
+                list.remove(pack);
+                break;
             }
         }
     }
@@ -59,7 +84,7 @@ public class PermissionManagerServer {
             }
         }
     }
-    public boolean isPermissionConsist(PermissionPackage permissionPackage){
+    public boolean isPermissionConsist(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){

@@ -1,14 +1,11 @@
 package taras.clientwebsocketapp.screens;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -33,18 +30,15 @@ import org.greenrobot.eventbus.ThreadMode;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.managers.PermissionManagerClient;
-import taras.clientwebsocketapp.managers.PermissionManagerServer;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.dialogs.permission_dialog.CheckPermissionDialog;
 import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
 import taras.clientwebsocketapp.screens.file_manager.FileManagerFragment;
-import taras.clientwebsocketapp.screens.scann_network.ScanNetworkFragment;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
@@ -133,8 +127,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FavoriteFilesManager.getInstance();
-        PermissionManagerClient.getPermissionManager();
-        PermissionManagerServer.getPermissionManager();
+        //PermissionManagerClient.getPermissionManager();
+        PermissionManager.getPermissionManager();
     }
 
 

@@ -8,12 +8,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.managers.PermissionManagerClient;
-import taras.clientwebsocketapp.managers.PermissionManagerServer;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
-import taras.clientwebsocketapp.model.ServerStatePackage;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
@@ -90,8 +88,8 @@ public class ServerManager {
         return scannerPackage;
     }
     private PermissionPackage createPackagePermissionResponse(PermissionPackage pack){
-        if (!PermissionManagerServer.getPermissionManager().isPermissionConsist(pack)){
-            PermissionManagerServer.getPermissionManager().addToPermissionManager(pack);
+        if (!PermissionManager.getPermissionManager().isPermissionConsist(pack)){
+            PermissionManager.getPermissionManager().addToPermissionManager(pack);
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -103,7 +101,7 @@ public class ServerManager {
             });
             return pack;
         } else {
-            return PermissionManagerServer.getPermissionManager().getPermissionFromManager(pack);
+            return PermissionManager.getPermissionManager().getPermissionFromManager(pack);
         }
     }
 
