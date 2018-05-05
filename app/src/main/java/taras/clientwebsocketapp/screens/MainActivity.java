@@ -29,7 +29,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import taras.clientwebsocketapp.managers.PermissionManagerClient;
 import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;

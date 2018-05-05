@@ -88,8 +88,8 @@ public class ServerManager {
         return scannerPackage;
     }
     private PermissionPackage createPackagePermissionResponse(PermissionPackage pack){
-        if (!PermissionManager.getPermissionManager().isPermissionConsist(pack)){
-            PermissionManager.getPermissionManager().addToPermissionManager(pack);
+        if (!PermissionManager.getPermissionManager().isListPermissionConsist(PermissionManager.SERVER, pack)){
+            PermissionManager.getPermissionManager().addToPermissionManager(PermissionManager.SERVER, pack);
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -101,7 +101,7 @@ public class ServerManager {
             });
             return pack;
         } else {
-            return PermissionManager.getPermissionManager().getPermissionFromManager(pack);
+            return PermissionManager.getPermissionManager().getPermissionPackageFromManager(PermissionManager.SERVER, pack);
         }
     }
 

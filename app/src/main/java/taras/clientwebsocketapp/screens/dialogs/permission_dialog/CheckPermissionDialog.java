@@ -72,7 +72,7 @@ public class CheckPermissionDialog extends DialogFragment {
             public void onFinish() {
                 pbTimeout.setProgress(progressCount);
                 if (permissionPackage.getIsAllowed() == null){
-                    PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                    PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.SERVER, permissionPackage, false);
                 }
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "countDownTimer, onFinish");
                 dismiss();
@@ -127,13 +127,13 @@ public class CheckPermissionDialog extends DialogFragment {
         switch (view.getId()){
             case R.id.tvAccept:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Accept");
-                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.SERVER, permissionPackage, true);
                 countDownTimer.cancel();
                 dismiss();
                 break;
             case R.id.tvDeny:
                 Log.d(ConstatsLogTag.CheckPermissionDialog, "Deny");
-                PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.SERVER, permissionPackage, false);
                 countDownTimer.cancel();
                 dismiss();
                 break;
@@ -142,7 +142,7 @@ public class CheckPermissionDialog extends DialogFragment {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+        PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.SERVER, permissionPackage, false);
         super.onDismiss(dialog);
     }
 }

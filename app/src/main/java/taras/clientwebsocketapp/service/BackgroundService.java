@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
-import taras.clientwebsocketapp.managers.PermissionManagerClient;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
@@ -24,7 +24,6 @@ import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 /**
  * Created by Taras on 04.02.2018.
@@ -129,7 +128,8 @@ public class BackgroundService extends Service {
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");
-                PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                //PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, false);
             } else {
                 if (permissionPackage.getIsAllowed() == null){
                     try {
@@ -145,7 +145,7 @@ public class BackgroundService extends Service {
 
                 if (permissionPackage.getIsAllowed().equals("true")){
                     Log.d(ConstatsLogTag.CheckPermission, "successful permission for client");
-                    PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, true);
+                    PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, true);
                     //todo successful permission, start send file
 
                     /*EventBusMsg<PermissionPackage> message =
@@ -156,7 +156,7 @@ public class BackgroundService extends Service {
                 if (permissionPackage.getIsAllowed().equals("false")){
                     //todo not successful permission
                     Log.d(ConstatsLogTag.CheckPermission, "not successful permission for client");
-                    PermissionManagerClient.getPermissionManager().setAcceptPermission(permissionPackage, false);
+                    PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, false);
                     /*EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
                     EventBus.getDefault().postSticky(message);*/

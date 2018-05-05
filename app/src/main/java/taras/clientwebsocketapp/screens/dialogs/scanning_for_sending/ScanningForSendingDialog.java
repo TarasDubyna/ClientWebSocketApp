@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.PermissionManagerClient;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -177,7 +177,7 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
         permissionPackage.setToken(GeneratorKey.generateToken());
 
-        PermissionManagerClient.getPermissionManager().addToPermissionManager(permissionPackage);
+        PermissionManager.getPermissionManager().addToPermissionManager(PermissionManager.CLIENT, permissionPackage);
         dismiss();
 
         EventBusMsg<PermissionPackage> message =

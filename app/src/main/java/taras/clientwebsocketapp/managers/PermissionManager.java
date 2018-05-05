@@ -34,39 +34,41 @@ public class PermissionManager {
 
     public void addToPermissionManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            if (typeManager == CLIENT){
-                this.permissionPackageListClient.add(permissionPackage);
-            }
-            if (typeManager == SERVER){
-                this.permissionPackageListServer.add(permissionPackage);
-            }
+            getPermissionList(typeManager).add(permissionPackage);
         }
     }
 
     public void removeFromPermissionManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            if (typeManager == CLIENT){
-                removeFromList(this.permissionPackageListClient, permissionPackage);
-            }
-            if (typeManager == SERVER){
-                removeFromList(this.permissionPackageListServer, permissionPackage);
-            }
-        }
-    }
-
-
-    private void removeFromList(List<PermissionPackage> list, PermissionPackage pack){
-        for (PermissionPackage permissionPackage: list){
-            if (isPermissionConsist(permissionPackage)){
-                list.remove(pack);
-                break;
+            for (PermissionPackage pack: getPermissionList(typeManager)){
+                if (isListPermissionConsist(typeManager, permissionPackage)){
+                    getPermissionList(typeManager).remove(pack);
+                    break;
+                }
             }
         }
     }
 
-    public void setAcceptPermission(PermissionPackage permissionPackage, boolean isAllowed){
+    public boolean isListPermissionConsist(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            for (PermissionPackage pack: permissionPackageList){
+            for (PermissionPackage pack: getPermissionList(typeManager)){
+                if (pack.getToken().equals(permissionPackage.getToken())){
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+
+
+
+    /*
+    * Сейчас используется isAllowed, надо что бы использовался код шифрования
+    */
+    public void setAcceptPermission(int typeManager, PermissionPackage permissionPackage, boolean isAllowed){
+        synchronized (lock){
+            for (PermissionPackage pack: getPermissionList(typeManager)){
                 if (pack.getToken().equals(permissionPackage.getToken())){
                     if (pack.getIsAllowed() == null){
                         if (isAllowed){
@@ -78,25 +80,29 @@ public class PermissionManager {
                             pack.setIsAllowed("false");
                             break;
                         }
+                    } else {
+                        break;
                     }
                 }
             }
         }
     }
-    public boolean isPermissionConsist(PermissionPackage permissionPackage){
-        synchronized (lock){
-            for (PermissionPackage pack: permissionPackageList){
-                if (pack.getToken().equals(permissionPackage.getToken())){
-                    return true;
-                }
-            }
-            return false;
+
+
+    private List<PermissionPackage> getPermissionList(int typeManager){
+        if (typeManager == CLIENT){
+            return this.permissionPackageListClient;
         }
+        if (typeManager == SERVER){
+            return this.permissionPackageListServer;
+        }
+        return new ArrayList<>();
     }
 
-    public PermissionPackage getPermissionFromManager(PermissionPackage permissionPackage){
+
+    public PermissionPackage getPermissionPackageFromManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
-            for (PermissionPackage pack: permissionPackageList){
+            for (PermissionPackage pack: getPermissionList(typeManager)){
                 if (pack.getToken().equals(permissionPackage.getToken())){
                     Log.d("test","getToken(), true");
                     return pack;
