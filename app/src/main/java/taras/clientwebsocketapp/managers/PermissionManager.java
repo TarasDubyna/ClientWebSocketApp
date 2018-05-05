@@ -16,9 +16,9 @@ public class PermissionManager {
     private List<PermissionPackage> permissionPackageListClient;
     private List<PermissionPackage> permissionPackageListServer;
 
+    private final Object lock = new Object();
 
     private static PermissionManager permissionManager;
-    private final Object lock = new Object();
 
     public PermissionManager() {
         this.permissionPackageListClient = new ArrayList<>();
@@ -31,8 +31,6 @@ public class PermissionManager {
         }
         return permissionManager;
     }
-
-
 
     public void addToPermissionManager(int typeManager, PermissionPackage permissionPackage){
         synchronized (lock){
@@ -55,6 +53,7 @@ public class PermissionManager {
             }
         }
     }
+
 
     private void removeFromList(List<PermissionPackage> list, PermissionPackage pack){
         for (PermissionPackage permissionPackage: list){
@@ -84,7 +83,7 @@ public class PermissionManager {
             }
         }
     }
-    public boolean isPermissionConsist(int typeManager, PermissionPackage permissionPackage){
+    public boolean isPermissionConsist(PermissionPackage permissionPackage){
         synchronized (lock){
             for (PermissionPackage pack: permissionPackageList){
                 if (pack.getToken().equals(permissionPackage.getToken())){
