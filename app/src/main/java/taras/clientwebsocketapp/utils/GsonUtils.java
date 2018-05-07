@@ -3,6 +3,7 @@ package taras.clientwebsocketapp.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
@@ -19,16 +20,18 @@ public class GsonUtils {
         ScannerPackage scannerPackage = gson.fromJson(json, ScannerPackage.class);
         return scannerPackage;
     }
-    public static PermissionPackage parsePermissionPackageFirst(String json){
+    public static PermissionPackage parsePermissionPackage(String json){
         Gson gson = new Gson();
         PermissionPackage permissionPackage = gson.fromJson(json, PermissionPackage.class);
         return permissionPackage;
     }
-    public static ServerStatePackage parseServerStatePackage(String json){
+
+    public static FileSendPackage parseFileSendPackage(String json){
         Gson gson = new Gson();
-        ServerStatePackage serverStatePackage = gson.fromJson(json, ServerStatePackage.class);
-        return serverStatePackage;
+        FileSendPackage fileSendPackage = gson.fromJson(json, FileSendPackage.class);
+        return fileSendPackage;
     }
+
 
     // object -> json
     public static String createJsonScannerPackage(ScannerPackage scannerPackage){
@@ -41,10 +44,10 @@ public class GsonUtils {
                 .excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(permissionPackage);
     }
-    public static String createJsonServerStatePackage(ServerStatePackage serverStatePackage){
+    public static String createJsonFileSendPackage(FileSendPackage fileSendPackage){
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
-        return gson.toJson(serverStatePackage);
+        return gson.toJson(fileSendPackage);
     }
 
 

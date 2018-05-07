@@ -150,17 +150,6 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         EventBus.getDefault().postSticky(message);
     }
 
-    private void testData(){
-        tvNoDevices.setVisibility(View.GONE);
-        rvDevices.setVisibility(View.VISIBLE);
-        for (int i = 0; i < 6; i ++){
-            ScannerPackage scannerPackage = new ScannerPackage();
-            scannerPackage.setServerIp("192.168.1." + i);
-            scannerPackage.setServerName("server name");
-            adapter.addItem(scannerPackage);
-        }
-    }
-
     @Override
     public void onRowClicked(int position) {
         if (!adapter.isEmpty()){

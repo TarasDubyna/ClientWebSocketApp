@@ -87,7 +87,7 @@ public class PermissionPackage extends Package{
         return GsonUtils.createJsonPermissionPackageFirst(this);
     }
     public static PermissionPackage parse(String json){
-        return GsonUtils.parsePermissionPackageFirst(json);
+        return GsonUtils.parsePermissionPackage(json);
     }
 
     public boolean isPermissionTimeout(){

@@ -64,7 +64,7 @@ public class ServerManager {
         Log.d(ConstatsLogTag.Server, "server listen: " + packageType);
         switch (packageType){
             case Constants.PACKAGE_TYPE_PERMISSION:
-                return GsonUtils.parsePermissionPackageFirst(requestJson);
+                return GsonUtils.parsePermissionPackage(requestJson);
             case Constants.PACKAGE_TYPE_SCANNING:
                 return GsonUtils.parseScannerPackage(requestJson);
         }

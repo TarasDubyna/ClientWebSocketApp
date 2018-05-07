@@ -62,7 +62,7 @@ public class SelectedFileManager {
     public List<String> getAllSelectedFilesNames(){
         List<String> filesName = new ArrayList<>();
         for (File file: selectedDirectoriesFilesList){
-            filesName.add(file.getName());
+            filesName.add(file.getAbsolutePath());
         }
         return filesName;
     }

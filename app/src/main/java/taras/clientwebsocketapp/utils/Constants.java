@@ -13,7 +13,9 @@ public class Constants {
     //packages type
     public static final String PACKAGE_TYPE_SCANNING = "package_type_scanning";
     public static final String PACKAGE_TYPE_PERMISSION = "package_type_permission";
-    public static final String PACKAGE_TYPE_SERVER_STATE = "package_type_server_state";
+    //public static final String PACKAGE_TYPE_SERVER_STATE = "package_type_server_state";
+    public static final String PACKAGE_FILE_SEND_STATE = "package_file_send_state";
+    public static final String PACKAGE_FILE_SEND = "package_file_send";
 
 
     //FileManager type
