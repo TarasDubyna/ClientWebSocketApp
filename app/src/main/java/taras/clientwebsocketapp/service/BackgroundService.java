@@ -17,6 +17,7 @@ import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
@@ -147,6 +148,8 @@ public class BackgroundService extends Service {
                     Log.d(ConstatsLogTag.CheckPermission, "successful permission for client");
                     PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, true);
                     //todo successful permission, start send file
+
+                    FileSenderManager.getFileSenderManager().addFileToSend(permissionPackage);
 
                     /*EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);

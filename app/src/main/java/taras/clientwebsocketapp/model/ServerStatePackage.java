@@ -21,7 +21,11 @@ public class ServerStatePackage extends Package {
     @Expose
     private String requestType;
 
-    public ServerStatePackage(Package pack) {
+    public ServerStatePackage(String type) {
+        super(type);
+    }
+
+    /*public ServerStatePackage(Package pack) {
         super(Constants.PACKAGE_TYPE_SERVER_STATE);
         this.setClientIp(pack.getClientIp());
         this.setClientName(pack.getClientName());
@@ -36,5 +40,5 @@ public class ServerStatePackage extends Package {
     }
     public static ServerStatePackage parse(String json){
         return GsonUtils.parseServerStatePackage(json);
-    }
+    }*/
 }
