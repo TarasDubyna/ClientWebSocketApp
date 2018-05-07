@@ -23,4 +23,36 @@ public class FileSendStatePackage extends Package {
     public FileSendStatePackage(String type) {
         super(type);
     }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public int getCurrentPart() {
+        return currentPart;
+    }
+
+    public void setCurrentPart(int currentPart) {
+        this.currentPart = currentPart;
+    }
+
+    public int getAllPart() {
+        return allPart;
+    }
+
+    public void setAllPart(int allPart) {
+        this.allPart = allPart;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
 }

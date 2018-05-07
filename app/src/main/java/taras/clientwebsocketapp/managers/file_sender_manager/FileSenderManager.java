@@ -1,24 +1,27 @@
 package taras.clientwebsocketapp.managers.file_sender_manager;
 
-import java.io.BufferedInputStream;
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import taras.clientwebsocketapp.model.FileFolder;
 import taras.clientwebsocketapp.model.FileSendPackage;
-import taras.clientwebsocketapp.utils.FileUtils;
+import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class FileSenderManager {
 
+    private static final String LOG_TAG = FileSenderManager.class.getSimpleName();
+
     private static FileSenderManager fileSenderManager;
+
+    private String STORAGE_FILE_DIRECTORY = PreferenceUtils.getLocalStorageDirection();
+    private static final int CHUNK_SIZE = 256000;
 
     private List<List<FileSendPackage>> lists;
 
@@ -35,54 +38,58 @@ public class FileSenderManager {
     }
 
     public void addFileToSend(String fileName){
-        this.lists.add()
+        this.lists.add();
     }
 
-    private List<FileSendPackage> createFileSendPackage(File file){
-        Arrays.copyofRa
-    }
 
     private byte[] convertFileToByteArray(File file) throws IOException {
-        int size = (int) file.length();
-        byte[] bytes = new byte[size];
-        try {
-            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-            buf.read(bytes, 0, bytes.length);
-            buf.close();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        byte[] byteFile = new byte[(int) file.length()];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        fileInputStream.read(byteFile);
+        Log.d(LOG_TAG, byteFile.toString());
+        return byteFile;
+    }
+
+    private void saveByteArrayInFile(byte[] fileByteArray, String fileName) throws IOException {
+        String newFileDirectory = STORAGE_FILE_DIRECTORY + fileName;
+        Log.d(LOG_TAG, "newFileDirectory: " + newFileDirectory);
+        try (FileOutputStream fileOuputStream = new FileOutputStream(newFileDirectory)) {
+            fileOuputStream.write(fileByteArray);
+            Log.d(LOG_TAG, "newFile: " + newFileDirectory + " write successful");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            Log.d(LOG_TAG, "newFile: " + newFileDirectory + " write error");
             e.printStackTrace();
         }
-        return bytes;
-    }
-
-    private File convertByteArrayToFile(byte[] array, String fileName) throws IOException {
-        FileOutputStream out = new FileOutputStream(fileName);
-        out.write(array);
-        out.close();
-        return new File()
     }
 
 
-    private List<byte[]> split(byte[] array, byte value){
-        List<byte[]> list = new ArrayList<>();
-        List<Byte> subList = new ArrayList<>();
-        for(byte element : array){
-            if(element == value && !subList.isEmpty()){
-                list.add(convertToPrimitiveArray(subList));
-                subList = new ArrayList<>();
-            }else if(element != value){
-                subList.add(element);
-            }
+    private List<byte[]> splitByteArray (byte[] bytesArray){
+        int len = bytesArray.length;
+        List<byte[]> splittedBytesArray = new ArrayList<>();
+
+        for (int i = 0; i < len - CHUNK_SIZE + 1; i += CHUNK_SIZE){
+            splittedBytesArray.add(Arrays.copyOfRange(bytesArray, i, i + CHUNK_SIZE));
         }
-        if(!subList.isEmpty()){
-            list.add(convertToPrimitiveArray(subList));
-        }
-        return list;
+        if (len % CHUNK_SIZE != 0)
+            splittedBytesArray.add(Arrays.copyOfRange(bytesArray, len - len % CHUNK_SIZE, len));
+
+        return splittedBytesArray;
     }
+
+    private List<FileSendPackage> createFileSendPackages(List<byte[]> splittedBytesArray, PermissionPackage permissionPackage){
+        int size = splittedBytesArray.size();
+        List<FileSendPackage> fileSendPackageList = new ArrayList<>();
+
+        for (int i = 0; i < size; i++){
+            FileSendPackage fileSendPackage = new FileSendPackage();
+            fileSendPackage.fillAfterPermission(permissionPackage);
+            fileSendPackage.createToSend(i, size, splittedBytesArray.get(i));
+            fileSendPackageList.add(fileSendPackage);
+        }
+        return fileSendPackageList;
+    }
+
+
 
     private byte[] convertToPrimitiveArray(List<Byte> list){
         byte[] array = new byte[list.size()];

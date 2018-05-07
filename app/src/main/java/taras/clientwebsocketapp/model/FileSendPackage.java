@@ -27,7 +27,7 @@ public class FileSendPackage extends Package{
     @Expose
     private byte[] data;
 
-    public FileSendPackage(String type) {
+    public FileSendPackage() {
         super(Constants.PACKAGE_FILE_SEND);
     }
 
@@ -47,11 +47,44 @@ public class FileSendPackage extends Package{
         return data;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+    public void setCurrentPart(int currentPart) {
+        this.currentPart = currentPart;
+    }
+    public void setAllPart(int allPart) {
+        this.allPart = allPart;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
     public String toJson(){
         return GsonUtils.createJsonFileSendPackage(this);
     }
     public static FileSendPackage parse(String json){
         return GsonUtils.parseFileSendPackage(json);
+    }
+
+
+    public void fillAfterPermission(PermissionPackage permissionPackage){
+        this.setClientIp(permissionPackage.getClientIp());
+        this.setClientName(permissionPackage.getClientName());
+        this.setServerIp(permissionPackage.getServerIp());
+        this.setServerName(permissionPackage.getServerName());
+
+        this.setToken(permissionPackage.getToken());
+    }
+
+    public void createToSend(int currentPart, int allPart, byte[] data){
+        this.setCurrentPart(currentPart);
+        this.setAllPart(allPart);
+        this.setData(data);
     }
 
 
