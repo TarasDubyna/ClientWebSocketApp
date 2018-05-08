@@ -32,6 +32,7 @@ public class FileSenderManager {
             fileSenderManager = new FileSenderManager();
         }
         return fileSenderManager;
+
     }
 
     public FileSenderManager() {
@@ -40,90 +41,34 @@ public class FileSenderManager {
 
     public void addFileToSend(PermissionPackage permissionPackage){
         for (String fileName: permissionPackage.getFilesName()){
-            createFilesPackages(new File(fileName), permissionPackage);
-        }
-    }
-
-    private void createFilesPackages(File file, PermissionPackage permissionPackage){
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    filesForSendingList.add(createFileSendPackages(splitByteArray(convertFileToByteArray(file)), permissionPackage));
-                } catch (IOException e) {
-                    e.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    FilePreparator filePreparator = new FilePreparator();
+                    filePreparator.addFile(new File(fileName))
+                            .setChunkSize(CHUNK_SIZE)
+                            .getFileForSendList(permissionPackage, filePreparatorCallback);
                 }
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-            Log.d(LOG_TAG, "Creation file for send list: " + file.getAbsolutePath());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            }).start();
         }
     }
 
-    private byte[] convertFileToByteArray(File file) throws IOException {
-        byte[] byteFile = new byte[(int) file.length()];
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(file);
-            fileInputStream.read(byteFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    FilePreparatorCallback filePreparatorCallback = new FilePreparatorCallback() {
+        @Override
+        public void getFileForSendList(List<FileSendPackage> fileSendPackageList) {
+            //todo send file
         }
-        Log.d(LOG_TAG, byteFile.toString());
-        return byteFile;
-    }
-    private List<byte[]> splitByteArray (byte[] bytesArray){
-        int len = bytesArray.length;
-        List<byte[]> splittedBytesArray = new ArrayList<>();
+    };
 
-        for (int i = 0; i < len - CHUNK_SIZE + 1; i += CHUNK_SIZE){
-            splittedBytesArray.add(Arrays.copyOfRange(bytesArray, i, i + CHUNK_SIZE));
-        }
-        if (len % CHUNK_SIZE != 0)
-            splittedBytesArray.add(Arrays.copyOfRange(bytesArray, len - len % CHUNK_SIZE, len));
 
-        return splittedBytesArray;
-    }
-    private List<FileSendPackage> createFileSendPackages(List<byte[]> splittedBytesArray, PermissionPackage permissionPackage){
-        int size = splittedBytesArray.size();
-        Log.d(LOG_TAG, "SplittedBytesArray.size(): " + splittedBytesArray.size());
-        Log.d(LOG_TAG, "splittedBytesArray: " + splittedBytesArray.toString());
-        List<FileSendPackage> fileSendPackageList = new ArrayList<>();
-        for (int i = 0; i < size; i++){
-            FileSendPackage fileSendPackage = new FileSendPackage();
-            fileSendPackage.fillAfterPermission(permissionPackage);
-            fileSendPackage.createToSend(i, size, splittedBytesArray.get(i));
-            fileSendPackageList.add(fileSendPackage);
-        }
-        Log.d(LOG_TAG, "FileSendPackage, fileSendPackageList: " + fileSendPackageList.size());
-        return fileSendPackageList;
+
+
+    public void addToFilesForSendingList(List<FileSendPackage> fileSendPackageList){
+        this.filesForSendingList.add(fileSendPackageList);
     }
 
 
-    //in response
-    private void saveByteArrayInFile(byte[] fileByteArray, String fileName){
-        String newFileDirectory = STORAGE_FILE_DIRECTORY + fileName;
-        Log.d(LOG_TAG, "newFileDirectory: " + newFileDirectory);
-        try (FileOutputStream fileOuputStream = new FileOutputStream(newFileDirectory)) {
-            fileOuputStream.write(fileByteArray);
-            Log.d(LOG_TAG, "newFile: " + newFileDirectory + " write successful");
-        } catch (IOException e) {
-            Log.d(LOG_TAG, "newFile: " + newFileDirectory + " write error");
-            e.printStackTrace();
-        }
-    }
-    private byte[] convertToPrimitiveArray(List<Byte> list){
-        byte[] array = new byte[list.size()];
-        for(int i=0 ; i<list.size() ; i++){
-            array[i] = list.get(i);
-        }
-        return array;
-    }
+
+
 
 }
