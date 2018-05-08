@@ -3,12 +3,7 @@ package taras.clientwebsocketapp.managers.file_sender_manager;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
@@ -22,10 +17,12 @@ public class FileSenderManager {
     private static FileSenderManager fileSenderManager;
 
     private String STORAGE_FILE_DIRECTORY = PreferenceUtils.getLocalStorageDirection();
-    private static final int CHUNK_SIZE = 256000;
+    private static final int CHUNK_SIZE = 4000;
 
     private List<List<FileSendPackage>> filesForSendingList;
 
+
+    private final Object lock = new Object();
 
     public static FileSenderManager getFileSenderManager() {
         if (fileSenderManager == null){
@@ -45,13 +42,15 @@ public class FileSenderManager {
                 @Override
                 public void run() {
                     FilePreparator filePreparator = new FilePreparator();
-                    filePreparator.addFile(new File(fileName))
+                    filePreparator.addFileName(fileName)
                             .setChunkSize(CHUNK_SIZE)
                             .getFileForSendList(permissionPackage, filePreparatorCallback);
                 }
             }).start();
         }
     }
+
+
 
     FilePreparatorCallback filePreparatorCallback = new FilePreparatorCallback() {
         @Override
@@ -64,7 +63,10 @@ public class FileSenderManager {
 
 
     public void addToFilesForSendingList(List<FileSendPackage> fileSendPackageList){
-        this.filesForSendingList.add(fileSendPackageList);
+        synchronized (lock){
+            this.filesForSendingList.add(fileSendPackageList);
+            Log.d(LOG_TAG, "Added to filesForSendingList dropped file: " + fileSendPackageList.get(0).getFileName());
+        }
     }
 
 

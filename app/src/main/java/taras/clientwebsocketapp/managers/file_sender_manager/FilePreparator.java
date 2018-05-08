@@ -23,9 +23,8 @@ public class FilePreparator {
 
     private String STORAGE_FILE_DIRECTORY = PreferenceUtils.getLocalStorageDirection();
 
-    private FilePreparatorCallback filePreparatorCallback;
-
     private File file;
+    private String fileName;
     private int chunkSize;
     private byte[] fileInByteArray;
     private List<byte[]> fileSplitedInByteList;
@@ -36,8 +35,9 @@ public class FilePreparator {
 
     }
 
-    public FilePreparator addFile(File file){
-        this.file = file;
+    public FilePreparator addFileName(String fileName){
+        this.fileName = fileName;
+        this.file = new File(fileName);
         return this;
     }
 
@@ -46,18 +46,19 @@ public class FilePreparator {
         return this;
     }
 
-    public List<byte[]> getFileInByteList(){
+    public void getFileInByteList(){
         this.fileSplitedInByteList = new ArrayList<>();
         convertFileToByteArray();
         splitByteArrayOnChunk();
-        return this.fileSplitedInByteList;
     }
 
     public void getFileForSendList(PermissionPackage permissionPackage, FilePreparatorCallback filePreparatorCallback){
+        getFileInByteList();
         List<FileSendPackage> list = new ArrayList<>();
         for (int i = 0; i < this.fileSplitedInByteList.size(); i++){
             FileSendPackage fileSendPackage = new FileSendPackage();
             fileSendPackage.fillAfterPermission(permissionPackage);
+            fileSendPackage.setFileName(fileName);
             fileSendPackage.setData(this.fileSplitedInByteList.get(i));
             fileSendPackage.setCurrentPart(i);
             fileSendPackage.setAllPart(this.fileSplitedInByteList.size());
