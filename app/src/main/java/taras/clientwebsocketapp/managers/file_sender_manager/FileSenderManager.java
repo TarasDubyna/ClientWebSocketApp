@@ -8,6 +8,7 @@ import java.util.List;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class FileSenderManager {
@@ -55,6 +56,9 @@ public class FileSenderManager {
     FilePreparatorCallback filePreparatorCallback = new FilePreparatorCallback() {
         @Override
         public void getFileForSendList(List<FileSendPackage> fileSendPackageList) {
+            for (int i = 0; i < fileSendPackageList.size(); i++){
+                NetworkConnection.getConnectionRepository().getPermission();
+            }
             //todo send file
         }
     };

@@ -60,13 +60,11 @@ public class RequestServiceManager implements Runnable {
     private void startServer(){
         service.startForeground(NotificationsManager.ID_FOREGROUND_SERVICE,
                 NotificationsManager.createServerStatusNotification(this.service));
-        //PreferenceUtils.saveRunningServerState(true);
         server.startServer();
     }
     private void stopServer(){
         server.stopServer();
         NotificationsManager.removeServerStatusNotification();
-        //PreferenceUtils.saveRunningServerState(false);
         service.stopForeground(true);
     }
 

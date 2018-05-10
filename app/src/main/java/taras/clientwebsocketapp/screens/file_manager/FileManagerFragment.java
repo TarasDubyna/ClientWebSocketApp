@@ -184,9 +184,11 @@ public class FileManagerFragment extends Fragment {
         @Override
         public void longClick(int position) {
             if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
-                adapterFiles.setFooterVisible(true);
-                selectedFileView.setVisibility(View.VISIBLE);
+                if (!adapterFiles.getItem(position).isDirectory()){
+                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
+                    adapterFiles.setFooterVisible(true);
+                    selectedFileView.setVisibility(View.VISIBLE);
+                }
             } else {
                 SelectedFileManager.getSelectedFileManager().removeAllSelectedFiles();
                 adapterFiles.notifyDataSetChanged();
@@ -209,11 +211,13 @@ public class FileManagerFragment extends Fragment {
                     tvEmptyFolder.setVisibility(View.VISIBLE);
                 }
             } else {
-                SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
-                selectedFileView.setSelectedNum(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectories().size());
-                adapterFiles.notifyItemChanged(position);
-                if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
-                    selectedFileView.setVisibility(View.GONE);
+                if (!adapterFiles.getItem(position).isDirectory()){
+                    SelectedFileManager.getSelectedFileManager().insertToSelectedFilesList(adapterFiles.getItem(position));
+                    selectedFileView.setSelectedNum(SelectedFileManager.getSelectedFileManager().getAllSelectedDirectories().size());
+                    adapterFiles.notifyItemChanged(position);
+                    if (SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
+                        selectedFileView.setVisibility(View.GONE);
+                    }
                 }
             }
         }

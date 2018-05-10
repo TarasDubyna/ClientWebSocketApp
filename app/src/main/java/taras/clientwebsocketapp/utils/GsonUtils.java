@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
+import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
@@ -26,6 +27,12 @@ public class GsonUtils {
         return permissionPackage;
     }
 
+    public static FileSendStatePackage parseFileSendStatePackage(String json){
+        Gson gson = new Gson();
+        FileSendStatePackage fileSendStatePackage = gson.fromJson(json, FileSendStatePackage.class);
+        return fileSendStatePackage;
+    }
+
     public static FileSendPackage parseFileSendPackage(String json){
         Gson gson = new Gson();
         FileSendPackage fileSendPackage = gson.fromJson(json, FileSendPackage.class);
@@ -43,6 +50,11 @@ public class GsonUtils {
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(permissionPackage);
+    }
+    public static String createJsonFileSendStatePackage(FileSendStatePackage fileSendStatePackage){
+        Gson gson = new GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation().create();
+        return gson.toJson(fileSendStatePackage);
     }
     public static String createJsonFileSendPackage(FileSendPackage fileSendPackage){
         Gson gson = new GsonBuilder()

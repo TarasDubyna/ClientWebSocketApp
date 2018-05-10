@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.utils.ConverterUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class FilePreparator {
@@ -62,8 +63,7 @@ public class FilePreparator {
             fileSendPackage.setData(this.fileSplitedInByteList.get(i));
             fileSendPackage.setCurrentPart(i);
             fileSendPackage.setAllPart(this.fileSplitedInByteList.size());
-            //Log.d(LOG_TAG, "#" + i + "  , fileSendPackage.toString: " + fileSendPackage.toJson());
-            Log.d(LOG_TAG, "#" + i + "  , fileSendPackage data byte[] size: " + fileSendPackage.getData().length);
+            Log.d(LOG_TAG, "File name: " + ConverterUtils.getFileNameFromDirectory(fileSendPackage.getFileName()) + ",Package #" + i + "  , fileSendPackage data byte[] size: " + fileSendPackage.getData().length);
             list.add(fileSendPackage);
         }
         filePreparatorCallback.getFileForSendList(list);

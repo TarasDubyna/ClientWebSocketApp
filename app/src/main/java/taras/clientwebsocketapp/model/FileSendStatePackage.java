@@ -3,22 +3,15 @@ package taras.clientwebsocketapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import taras.clientwebsocketapp.utils.GsonUtils;
+
 public class FileSendStatePackage extends Package {
 
-    @SerializedName("token")
-    @Expose
-    private String token;
-
-    @SerializedName("current_part")
-    @Expose
-    private int currentPart;
-    @SerializedName("all_part")
-    @Expose
-    private int allPart;
-
-    @SerializedName("data")
-    @Expose
-    private byte[] data;
+    @SerializedName("token") @Expose private String token;
+    @SerializedName("current_part") @Expose private int currentPart;
+    @SerializedName("all_part") @Expose private int allPart;
+    @SerializedName("state") @Expose private boolean state;
+    @SerializedName("file_name") @Expose private String fileName;
 
     public FileSendStatePackage(String type) {
         super(type);
@@ -27,7 +20,6 @@ public class FileSendStatePackage extends Package {
     public String getToken() {
         return token;
     }
-
     public void setToken(String token) {
         this.token = token;
     }
@@ -35,7 +27,6 @@ public class FileSendStatePackage extends Package {
     public int getCurrentPart() {
         return currentPart;
     }
-
     public void setCurrentPart(int currentPart) {
         this.currentPart = currentPart;
     }
@@ -43,16 +34,28 @@ public class FileSendStatePackage extends Package {
     public int getAllPart() {
         return allPart;
     }
-
     public void setAllPart(int allPart) {
         this.allPart = allPart;
     }
 
-    public byte[] getData() {
-        return data;
+    public boolean isState() {
+        return state;
+    }
+    public void setState(boolean state) {
+        this.state = state;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public String getFileName() {
+        return fileName;
+    }
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String toJson(){
+        return GsonUtils.createJsonFileSendStatePackage(this);
+    }
+    public static FileSendStatePackage parse(String json){
+        return GsonUtils.parseFileSendStatePackage(json);
     }
 }

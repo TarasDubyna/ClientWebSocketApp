@@ -97,7 +97,6 @@ public class ServerManager {
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    NotificationsManager.createGetPermissionNotification(context);
                     EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP,
                                     EventBusMsg.PACKAGE_PERMISSION, pack);

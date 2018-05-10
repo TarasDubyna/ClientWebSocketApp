@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
@@ -23,6 +24,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class NotificationsManager {
 
     public static int ID_FOREGROUND_SERVICE = 101;
+
+    private static final int ID_CHECK_PERMISSION = 1;
 
     private static NotificationsManager notificationManager;
 
@@ -42,7 +45,7 @@ public class NotificationsManager {
     }
 
 
-    public static void createGetPermissionNotification(Context context){
+    public static void createGetPermissionNotification(){
         PendingIntent pIntent = PendingIntent.getActivity(AppApplication.appContext, (int) System.currentTimeMillis(), new Intent(AppApplication.appContext, MainActivity.class), Intent.FILL_IN_ACTION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
         builder.setCategory(NotificationCompat.CATEGORY_SOCIAL)
@@ -50,6 +53,8 @@ public class NotificationsManager {
                 .setContentTitle(AppApplication.appContext.getString(R.string.app_name))
                 .setContentText("Check permission")
                 .setContentIntent(pIntent)
-                .setAutoCancel(false);
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
+        notificationManager.notify(ID_CHECK_PERMISSION, builder.build());
     }
 }

@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
+import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
+import taras.clientwebsocketapp.model.FileSendPackage;
+import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -82,7 +85,6 @@ public class NetworkOperations {
             scanningInterface.errorScanning(e);
         }
     }
-
     public static void getPermission(PermissionPackage permissionPackage, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
@@ -140,39 +142,40 @@ public class NetworkOperations {
         }
     }
 
-
-    /*
-    public static void takeRequest(String ip, String message, ScanningInterface scanningInterface) {
+    public static void sendFile(FileSendPackage fileSendPackage, FileSenderRequestCallback fileSenderRequestCallback){
         Socket socket = null;
         try {
-            socket = new Socket(InetAddress.getByName(ip), Constants.SERVER_PORT);
+            socket = new Socket(InetAddress.getByName(fileSendPackage.getServerIp()), Constants.SERVER_PORT);
             while (true) {
-                Log.d(LOG_TAG, "WatchSocket: open socket - " + ip);
+                Log.d(LOG_TAG, "WatchSocket: open socket - " + fileSendPackage.getServerIp());
 
-                // Посылаем message на сервер
+                // request to server
                 try {
-                    Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
+                    Log.d(LOG_TAG, "WatchSocket: send message - " + fileSendPackage.getServerIp());
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(message);
+                    out.println(fileSendPackage.toJson());
                 } catch (Exception e) {}
 
-                // Следим за потоком, принимающим сообщения
+                // check thread, rake response
                 StringBuilder stringBuilder = new StringBuilder();
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                     char[] buffer = new char[4096];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + ip);
+
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
+                    FileSendStatePackage fileSendStatePackage = FileSendStatePackage.parse(stringBuilder.toString());
+                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + fileSendStatePackage.getServerIp());
+
                     if (stringBuilder.toString().length() > 0){
                         socket.close();
-                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + ip);
-                        scanningInterface.successfulResponse(stringBuilder.toString());
+                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + fileSendStatePackage.getServerIp());
+                        fileSenderRequestCallback.getFileSendResponse(fileSendStatePackage);
                     }
                 }
             }
         } catch (IOException e) {
-            Log.d(LOG_TAG, "WatchSocket: IOException - " + ip);
+            Log.d(LOG_TAG, "WatchSocket: IOException - " + fileSendPackage.getServerIp());
             try {
                 if (socket != null){
                     socket.close();
@@ -181,9 +184,9 @@ public class NetworkOperations {
                 e1.printStackTrace();
             }
             e.printStackTrace();
-            scanningInterface.errorResponse(e);
+            fileSenderRequestCallback.errorRequest(e);
         } catch (Exception e) {
-            Log.d(LOG_TAG, "WatchSocket: Exception - " + ip);
+            Log.d(LOG_TAG, "WatchSocket: Exception - " + fileSendPackage.getServerIp());
             try {
                 if (socket != null){
                     socket.close();
@@ -192,10 +195,8 @@ public class NetworkOperations {
                 e1.printStackTrace();
             }
             e.printStackTrace();
-            scanningInterface.errorResponse(e);
+            fileSenderRequestCallback.errorRequest(e);
         }
     }
-
-*/
 
 }

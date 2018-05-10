@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TimerTask;
 
+import taras.clientwebsocketapp.managers.file_sender_manager.FilePreparatorCallback;
+import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
+import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.utils.NetworkUtils;
 import taras.clientwebsocketapp.utils.TimeUtils;
@@ -53,5 +56,10 @@ public class NetworkDataRepository implements ConnectionRepository {
     @Override
     public void getPermission(RequestServiceInterface requestServiceInterface, PermissionPackage permissionPackage) throws IOException {
         new Thread(() -> NetworkOperations.getPermission(permissionPackage, requestServiceInterface)).start();
+    }
+
+    @Override
+    public void sendFilePackage(FileSenderRequestCallback filePreparatorCallback, FileSendPackage fileSendPackage) throws IOException {
+        new Thread(() -> NetworkOperations.sendFile(fileSendPackage, filePreparatorCallback)).start();
     }
 }

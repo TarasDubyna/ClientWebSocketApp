@@ -2,6 +2,9 @@ package taras.clientwebsocketapp.network;
 
 import java.io.IOException;
 
+import taras.clientwebsocketapp.managers.file_sender_manager.FilePreparatorCallback;
+import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
+import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 
 /**
@@ -11,4 +14,5 @@ import taras.clientwebsocketapp.model.PermissionPackage;
 public interface ConnectionRepository {
     void scanNetwork(RequestServiceInterface requestServiceInterface, String networkIP) throws IOException;
     void getPermission(RequestServiceInterface scanningInterface, PermissionPackage permissionPackage) throws IOException;
+    void sendFilePackage(FileSenderRequestCallback fileSenderRequestCallback, FileSendPackage fileSendPackage) throws IOException;
 }

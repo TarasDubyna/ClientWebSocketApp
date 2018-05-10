@@ -7,6 +7,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.utils.ConverterUtils;
 
 public class PermissionFileHolder extends RecyclerView.ViewHolder{
 
@@ -19,7 +20,7 @@ public class PermissionFileHolder extends RecyclerView.ViewHolder{
     }
 
     public void bind(String fileName){
-        tvFileName.setText(fileName);
+        tvFileName.setText(ConverterUtils.getFileNameFromDirectory(fileName));
     }
 
 }
