@@ -4,5 +4,5 @@ import taras.clientwebsocketapp.model.FileSendStatePackage;
 
 public interface FileSenderRequestCallback {
     void getFileSendResponse(FileSendStatePackage fileSendStatePackage);
-    void errorRequest(Throwable throwable);
+    void errorRequest(FileSendStatePackage fileSendStatePackage, Throwable throwable);
 }

@@ -3,10 +3,12 @@ package taras.clientwebsocketapp.managers.file_sender_manager;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
+import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
@@ -51,30 +53,89 @@ public class FileSenderManager {
         }
     }
 
-
+    private void sendFilePackages(List<FileSendPackage> fileSendPackageList){
+        addToFilesForSendingList(fileSendPackageList);
+        for (int i = 0; i < fileSendPackageList.size(); i++){
+            try {
+                NetworkConnection.getConnectionRepository().sendFilePackage(fileSenderRequestCallback, fileSendPackageList.get(i));
+            } catch (IOException e) {
+                Log.d(LOG_TAG, "sendFilePackages, error: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+    }
 
     FilePreparatorCallback filePreparatorCallback = new FilePreparatorCallback() {
         @Override
         public void getFileForSendList(List<FileSendPackage> fileSendPackageList) {
-            for (int i = 0; i < fileSendPackageList.size(); i++){
-                NetworkConnection.getConnectionRepository().getPermission();
-            }
             //todo send file
+            sendFilePackages(fileSendPackageList);
+        }
+    };
+    FileSenderRequestCallback fileSenderRequestCallback = new FileSenderRequestCallback() {
+        @Override
+        public void getFileSendResponse(FileSendStatePackage fileSendStatePackage) {
+            Log.d(LOG_TAG, "Sucsessful send filePackage, fileName: " + fileSendStatePackage.getFileName()
+                    + " , part: " + fileSendStatePackage.getCurrentPart()
+                    + " , all part: " + fileSendStatePackage.getAllPart());
+            removeFromFilesForSendingList(fileSendStatePackage);
+
+        }
+
+        @Override
+        public void errorRequest(FileSendStatePackage fileSendStatePackage, Throwable throwable) {
+            FileSendPackage fileSendPackage = getFileSendPackageByState(fileSendStatePackage);
+            if (fileSendPackage != null){
+                try {
+                    NetworkConnection.getConnectionRepository().sendFilePackage(fileSenderRequestCallback, fileSendPackage);
+                } catch (IOException e) {
+                    Log.d(LOG_TAG, "sendFilePackages, error: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
         }
     };
 
 
 
-
-    public void addToFilesForSendingList(List<FileSendPackage> fileSendPackageList){
+    private void addToFilesForSendingList(List<FileSendPackage> fileSendPackageList){
         synchronized (lock){
             this.filesForSendingList.add(fileSendPackageList);
             Log.d(LOG_TAG, "Added to filesForSendingList dropped file: " + fileSendPackageList.get(0).getFileName());
         }
     }
-
-
-
-
+    private void removeFromFilesForSendingList(FileSendStatePackage fileSendStatePackage){
+        synchronized (lock){
+            for (int i = 0; i < filesForSendingList.size(); i++){
+                if (filesForSendingList.get(i).get(0).getToken().equals(fileSendStatePackage.getToken())){
+                    for (int j = 0; j < filesForSendingList.get(i).size(); j++){
+                        if (filesForSendingList.get(i).get(j).getFileName().equals(fileSendStatePackage.getFileName()) &&
+                                filesForSendingList.get(i).get(j).getCurrentPart() == fileSendStatePackage.getCurrentPart()){
+                            filesForSendingList.get(i).remove(j);
+                            Log.d(LOG_TAG, "Remove Package: " + i + ", " + j);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    private FileSendPackage getFileSendPackageByState(FileSendStatePackage fileSendStatePackage){
+        for (int i = 0; i < filesForSendingList.size(); i++){
+            if (filesForSendingList.get(i).get(0).getToken().equals(fileSendStatePackage.getToken())){
+                for (int j = 0; j < filesForSendingList.get(i).size(); j++){
+                    if (filesForSendingList.get(i).get(j).getFileName().equals(fileSendStatePackage.getFileName()) &&
+                            filesForSendingList.get(i).get(j).getCurrentPart() == fileSendStatePackage.getCurrentPart()){
+                        filesForSendingList.get(i).remove(j);
+                        return filesForSendingList.get(i).get(j);
+                    }
+                }
+                break;
+            }
+        }
+        return null;
+    }
 
 }

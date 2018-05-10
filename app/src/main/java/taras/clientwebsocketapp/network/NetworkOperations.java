@@ -142,6 +142,8 @@ public class NetworkOperations {
         }
     }
 
+
+    private static FileSendStatePackage fileSendStatePackage;
     public static void sendFile(FileSendPackage fileSendPackage, FileSenderRequestCallback fileSenderRequestCallback){
         Socket socket = null;
         try {
@@ -164,7 +166,7 @@ public class NetworkOperations {
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
 
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
-                    FileSendStatePackage fileSendStatePackage = FileSendStatePackage.parse(stringBuilder.toString());
+                    fileSendStatePackage = FileSendStatePackage.parse(stringBuilder.toString());
                     Log.d(LOG_TAG, "WatchSocket: socket get response - " + fileSendStatePackage.getServerIp());
 
                     if (stringBuilder.toString().length() > 0){
@@ -184,7 +186,7 @@ public class NetworkOperations {
                 e1.printStackTrace();
             }
             e.printStackTrace();
-            fileSenderRequestCallback.errorRequest(e);
+            fileSenderRequestCallback.errorRequest(fileSendStatePackage, e);
         } catch (Exception e) {
             Log.d(LOG_TAG, "WatchSocket: Exception - " + fileSendPackage.getServerIp());
             try {
@@ -195,7 +197,7 @@ public class NetworkOperations {
                 e1.printStackTrace();
             }
             e.printStackTrace();
-            fileSenderRequestCallback.errorRequest(e);
+            fileSenderRequestCallback.errorRequest(fileSendStatePackage, e);
         }
     }
 
