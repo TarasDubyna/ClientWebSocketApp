@@ -62,7 +62,8 @@ public class FilePreparator {
             fileSendPackage.setData(this.fileSplitedInByteList.get(i));
             fileSendPackage.setCurrentPart(i);
             fileSendPackage.setAllPart(this.fileSplitedInByteList.size());
-            Log.d(LOG_TAG, "#" + i + "  , fileSendPackage.toString: " + fileSendPackage.toJson());
+            //Log.d(LOG_TAG, "#" + i + "  , fileSendPackage.toString: " + fileSendPackage.toJson());
+            Log.d(LOG_TAG, "#" + i + "  , fileSendPackage data byte[] size: " + fileSendPackage.getData().length);
             list.add(fileSendPackage);
         }
         filePreparatorCallback.getFileForSendList(list);

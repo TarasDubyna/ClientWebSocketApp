@@ -1,5 +1,6 @@
 package taras.clientwebsocketapp.server;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -12,7 +13,6 @@ import java.net.Socket;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -22,13 +22,14 @@ public class Server {
     private static Server server;
 
     private Handler mainHandler;
+    private Context context;
 
 
     public Server(Handler mainHandler) {
         this.mainHandler = mainHandler;
     }
 
-    public static Server getInstance(Handler mainHandler){
+    public static Server getInstance(Handler mainHandler, Context context){
         if (server == null){
             server = new Server(mainHandler);
         }
@@ -45,7 +46,7 @@ public class Server {
 
     public void stopServer(){
         try {
-            NotificationsManager.removeServerNotification();
+            NotificationsManager.removeServerStatusNotification();
             serverState = false;
             serverSocket.close();
             Log.d(ConstatsLogTag.Server, "server stopped");
@@ -78,7 +79,7 @@ public class Server {
                                 InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 
-                                ServerManager serverManager = new ServerManager(mainHandler);
+                                ServerManager serverManager = new ServerManager(mainHandler, context);
                                 serverManager.getRequest(getRequestFromClient(inputStreamReader));
 
                                 sendResponse(outputStreamWriter, serverManager.returnResponse());

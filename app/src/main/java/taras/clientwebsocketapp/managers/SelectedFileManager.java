@@ -37,12 +37,6 @@ public class SelectedFileManager {
         return selectedFileManager;
     }
 
-    /*
-    public void setSelectedFileView(SelectedFileView selectedFileView){
-        this.selectedFileView = selectedFileView;
-    }
-    */
-
     //work with selected files;
     public SelectedFileManager insertToSelectedFilesList(File file){
         if (selectedDirectoriesFilesList.contains(file)){
@@ -70,8 +64,6 @@ public class SelectedFileManager {
 
     public void removeAllSelectedFiles(){
         selectedDirectoriesFilesList.clear();
-        //selectedFileView.setSelectedNum(0);
-        //selectedFileView.setVisibility(View.GONE);
     }
     public boolean isSelectedFilesListEmpty(){
         if (selectedDirectoriesFilesList.size() == 0){
@@ -90,9 +82,7 @@ public class SelectedFileManager {
 
     private void addToSelectedFiles(File file){
         selectedDirectoriesFilesList.add(file);
-        //selectedFileView.setSelectedNum(selectedDirectoriesFilesList.size());
         if (selectedDirectoriesFilesList.size() > 0){
-            //selectedFileView.setVisibility(View.VISIBLE);
         }
     }
     private void removeFromSelectedFiles(File file){

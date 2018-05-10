@@ -7,6 +7,7 @@ import android.content.Intent;
 
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.R;
+import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -21,7 +22,7 @@ public class NotificationsManager {
 
     private static NotificationsManager notificationManager;
 
-    public static Notification createServerNotification(Context context){
+    public static Notification createServerStatusNotification(Context context){
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(), 0);
         return new Notification.Builder(context)
                 .setSmallIcon(R.drawable.ic_phone_network)
@@ -31,11 +32,21 @@ public class NotificationsManager {
                 .setAutoCancel(false)
                 .build();
     }
-    public static void removeServerNotification(){
+    public static void removeServerStatusNotification(){
         Context context = AppApplication.appContext;
         android.app.NotificationManager notificationManager = (android.app.NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(0);
     }
 
 
+    public static Notification createGetPermissionNotification(Context context){
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class), 0);
+        return new Notification.Builder(context)
+                .setSmallIcon(R.drawable.ic_phone_network)
+                .setContentTitle(context.getString(R.string.app_name))
+                .setContentText("Check permission")
+                .setContentIntent(pIntent)
+                .setAutoCancel(false)
+                .build();
+    }
 }

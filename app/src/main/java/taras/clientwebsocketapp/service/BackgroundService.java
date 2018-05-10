@@ -53,7 +53,7 @@ public class BackgroundService extends Service {
     public void onCreate() {
         super.onCreate();
         EventBus.getDefault().register(this);
-        server = Server.getInstance(mainHandler);
+        server = Server.getInstance(mainHandler, getApplicationContext());
     }
     @Override
     public void onDestroy() {

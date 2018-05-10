@@ -17,7 +17,7 @@ public class FileSenderManager {
     private static FileSenderManager fileSenderManager;
 
     private String STORAGE_FILE_DIRECTORY = PreferenceUtils.getLocalStorageDirection();
-    private static final int CHUNK_SIZE = 4000;
+    private static final int CHUNK_SIZE = 64000;
 
     private List<List<FileSendPackage>> filesForSendingList;
 

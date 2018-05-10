@@ -11,7 +11,6 @@ import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
-import taras.clientwebsocketapp.utils.PreferenceUtils;
 import taras.clientwebsocketapp.utils.TimeUtils;
 
 public class RequestServiceManager implements Runnable {
@@ -60,13 +59,13 @@ public class RequestServiceManager implements Runnable {
 
     private void startServer(){
         service.startForeground(NotificationsManager.ID_FOREGROUND_SERVICE,
-                NotificationsManager.createServerNotification(this.service));
+                NotificationsManager.createServerStatusNotification(this.service));
         //PreferenceUtils.saveRunningServerState(true);
         server.startServer();
     }
     private void stopServer(){
         server.stopServer();
-        NotificationsManager.removeServerNotification();
+        NotificationsManager.removeServerStatusNotification();
         //PreferenceUtils.saveRunningServerState(false);
         service.stopForeground(true);
     }

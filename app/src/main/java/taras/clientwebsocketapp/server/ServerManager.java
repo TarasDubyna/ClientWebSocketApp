@@ -1,5 +1,6 @@
 package taras.clientwebsocketapp.server;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
@@ -8,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import taras.clientwebsocketapp.AppApplication;
+import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
@@ -24,6 +26,7 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class ServerManager {
     private Handler mainHandler;
+    private Context context;
 
     private String requestJson;
 
@@ -31,8 +34,9 @@ public class ServerManager {
     private Package requestPackage;
 
 
-    public ServerManager(Handler mainHandler) {
+    public ServerManager(Handler mainHandler, Context context) {
         this.mainHandler = mainHandler;
+        this.context = context;
     }
 
     public ServerManager getRequest(String requestJson){
@@ -93,6 +97,7 @@ public class ServerManager {
             mainHandler.post(new Runnable() {
                 @Override
                 public void run() {
+                    NotificationsManager.createGetPermissionNotification(context);
                     EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP,
                                     EventBusMsg.PACKAGE_PERMISSION, pack);
