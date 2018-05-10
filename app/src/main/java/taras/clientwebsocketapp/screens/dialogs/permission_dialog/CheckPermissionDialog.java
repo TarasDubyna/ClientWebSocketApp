@@ -67,7 +67,10 @@ public class CheckPermissionDialog extends DialogFragment {
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
                 //tvTimer.setText(seconds);
                 progressCount++;
-                pbTimeout.setProgress(progressCount);
+                if (pbTimeout != null){
+                    pbTimeout.setProgress(progressCount);
+                }
+
             }
             public void onFinish() {
                 pbTimeout.setProgress(progressCount);

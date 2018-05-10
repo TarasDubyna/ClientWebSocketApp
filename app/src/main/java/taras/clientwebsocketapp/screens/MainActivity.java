@@ -181,12 +181,10 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view) {
         EventBusMsg<String> message = null;
         if (serverSwitch.isChecked()){
-            serverSwitch.setChecked(true);
             Snackbar.make(view, getString(R.string.server_on_visible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
             message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_START, null);
         } else {
-            serverSwitch.setChecked(false);
             Snackbar.make(view, getString(R.string.server_off_invisible), Snackbar.LENGTH_SHORT)
                     .setAction("Action", null).show();
             message = new EventBusMsg<String>(EventBusMsg.TO_SERVICE, EventBusMsg.SERVER_STOP, null);

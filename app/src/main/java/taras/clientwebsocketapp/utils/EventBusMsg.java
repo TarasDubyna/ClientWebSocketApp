@@ -14,8 +14,8 @@ public class EventBusMsg<T> {
     public static final int PACKAGE_SERVER_STATE = 3;
     public static final int CHECK_IS_SERVER_WORK = 4;
 
-    public static final int SERVER_START = 4;
-    public static final int SERVER_STOP = 5;
+    public static final int SERVER_START = 5;
+    public static final int SERVER_STOP = 6;
 
     public static final int SCANNING_NETWORK_END = 100;
 
