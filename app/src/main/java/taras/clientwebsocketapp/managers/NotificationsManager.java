@@ -57,4 +57,49 @@ public class NotificationsManager {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
         notificationManager.notify(ID_CHECK_PERMISSION, builder.build());
     }
+
+
+
+
+
+
+/*
+    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+mBuilder.setContentTitle("Picture Download")
+        .setContentText("Download in progress")
+        .setSmallIcon(R.drawable.ic_notification)
+        .setPriority(NotificationCompat.PRIORITY_LOW);
+
+    // Issue the initial notification with zero progress
+    int PROGRESS_MAX = 100;
+    int PROGRESS_CURRENT = 0;
+mBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+notificationManager.notify(notificationId, mBuilder.build());
+
+// Do the job here that tracks the progress.
+// Usually, this should be in a worker thread
+// To show progress, update PROGRESS_CURRENT and update the notification with:
+// mBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+// notificationManager.notify(notificationId, mBuilder.build());
+
+// When done, update the notification one more time to remove the progress bar
+mBuilder.setContentText("Download complete")
+        .setProgress(0,0,false);
+notificationManager.notify(notificationId, mBuilder.build());*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
