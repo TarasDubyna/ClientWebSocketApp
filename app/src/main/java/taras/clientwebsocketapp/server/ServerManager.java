@@ -11,6 +11,9 @@ import org.json.JSONObject;
 import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.managers.PermissionManager;
+import taras.clientwebsocketapp.managers.file_getter_manager.FileGetterManager;
+import taras.clientwebsocketapp.model.FileSendPackage;
+import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
@@ -65,12 +68,14 @@ public class ServerManager {
         return null;
     }
     private Package getPackageFromJson(){
-        Log.d(ConstatsLogTag.Server, "server listen: " + packageType);
+        Log.d(ConstatsLogTag.Server, "Parse request: " + packageType);
         switch (packageType){
             case Constants.PACKAGE_TYPE_PERMISSION:
-                return GsonUtils.parsePermissionPackage(requestJson);
+                return PermissionPackage.parse(requestJson);
             case Constants.PACKAGE_TYPE_SCANNING:
-                return GsonUtils.parseScannerPackage(requestJson);
+                return ScannerPackage.parse(requestJson);
+            case Constants.PACKAGE_FILE_SEND:
+                return FileSendPackage.parse(requestJson);
         }
         return null;
     }
@@ -81,6 +86,8 @@ public class ServerManager {
                 return createScannerPackageResponse((ScannerPackage) requestPackage).toJson();
             case Constants.PACKAGE_TYPE_PERMISSION:
                 return createPackagePermissionResponse((PermissionPackage) requestPackage).toJson();
+            case Constants.PACKAGE_FILE_SEND:
+                return createFileSendStatePackageResponse((FileSendPackage) requestPackage).toJson();
 
         }
         return null;
@@ -107,6 +114,10 @@ public class ServerManager {
         } else {
             return PermissionManager.getPermissionManager().getPermissionPackageFromManager(PermissionManager.SERVER, pack);
         }
+    }
+    private FileSendStatePackage createFileSendStatePackageResponse(FileSendPackage fileSendPackage){
+        FileGetterManager.getFileGetterManager().addGettedFileSandPackage(fileSendPackage);
+        return new FileSendStatePackage(fileSendPackage);
     }
 
 }

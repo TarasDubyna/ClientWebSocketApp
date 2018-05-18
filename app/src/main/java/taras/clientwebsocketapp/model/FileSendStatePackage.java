@@ -3,6 +3,7 @@ package taras.clientwebsocketapp.model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 
 public class FileSendStatePackage extends Package {
@@ -10,11 +11,19 @@ public class FileSendStatePackage extends Package {
     @SerializedName("token") @Expose private String token;
     @SerializedName("current_part") @Expose private int currentPart;
     @SerializedName("all_part") @Expose private int allPart;
-    @SerializedName("state") @Expose private boolean state;
+    //@SerializedName("state") @Expose private boolean state;
     @SerializedName("file_name") @Expose private String fileName;
 
-    public FileSendStatePackage(String type) {
-        super(type);
+    public FileSendStatePackage() {
+        super(Constants.PACKAGE_FILE_SEND_STATE);
+    }
+
+    public FileSendStatePackage(FileSendPackage fileSendPackage) {
+        super(Constants.PACKAGE_FILE_SEND_STATE);
+        this.token = fileSendPackage.getToken();
+        this.currentPart = fileSendPackage.getCurrentPart();
+        this.allPart = fileSendPackage.getAllPart();
+        this.fileName = fileSendPackage.getFileName();
     }
 
     public String getToken() {
@@ -38,12 +47,12 @@ public class FileSendStatePackage extends Package {
         this.allPart = allPart;
     }
 
-    public boolean isState() {
+    /*public boolean isState() {
         return state;
     }
     public void setState(boolean state) {
         this.state = state;
-    }
+    }*/
 
     public String getFileName() {
         return fileName;

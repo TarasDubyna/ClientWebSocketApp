@@ -1,6 +1,8 @@
 package taras.clientwebsocketapp.managers;
 
+import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -58,6 +60,33 @@ public class NotificationsManager {
         notificationManager.notify(ID_CHECK_PERMISSION, builder.build());
     }
 
+    public static void createFileGetNotification(int id, String fileName){
+        PendingIntent pIntent = PendingIntent.getActivity(AppApplication.appContext, (int) System.currentTimeMillis(), new Intent(), 0);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
+        builder.setCategory(NotificationCompat.CATEGORY_PROGRESS)
+                .setSmallIcon(R.drawable.ic_phone_network)
+                .setContentTitle(AppApplication.appContext.getString(R.string.app_name))
+                .setContentText("Download: " + fileName)
+                .setProgress(100, 0, true)
+                .setContentIntent(pIntent)
+                .setAutoCancel(false);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
+        notificationManager.notify(id, builder.build());
+    }
+    public static void updateFileGetNotification(int id, int progress){
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
+        builder.setProgress(100, progress, true);
+        notificationManager.notify(id, builder.build());
+    }
+    public static void finishFileGetNotification(int id){
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
+        builder.setAutoCancel(true);
+        builder.setContentText("Download complete")
+                .setProgress(0,0,false);
+        notificationManager.notify(id, builder.build());
+    }
 
 
 
