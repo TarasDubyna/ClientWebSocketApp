@@ -61,6 +61,7 @@ public class ServerManager {
         try {
             JSONObject requestJsonObject = new JSONObject(requestJson);
             String packageType = requestJsonObject.getString("type");
+            Log.d("ServerManager", "packageType: " + packageType);
             return packageType;
         } catch (JSONException e) {
             e.printStackTrace();

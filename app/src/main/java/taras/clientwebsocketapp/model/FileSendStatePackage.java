@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.model;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,6 +9,8 @@ import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.GsonUtils;
 
 public class FileSendStatePackage extends Package {
+
+    private static final String LOG_TAG = FileSendStatePackage.class.getSimpleName();
 
     @SerializedName("token") @Expose private String token;
     @SerializedName("current_part") @Expose private int currentPart;
@@ -20,6 +24,7 @@ public class FileSendStatePackage extends Package {
 
     public FileSendStatePackage(FileSendPackage fileSendPackage) {
         super(Constants.PACKAGE_FILE_SEND_STATE);
+        Log.d(LOG_TAG, "Create FileSendStatePackage: " + this.toJson());
         this.token = fileSendPackage.getToken();
         this.currentPart = fileSendPackage.getCurrentPart();
         this.allPart = fileSendPackage.getAllPart();

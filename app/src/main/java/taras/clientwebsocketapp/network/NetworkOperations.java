@@ -162,7 +162,8 @@ public class NetworkOperations {
                 StringBuilder stringBuilder = new StringBuilder();
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-                    char[] buffer = new char[4096];
+
+                    char[] buffer = new char[8192];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
 
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);

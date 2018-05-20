@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import taras.clientwebsocketapp.AppApplication;
+import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
@@ -32,7 +33,7 @@ import taras.clientwebsocketapp.utils.EventBusMsg;
 
 public class BackgroundService extends Service {
 
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = BackgroundService.class.getSimpleName();
     public static final String SERVICE_ACTION = "SERVICE_ACTION";
 
     private Server server;
@@ -52,6 +53,7 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(LOG_TAG, "Service onCreate");
         EventBus.getDefault().register(this);
         server = Server.getInstance(mainHandler, getApplicationContext());
     }
@@ -61,6 +63,8 @@ public class BackgroundService extends Service {
         server.stopServer();
         //PreferenceUtils.saveRunningServerState(false);
         EventBus.getDefault().unregister(this);
+        NotificationsManager.removeServerStatusNotification();
+        Log.d(LOG_TAG, "Service onDestroy");
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -125,7 +129,7 @@ public class BackgroundService extends Service {
 
         @Override
         public void successfulGetPermission(PermissionPackage permissionPackage) {
-            Log.d("test", "hello");
+            Log.d(LOG_TAG, "Get permission, is allowed: " + permissionPackage.getIsAllowed());
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");

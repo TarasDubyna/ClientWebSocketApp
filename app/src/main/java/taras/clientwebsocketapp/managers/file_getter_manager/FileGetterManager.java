@@ -59,15 +59,17 @@ public class FileGetterManager {
         }
     }
     private void createNewFileList(FileSendPackage fileSendPackage){
-        List<FileSendPackage> list = new ArrayList<>(fileSendPackage.getAllPart() + 1);
-        list.add(fileSendPackage.getCurrentPart(), fileSendPackage);
+        List<FileSendPackage> list = new ArrayList<FileSendPackage>(fileSendPackage.getAllPart() + 1);
+        //list.add(fileSendPackage.getCurrentPart(), fileSendPackage);
+        list.add(fileSendPackage);
         this.gettedFileSendPackages.add(list);
 
         notificationMap.put(fileSendPackage.getFileName(), notificationMap.size() + 1);
         NotificationsManager.createFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), fileSendPackage.getFileName());
     }
     private void addFilePackage(List<FileSendPackage> fileList, FileSendPackage fileSendPackage){
-        fileList.add(fileSendPackage.getCurrentPart(), fileSendPackage);
+        //fileList.add(fileSendPackage.getCurrentPart(), fileSendPackage);
+        fileList.add(fileSendPackage);
         NotificationsManager.updateFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), getDownloadProgress(fileList));
     }
 

@@ -20,7 +20,7 @@ public class FileSenderManager {
     private static FileSenderManager fileSenderManager;
 
     private String STORAGE_FILE_DIRECTORY = PreferenceUtils.getLocalStorageDirection();
-    private static final int CHUNK_SIZE = 64000;
+    private static final int CHUNK_SIZE = 2000;
 
     private List<List<FileSendPackage>> filesForSendingList;
 
@@ -79,12 +79,12 @@ public class FileSenderManager {
                     + " , part: " + fileSendStatePackage.getCurrentPart()
                     + " , all part: " + fileSendStatePackage.getAllPart());
             removeFromFilesForSendingList(fileSendStatePackage);
-
         }
 
         @Override
         public void errorRequest(FileSendStatePackage fileSendStatePackage, Throwable throwable) {
-            FileSendPackage fileSendPackage = getFileSendPackageByState(fileSendStatePackage);
+            Log.d(LOG_TAG, "Error send file package");
+            /*FileSendPackage fileSendPackage = getFileSendPackageByState(fileSendStatePackage);
             if (fileSendPackage != null){
                 try {
                     NetworkConnection.getConnectionRepository().sendFilePackage(fileSenderRequestCallback, fileSendPackage);
@@ -92,7 +92,7 @@ public class FileSenderManager {
                     Log.d(LOG_TAG, "sendFilePackages, error: " + e.getMessage());
                     e.printStackTrace();
                 }
-            }
+            }*/
 
         }
     };
@@ -124,6 +124,22 @@ public class FileSenderManager {
     }
     private FileSendPackage getFileSendPackageByState(FileSendStatePackage fileSendStatePackage){
         for (int i = 0; i < filesForSendingList.size(); i++){
+            for (int j = 0; j < filesForSendingList.get(i).size(); j++){
+                if (compareFileSendPackagesByFileName(filesForSendingList.get(i).get(j), fileSendStatePackage)){
+                    if (compareFileSendPackagesByCurrentPart(filesForSendingList.get(i).get(j), fileSendStatePackage)){
+                        filesForSendingList.get(i).remove(j);
+                        return filesForSendingList.get(i).get(j);
+                    }
+                } else {
+                    continue;
+                }
+            }
+        }
+        return null;
+/*
+
+
+        for (int i = 0; i < filesForSendingList.size(); i++){
             if (filesForSendingList.get(i).get(0).getToken().equals(fileSendStatePackage.getToken())){
                 for (int j = 0; j < filesForSendingList.get(i).size(); j++){
                     if (filesForSendingList.get(i).get(j).getFileName().equals(fileSendStatePackage.getFileName()) &&
@@ -135,7 +151,25 @@ public class FileSenderManager {
                 break;
             }
         }
-        return null;
+        return null;*/
+    }
+
+    private boolean compareFileSendPackagesByFileName(FileSendPackage fileSendPackageCompared, FileSendStatePackage fileSendPackage){
+        if (fileSendPackageCompared != null){
+            if (fileSendPackageCompared.getToken().equals(fileSendPackage.getToken())
+                    && fileSendPackageCompared.getFileName().equals(fileSendPackage.getFileName()))
+                return true;
+            else return false;
+        } else {
+            return false;
+        }
+    }
+    private boolean compareFileSendPackagesByCurrentPart(FileSendPackage fileSendPackageCompared, FileSendStatePackage fileSendPackage){
+        if (fileSendPackageCompared.getToken().equals(fileSendPackage.getToken())
+                && fileSendPackageCompared.getFileName().equals(fileSendPackage.getFileName())
+                && fileSendPackageCompared.getCurrentPart() == fileSendPackage.getCurrentPart())
+            return true;
+        else return false;
     }
 
 }

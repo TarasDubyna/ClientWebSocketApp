@@ -70,13 +70,6 @@ public class FilePreparator {
     }
 
 
-
-
-
-
-
-
-
     public FilePreparator addFileAsSplitted(List<byte[]> fileSplitedInByteList){
         this.fileSplitedInByteList = fileSplitedInByteList;
         return this;
