@@ -23,6 +23,7 @@ import taras.clientwebsocketapp.model.ScannerPackage;
 
 public class NetworkOperations {
     private static final String LOG_TAG = "myLogs";
+    private static final int BUFFER_SIZE = 4096;
 
     public static void scanNetwork(String ip, RequestServiceInterface scanningInterface) {
         Socket socket = null;
@@ -42,7 +43,7 @@ public class NetworkOperations {
                 StringBuilder stringBuilder = new StringBuilder();
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-                    char[] buffer = new char[4096];
+                    char[] buffer = new char[BUFFER_SIZE];
 
                     try {
                         stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
@@ -103,7 +104,7 @@ public class NetworkOperations {
                 StringBuilder stringBuilder = new StringBuilder();
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-                    char[] buffer = new char[4096];
+                    char[] buffer = new char[BUFFER_SIZE];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
 
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
@@ -163,7 +164,7 @@ public class NetworkOperations {
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 
-                    char[] buffer = new char[8192];
+                    char[] buffer = new char[BUFFER_SIZE];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
 
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);

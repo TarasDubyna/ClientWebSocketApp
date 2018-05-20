@@ -80,9 +80,7 @@ public class Server {
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
 
                                 ServerManager serverManager = new ServerManager(mainHandler, context);
-                                serverManager.getRequest(getRequestFromClient(inputStreamReader));
-
-                                sendResponse(outputStreamWriter, serverManager.returnResponse());
+                                sendResponse(outputStreamWriter, serverManager.returnResponse(getRequestFromClient(inputStreamReader)));
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

@@ -27,7 +27,7 @@ import taras.clientwebsocketapp.utils.PreferenceUtils;
  * Created by Taras on 17.02.2018.
  */
 
-public class ServerManager {
+public class  ServerManager {
     private Handler mainHandler;
     private Context context;
 
@@ -48,16 +48,15 @@ public class ServerManager {
         return this;
     }
 
-    public String returnResponse(){
-        packageType = getPackageType();
-        requestPackage = getPackageFromJson();
-        String response = createResponse();
+    public String returnResponse(String requestJson){
+        String packageType = getPackageType(requestJson);
+        String response = createResponse(packageType, getPackageFromJson(packageType, requestJson));
         Log.d(ConstatsLogTag.Socket, "server returnResponse: " + response);
         return response;
     }
 
 
-    private String getPackageType() {
+    private String getPackageType(String requestJson) {
         try {
             JSONObject requestJsonObject = new JSONObject(requestJson);
             String packageType = requestJsonObject.getString("type");
@@ -68,7 +67,7 @@ public class ServerManager {
         }
         return null;
     }
-    private Package getPackageFromJson(){
+    private Package getPackageFromJson(String packageType, String requestJson){
         Log.d(ConstatsLogTag.Server, "Parse request: " + packageType);
         switch (packageType){
             case Constants.PACKAGE_TYPE_PERMISSION:
@@ -81,13 +80,16 @@ public class ServerManager {
         return null;
     }
 
-    private String createResponse(){
+    private String createResponse(String packageType, Package requestPackage){
         switch (packageType){
             case Constants.PACKAGE_TYPE_SCANNING:
+                packageType = null;
                 return createScannerPackageResponse((ScannerPackage) requestPackage).toJson();
             case Constants.PACKAGE_TYPE_PERMISSION:
+                packageType = null;
                 return createPackagePermissionResponse((PermissionPackage) requestPackage).toJson();
             case Constants.PACKAGE_FILE_SEND:
+                packageType = null;
                 return createFileSendStatePackageResponse((FileSendPackage) requestPackage).toJson();
 
         }

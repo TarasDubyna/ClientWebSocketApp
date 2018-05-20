@@ -24,11 +24,11 @@ public class FileSendStatePackage extends Package {
 
     public FileSendStatePackage(FileSendPackage fileSendPackage) {
         super(Constants.PACKAGE_FILE_SEND_STATE);
-        Log.d(LOG_TAG, "Create FileSendStatePackage: " + this.toJson());
         this.token = fileSendPackage.getToken();
         this.currentPart = fileSendPackage.getCurrentPart();
         this.allPart = fileSendPackage.getAllPart();
         this.fileName = fileSendPackage.getFileName();
+        Log.d(LOG_TAG, "Create FileSendStatePackage: " + this.toJson());
     }
 
     public String getToken() {
