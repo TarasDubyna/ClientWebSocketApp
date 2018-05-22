@@ -4,9 +4,11 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -78,9 +80,12 @@ public class Server {
                             try {
                                 InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
                                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
-
                                 ServerManager serverManager = new ServerManager(mainHandler, context);
-                                sendResponse(outputStreamWriter, serverManager.returnResponse(getRequestFromClient(inputStreamReader)));
+
+                                String stringRequest = getRequestFromClient(inputStreamReader);
+                                String stringResponse = serverManager.returnResponse(stringRequest);
+
+                                sendResponse(outputStreamWriter, stringResponse);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -95,8 +100,9 @@ public class Server {
 
         private String getRequestFromClient(InputStreamReader inputStreamReader) throws IOException {
             StringBuilder stringBuilder = new StringBuilder();
-            char[] buffer = new char[4096];
-            stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+            //char[] buffer = new char[4096];
+            //stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+            stringBuilder.append(inputStreamReader.read());
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             return stringBuilder.toString();
         }
