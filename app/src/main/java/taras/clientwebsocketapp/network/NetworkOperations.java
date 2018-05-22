@@ -11,9 +11,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
-import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.FileSendStatePackage;
+import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.network.callbacks.GetPermissionCallback;
+import taras.clientwebsocketapp.network.callbacks.NetworkCallback;
+import taras.clientwebsocketapp.network.callbacks.ScanningNetworkCallback;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.model.ScannerPackage;
 
@@ -23,9 +26,100 @@ import taras.clientwebsocketapp.model.ScannerPackage;
 
 public class NetworkOperations {
     private static final String LOG_TAG = "myLogs";
-    private static final int BUFFER_SIZE = 4096;
 
-    public static void scanNetwork(String ip, RequestServiceInterface scanningInterface) {
+
+    private void takeRequest(String ip, Package pack, NetworkCallback callback){
+        String typePackage = pack.getType();
+        Socket socket = null;
+        StringBuilder stringBuilder = null;
+        try {
+            socket = new Socket(InetAddress.getByName(ip), Constants.SERVER_PORT);
+            while (true) {
+                Log.d(LOG_TAG, "WatchSocket: open socket - " + ip);
+                // Посылаем message на сервер
+                try {
+                    Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
+                    PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                    out.println(new ScannerPackage().toJson());
+                } catch (Exception e) {}
+
+                // Следим за потоком, принимающим сообщения
+                stringBuilder = new StringBuilder();
+                while (true) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
+
+                    try {
+                        stringBuilder.append(inputStreamReader.read());
+                    } catch (Exception ex){
+                        Log.d(LOG_TAG, "Exception: " + ex.getMessage());
+                    }
+
+                    Log.d(LOG_TAG, "WatchSocket: socket get response - " + ip);
+                    Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
+                    if (stringBuilder.toString().length() > 0){
+                        socket.close();
+                        Log.d(LOG_TAG, "WatchSocket: close response socket - " + ip);
+                        sendSuccessfulCallback(callback, typePackage, stringBuilder.toString());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "WatchSocket: IOException - " + ip);
+            try {
+                if (socket != null){
+                    socket.close();
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                sendErrorCallback(callback, typePackage, stringBuilder.toString(), e1);
+            }
+            e.printStackTrace();
+            sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e);
+        } catch (Exception e) {
+            Log.d(LOG_TAG, "WatchSocket: Exception - " + ip);
+            try {
+                if (socket != null){
+                    socket.close();
+                }
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e1);
+            }
+            e.printStackTrace();
+            sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e);
+        }
+    }
+
+
+
+    private void sendSuccessfulCallback(NetworkCallback callback, String type, String response){
+        switch (type){
+            case Constants.PACKAGE_TYPE_SCANNING:
+                ((ScanningNetworkCallback)callback).successfulScanningResponse(ScannerPackage.parse(response));
+                break;
+            case Constants.PACKAGE_TYPE_PERMISSION:
+                ((GetPermissionCallback)callback).successfulGetPermission(PermissionPackage.parse(response));
+                break;
+            case Constants.PACKAGE_FILE_SEND:
+                ((FileSenderRequestCallback) callback).getFileSendResponse(FileSendStatePackage.parse(response));
+                break;
+        }
+    }
+    private void sendErrorCallback(NetworkCallback callback, String type, String response, Throwable throwable){
+        switch (type){
+            case Constants.PACKAGE_TYPE_SCANNING:
+                ((ScanningNetworkCallback)callback).errorScanning(throwable);
+                break;
+            case Constants.PACKAGE_TYPE_PERMISSION:
+                ((GetPermissionCallback)callback).errorGetPermissionResponse(throwable);
+                break;
+            case Constants.PACKAGE_FILE_SEND:
+                ((FileSenderRequestCallback)callback).errorRequest(FileSendStatePackage.parse(response),throwable);
+                break;
+        }
+    }
+
+    /*public static void scanNetwork(String ip, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
             socket = new Socket(InetAddress.getByName(ip), Constants.SERVER_PORT);
@@ -85,8 +179,8 @@ public class NetworkOperations {
             e.printStackTrace();
             scanningInterface.errorScanning(e);
         }
-    }
-    public static void getPermission(PermissionPackage permissionPackage, RequestServiceInterface scanningInterface) {
+    }*/
+    /*public static void getPermission(PermissionPackage permissionPackage, RequestServiceInterface scanningInterface) {
         Socket socket = null;
         try {
             socket = new Socket(InetAddress.getByName(permissionPackage.getServerIp()), Constants.SERVER_PORT);
@@ -141,10 +235,10 @@ public class NetworkOperations {
             e.printStackTrace();
             scanningInterface.errorResponse(e);
         }
-    }
+    }*/
 
 
-    private static FileSendStatePackage fileSendStatePackage;
+    /*private static FileSendStatePackage fileSendStatePackage;
     public static void sendFile(FileSendPackage fileSendPackage, FileSenderRequestCallback fileSenderRequestCallback){
         Socket socket = null;
         try {
@@ -164,7 +258,7 @@ public class NetworkOperations {
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
 
-                    char[] buffer = new char[BUFFER_SIZE];
+                    //char[] buffer = new char[BUFFER_SIZE];
                     stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
 
                     Log.d(LOG_TAG, "WatchSocket: response - " + stringBuilder);
@@ -201,6 +295,6 @@ public class NetworkOperations {
             e.printStackTrace();
             fileSenderRequestCallback.errorRequest(fileSendStatePackage, e);
         }
-    }
+    }*/
 
 }

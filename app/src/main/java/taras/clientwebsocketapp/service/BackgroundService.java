@@ -22,7 +22,7 @@ import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
-import taras.clientwebsocketapp.network.RequestServiceInterface;
+import taras.clientwebsocketapp.network.callbacks.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;

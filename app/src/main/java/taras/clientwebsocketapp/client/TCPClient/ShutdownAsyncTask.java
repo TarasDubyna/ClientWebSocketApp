@@ -4,15 +4,24 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
+import taras.clientwebsocketapp.model.Package;
+import taras.clientwebsocketapp.utils.GsonUtils;
+
 public class ShutdownAsyncTask extends AsyncTask<String, String, TCPClient> {
     private static final String LOG_TAG = ShutdownAsyncTask.class.getSimpleName();
 
     private static final String COMMAND = "shutdown -s";
+
     private TCPClient tcpClient;
+    private String IpAddress;
+    private Package packageForSend;
+    private ShutdownAsyncTaskProcessCallback callback;
 
 
-    public ShutdownAsyncTask(){
-
+    public ShutdownAsyncTask(String IpAddress, Package packageForSend, ShutdownAsyncTaskProcessCallback callback){
+        this.IpAddress = IpAddress;
+        this.packageForSend = packageForSend;
+        this.callback = callback;
     }
 
 
@@ -26,7 +35,7 @@ public class ShutdownAsyncTask extends AsyncTask<String, String, TCPClient> {
         Log.d(LOG_TAG, "In do in background");
 
         try{
-            tcpClient = new TCPClient("192.168.1.1", COMMAND,
+            tcpClient = new TCPClient(IpAddress, GsonUtils.convertToJson(packageForSend),
                     new MessageCallback() {
                         @Override
                         public void callbackMessageReceiver(String message) {
@@ -37,6 +46,7 @@ public class ShutdownAsyncTask extends AsyncTask<String, String, TCPClient> {
         }catch (NullPointerException e){
             Log.d(LOG_TAG, "Caught null pointer exception");
             e.printStackTrace();
+            callback.showError(e);
         }
         tcpClient.run();
         return null;
@@ -68,5 +78,11 @@ public class ShutdownAsyncTask extends AsyncTask<String, String, TCPClient> {
         if(result != null){
             result.stopClient();
         }
+    }
+
+
+    public interface ShutdownAsyncTaskProcessCallback{
+        void finished();
+        void showError(Throwable throwable);
     }
 }

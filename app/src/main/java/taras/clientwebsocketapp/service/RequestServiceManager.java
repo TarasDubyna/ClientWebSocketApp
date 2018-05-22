@@ -8,7 +8,7 @@ import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
-import taras.clientwebsocketapp.network.RequestServiceInterface;
+import taras.clientwebsocketapp.network.callbacks.RequestServiceInterface;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.TimeUtils;

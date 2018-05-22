@@ -2,10 +2,10 @@ package taras.clientwebsocketapp.network;
 
 import java.io.IOException;
 
-import taras.clientwebsocketapp.managers.file_sender_manager.FilePreparatorCallback;
 import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
 import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.network.callbacks.RequestServiceInterface;
 
 /**
  * Created by Taras on 08.02.2018.

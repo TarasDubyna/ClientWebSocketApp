@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.FileSendStatePackage;
+import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.model.ServerStatePackage;
@@ -14,6 +15,21 @@ import taras.clientwebsocketapp.model.ServerStatePackage;
  */
 
 public class GsonUtils {
+
+
+    public static String convertToJson(Package pack){
+        switch (pack.getType()){
+            case Constants.PACKAGE_TYPE_SCANNING:
+                return ((ScannerPackage) pack).toJson();
+            case Constants.PACKAGE_TYPE_PERMISSION:
+                return ((PermissionPackage) pack).toJson();
+            case Constants.PACKAGE_FILE_SEND:
+                return ((FileSendPackage) pack).toJson();
+                default:
+                    return "";
+        }
+    }
+
 
     // json -> object
     public static ScannerPackage parseScannerPackage(String json){

@@ -44,7 +44,6 @@ public class TCPClient extends Thread implements Runnable {
             out.println(message);
             out.flush();
             Log.d(LOG_TAG, "Sent Message: " + message);
-
         }
     }
 
