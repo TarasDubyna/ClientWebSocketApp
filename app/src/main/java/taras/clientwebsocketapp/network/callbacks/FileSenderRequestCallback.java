@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.managers.file_sender_manager;
+package taras.clientwebsocketapp.network.callbacks;
 
 import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.network.callbacks.NetworkCallback;

@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 
-import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderRequestCallback;
+import taras.clientwebsocketapp.network.callbacks.FileSenderRequestCallback;
 import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.Package;
 import taras.clientwebsocketapp.model.PermissionPackage;
@@ -28,7 +28,7 @@ public class NetworkOperations {
     private static final String LOG_TAG = "myLogs";
 
 
-    private void takeRequest(String ip, Package pack, NetworkCallback callback){
+    public static void takeRequest(String ip, Package pack, NetworkCallback callback){
         String typePackage = pack.getType();
         Socket socket = null;
         StringBuilder stringBuilder = null;
@@ -71,10 +71,10 @@ public class NetworkOperations {
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
-                sendErrorCallback(callback, typePackage, stringBuilder.toString(), e1);
+                sendErrorCallback(callback, typePackage, stringBuilder, e1);
             }
             e.printStackTrace();
-            sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e);
+            sendErrorCallback(callback, typePackage,  stringBuilder, e);
         } catch (Exception e) {
             Log.d(LOG_TAG, "WatchSocket: Exception - " + ip);
             try {
@@ -83,16 +83,16 @@ public class NetworkOperations {
                 }
             } catch (IOException e1) {
                 e1.printStackTrace();
-                sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e1);
+                sendErrorCallback(callback, typePackage,  stringBuilder, e1);
             }
             e.printStackTrace();
-            sendErrorCallback(callback, typePackage,  stringBuilder.toString(), e);
+            sendErrorCallback(callback, typePackage,  stringBuilder, e);
         }
     }
 
 
 
-    private void sendSuccessfulCallback(NetworkCallback callback, String type, String response){
+    private static void sendSuccessfulCallback(NetworkCallback callback, String type, String response){
         switch (type){
             case Constants.PACKAGE_TYPE_SCANNING:
                 ((ScanningNetworkCallback)callback).successfulScanningResponse(ScannerPackage.parse(response));
@@ -105,7 +105,7 @@ public class NetworkOperations {
                 break;
         }
     }
-    private void sendErrorCallback(NetworkCallback callback, String type, String response, Throwable throwable){
+    private static void sendErrorCallback(NetworkCallback callback, String type, StringBuilder response, Throwable throwable){
         switch (type){
             case Constants.PACKAGE_TYPE_SCANNING:
                 ((ScanningNetworkCallback)callback).errorScanning(throwable);
@@ -114,7 +114,8 @@ public class NetworkOperations {
                 ((GetPermissionCallback)callback).errorGetPermissionResponse(throwable);
                 break;
             case Constants.PACKAGE_FILE_SEND:
-                ((FileSenderRequestCallback)callback).errorRequest(FileSendStatePackage.parse(response),throwable);
+
+                ((FileSenderRequestCallback)callback).errorRequest(FileSendStatePackage.parse(response == null ? "" : response.toString()),throwable);
                 break;
         }
     }

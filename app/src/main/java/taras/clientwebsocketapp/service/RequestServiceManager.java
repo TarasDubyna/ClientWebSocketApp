@@ -8,12 +8,14 @@ import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
-import taras.clientwebsocketapp.network.callbacks.RequestServiceInterface;
+import taras.clientwebsocketapp.network.callbacks.FileSenderRequestCallback;
+import taras.clientwebsocketapp.network.callbacks.GetPermissionCallback;
+import taras.clientwebsocketapp.network.callbacks.ScanningNetworkCallback;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.EventBusMsg;
 import taras.clientwebsocketapp.utils.TimeUtils;
 
-public class RequestServiceManager implements Runnable {
+public class RequestServiceManager{
 
     private static final String LOG_TAG = "myLogs";
 
@@ -21,7 +23,10 @@ public class RequestServiceManager implements Runnable {
     private Server server;
 
     private BackgroundService service;
-    private RequestServiceInterface requestServiceInterface;
+
+    private ScanningNetworkCallback scanningNetworkCallback = null;
+    private GetPermissionCallback getPermissionCallback = null;
+    private FileSenderRequestCallback fileSenderRequestCallback = null;
 
     public RequestServiceManager(BackgroundService service) {
         this.service = service;
@@ -37,8 +42,26 @@ public class RequestServiceManager implements Runnable {
         return this;
     }
 
-    public void takeRequest(RequestServiceInterface requestServiceInterface) throws IOException {
-        this.requestServiceInterface = requestServiceInterface;
+    public RequestServiceManager setScanningCallback(ScanningNetworkCallback callback){
+        if (this.scanningNetworkCallback == null){
+            this.scanningNetworkCallback = callback;
+        }
+        return this;
+    }
+    public RequestServiceManager setGetPermissionCallback(GetPermissionCallback callback){
+        if (this.getPermissionCallback == null){
+            this.getPermissionCallback = callback;
+        }
+        return this;
+    }
+    public RequestServiceManager setFileSenderCallback(FileSenderRequestCallback callback){
+        if (this.fileSenderRequestCallback == null){
+            this.fileSenderRequestCallback = callback;
+        }
+        return this;
+    }
+
+    public void takeRequest() throws IOException {
         switch (message.getCodeType()){
             case EventBusMsg.PACKAGE_SCANNER:
                 scanningNetwork();
@@ -75,18 +98,12 @@ public class RequestServiceManager implements Runnable {
         if (permissionPackage.getStartTimestamp() == 0){
             permissionPackage.setStartTimestamp(TimeUtils.getCurrentTime());
         }
-        NetworkConnection.getConnectionRepository().getPermission(requestServiceInterface, permissionPackage);
+        NetworkConnection.getConnectionRepository().getPermission(getPermissionCallback, permissionPackage);
     }
 
     private void scanningNetwork() throws IOException {
         NetworkConnection
                 .getConnectionRepository()
-                .scanNetwork(requestServiceInterface, AppApplication.networkIp);
-    }
-
-
-    @Override
-    public void run() {
-
+                .scanNetwork(scanningNetworkCallback, AppApplication.networkIp);
     }
 }
