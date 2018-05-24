@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.PrimitiveIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,14 +23,9 @@ import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
 import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
-import taras.clientwebsocketapp.screens.manager.FileManager;
-import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
-import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
-import taras.clientwebsocketapp.utils.FileUtils;
+import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialog;
+import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialogInterface;
 
-import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
 
 /**

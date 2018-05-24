@@ -14,6 +14,8 @@ import android.util.Log;
 import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import io.realm.Realm;
@@ -24,6 +26,7 @@ import taras.clientwebsocketapp.screens.manager.FileManager;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.utils.ExternalDataUtils;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
+import taras.clientwebsocketapp.utils.StorageOptions;
 
 import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressString;
 
@@ -33,7 +36,7 @@ import static taras.clientwebsocketapp.utils.NetworkUtils.getIpNetworkAddressStr
 
 public class AppApplication extends Application{
 
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = AppApplication.class.getSimpleName();
 
     public static String deviceIp;
     public static String networkIp;
@@ -55,6 +58,7 @@ public class AppApplication extends Application{
 
         getNetworkParams();
         getLocalStorage();
+        checkCardSD();
 
         Realm.init(this);
         RealmConfiguration configuration = new RealmConfiguration.Builder()
@@ -95,5 +99,15 @@ public class AppApplication extends Application{
 
     public void getLocalStorage(){
         PreferenceUtils.saveLocalStorageDirection(FileManager.getManager(getContext()).getStartDirectory());
+    }
+    private void checkCardSD(){
+        Log.d(LOG_TAG, "checkCardSD");
+        HashSet<String> sdMountsSet = StorageOptions.getExternalMounts();
+
+        Iterator iter = sdMountsSet.iterator();
+        while (iter.hasNext()) {
+            System.out.println(iter.next());
+        }
+
     }
 }
