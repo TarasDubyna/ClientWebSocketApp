@@ -47,9 +47,11 @@ public class StorageOptions {
                     String[] parts = line.split(" ");
                     for (String part : parts) {
                         if (part.startsWith("/"))
-                            if (!part.toLowerCase(Locale.US).contains("vold"))
+                            if (!part.toLowerCase(Locale.US).contains("vold")){
                                 System.out.println("part: " + part);
                                 out.add(part);
+                                PreferenceUtils.saveSDStorageDirection(part);
+                            }
                     }
                 }
             }
