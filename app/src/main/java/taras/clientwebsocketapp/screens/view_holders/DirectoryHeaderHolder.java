@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -29,7 +30,7 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
 
     @BindDrawable(R.drawable.ic_mobile_phone) Drawable phone;
     @BindDrawable(R.drawable.ic_card_sd) Drawable cardSD;
-    @BindDrawable(R.drawable.ic_star) Drawable ic_star;
+    @BindDrawable(R.drawable.ic_star) Drawable favorite;
 
     private static final int MAIN_NORMAL_SIZE = 40;
     private static final int MAIN_SMALL_SIZE = 30;
@@ -68,12 +69,12 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
     }
 
     private void initImagesLayoutParams(){
-        LinearLayout.LayoutParams mainIconLayoutParams;
+        FrameLayout.LayoutParams mainIconLayoutParams;
         if (type == Constants.CONTENT_USUAL){
             if (PreferenceUtils.getSDStorageDirection() != null){
                 ivMainIcon.setVisibility(View.VISIBLE);
                 ivSubIcon.setVisibility(View.VISIBLE);
-                mainIconLayoutParams = new LinearLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
+                mainIconLayoutParams = new FrameLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
                 mainIconLayoutParams.gravity = Gravity.CENTER;
                 ivMainIcon.setLayoutParams(mainIconLayoutParams);
                 if (memoryType == TYPE_PHONE){
@@ -87,8 +88,8 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
             } else {
                 ivMainIcon.setVisibility(View.VISIBLE);
                 ivSubIcon.setVisibility(View.GONE);
-
-                mainIconLayoutParams = new LinearLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
+                mainIconLayoutParams = new FrameLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
+                mainIconLayoutParams.setMargins(2, 2, 2, 2);
                 mainIconLayoutParams.gravity = Gravity.CENTER_VERTICAL;
                 ivMainIcon.setLayoutParams(mainIconLayoutParams);
                 ivMainIcon.setImageDrawable(phone);
@@ -96,9 +97,10 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
         }
 
         if (type == Constants.CONTENT_FAVORITE){
+            ivMainIcon.setImageDrawable(favorite);
             ivMainIcon.setVisibility(View.VISIBLE);
             ivSubIcon.setVisibility(View.GONE);
-            mainIconLayoutParams = new LinearLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
+            mainIconLayoutParams = new FrameLayout.LayoutParams(ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE), ConverterUtils.convertDpToPx(MAIN_NORMAL_SIZE));
             mainIconLayoutParams.gravity = Gravity.CENTER;
             ivMainIcon.setLayoutParams(mainIconLayoutParams);
         }

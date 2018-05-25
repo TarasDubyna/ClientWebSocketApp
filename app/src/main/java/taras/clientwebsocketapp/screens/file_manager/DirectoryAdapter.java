@@ -53,7 +53,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == TYPE_HEADER){
             View headerView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.recycler_directory_item, parent, false);
+                    .inflate(R.layout.recycler_directory_header, parent, false);
             return new DirectoryHeaderHolder(headerView, type, memoryType);
         } else if (viewType == TYPE_ITEM){
             View itemView = LayoutInflater.from(parent.getContext())
