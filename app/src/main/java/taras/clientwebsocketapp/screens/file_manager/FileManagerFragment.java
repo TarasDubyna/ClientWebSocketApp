@@ -77,6 +77,16 @@ public class FileManagerFragment extends Fragment {
                 rvFiles.setVisibility(View.VISIBLE);
                 tvEmptyFolder.setVisibility(View.GONE);
             }
+
+            @Override
+            public void goToZeroPosition(String directory) {
+
+            }
+
+            @Override
+            public void changeTypeMemory(String directory, int memoryType) {
+
+            }
         });
         adapterFiles = new FileManagerAdapter(getContext(), fileManagerHolderClickCallback);
     }

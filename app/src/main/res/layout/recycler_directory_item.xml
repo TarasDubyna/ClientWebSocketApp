@@ -20,12 +20,5 @@
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:text=""/>
-        <ImageView
-            android:id="@+id/ivImage"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:layout_width="30dp"
-            android:tint="@color/white"
-            android:layout_height="30dp" />
     </android.support.v7.widget.CardView>
 </LinearLayout>
