@@ -102,12 +102,21 @@ public class AppApplication extends Application{
     }
     private void checkCardSD(){
         Log.d(LOG_TAG, "checkCardSD");
-        HashSet<String> sdMountsSet = StorageOptions.getExternalMounts();
-
+        /*HashSet<String> sdMountsSet = StorageOptions.getExternalMounts();
         Iterator iter = sdMountsSet.iterator();
         while (iter.hasNext()) {
-            System.out.println(iter.next());
+            PreferenceUtils.saveSDStorageDirection(String.valueOf(iter.next()));
+            System.out.println("checkCardSD: " + iter.next());
+        }*/
+
+        String[] stringArray = StorageOptions.getExternalStorageDirectories(getContext());
+        for (int i = 0; i < stringArray.length; i++){
+            if (!stringArray[i].equals("0")){
+                PreferenceUtils.saveSDStorageDirection(stringArray[i]);
+            }
+            System.out.println("getExternalStorageDirectories: " + stringArray[i]);
         }
+
 
     }
 }

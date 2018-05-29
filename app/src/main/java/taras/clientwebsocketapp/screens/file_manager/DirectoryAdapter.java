@@ -78,8 +78,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             ((DirectoryHolder) holder).onRowClicked(new DirectoryInterface() {
                 @Override
                 public void moveToDirectory(String directory) {
-                    Log.d(LOG_TAG, "moveToDirectory: " + directory);
-                    Log.d(LOG_TAG, "directory position: " + position);
+                    Log.d(LOG_TAG, "moveToDirectory: " + directory + " ,directory position: " + position);
                     removeListToPosition(position);
                     notifyDataSetChanged();
                     directoryInterface.moveToDirectory(directory);
@@ -103,14 +102,18 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public void goToZeroPosition(String directory) {
                     Log.d(LOG_TAG, "directory, goToZeroPosition: " + directory);
                     removeListToPosition(0);
+                    notifyDataSetChanged();
                     directoryInterface.moveToDirectory(directory);
                 }
 
                 @Override
                 public void changeTypeMemory(String directory, int memType) {
-                    Log.d(LOG_TAG, "directory, changeTypeMemory: " + directory);
-                    memoryType = memType;
-                    notifyDataSetChanged();
+                    if (type == CONTENT_USUAL){
+                        Log.d(LOG_TAG, "directory, changeTypeMemory: " + directory);
+                        memoryType = memType;
+                        notifyDataSetChanged();
+                        directoryInterface.moveToDirectory(directory);
+                    }
                 }
             });
         }
