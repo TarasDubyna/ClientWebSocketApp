@@ -54,15 +54,15 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
         initImagesLayoutParams();
     }
 
-    public void bind(int directoriesSize){
-        this.directoriesSize = directoriesSize;
-    }
-
-    public void onRowClicked(DirectoryInterface listener){
+    public void onRowClicked(int directoriesSize, DirectoryInterface listener){
         cvItem.setOnClickListener(v -> {
             if (directoriesSize == 1){
                 String directoryNew = changeMemoryType();
-                listener.changeTypeMemory(directoryNew, memoryType);
+                if (directoryNew != null){
+                    listener.changeTypeMemory(directoryNew, memoryType);
+                } else {
+                    listener.goToZeroPosition(getDirectory());
+                }
             } else if (directoriesSize > 1){
                 listener.goToZeroPosition(getDirectory());
             }});

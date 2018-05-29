@@ -33,7 +33,7 @@ import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
  */
 
 public class FileManagerFragment extends Fragment {
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = FileManagerFragment.class.getSimpleName();
 
 
     @BindView(R.id.rvFiles)
@@ -69,6 +69,7 @@ public class FileManagerFragment extends Fragment {
         adapterDirectories = new DirectoryAdapter(new DirectoryInterface() {
             @Override
             public void moveToDirectory(String directory) {
+                Log.d(LOG_TAG, "moveToDirectory: " + directory);
                 if (directory != null){
                     adapterFiles.setNewDirectory(directory);
                 } else {
@@ -130,6 +131,7 @@ public class FileManagerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
+        adapterFiles.setNewDirectory(adapterDirectories.getItem(adapterDirectories.getItemCount() - 1));
     }
 
     private void initFileManagerRecyclers(){

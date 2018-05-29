@@ -20,7 +20,7 @@ import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
  */
 
 public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = DirectoryAdapter.class.getSimpleName();
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
@@ -79,13 +79,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void moveToDirectory(String directory) {
                     Log.d(LOG_TAG, "moveToDirectory: " + directory);
-                    Log.d(LOG_TAG, "position: " + position);
+                    Log.d(LOG_TAG, "directory position: " + position);
                     removeListToPosition(position);
-                    if (position == 0){
-                        directory = null;
-                    }
-
                     notifyDataSetChanged();
+                    directoryInterface.moveToDirectory(directory);
                 }
                 @Override
                 public void goToZeroPosition(String directory) {
@@ -96,8 +93,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
         } else if (holder instanceof DirectoryHeaderHolder){
-            ((DirectoryHeaderHolder) holder).bind(directoryList.size());
-            ((DirectoryHeaderHolder) holder).onRowClicked(new DirectoryInterface() {
+            ((DirectoryHeaderHolder) holder).onRowClicked(directoryList.size(), new DirectoryInterface() {
                 @Override
                 public void moveToDirectory(String directory) {
 
@@ -105,12 +101,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                 @Override
                 public void goToZeroPosition(String directory) {
+                    Log.d(LOG_TAG, "directory, goToZeroPosition: " + directory);
                     removeListToPosition(0);
                     directoryInterface.moveToDirectory(directory);
                 }
 
                 @Override
                 public void changeTypeMemory(String directory, int memType) {
+                    Log.d(LOG_TAG, "directory, changeTypeMemory: " + directory);
                     memoryType = memType;
                     notifyDataSetChanged();
                 }
