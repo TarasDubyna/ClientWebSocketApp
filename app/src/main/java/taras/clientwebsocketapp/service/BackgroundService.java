@@ -19,10 +19,13 @@ import taras.clientwebsocketapp.AppApplication;
 import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.file_sender_manager.FileSenderManager;
+import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
-import taras.clientwebsocketapp.network.RequestServiceInterface;
+import taras.clientwebsocketapp.network.callbacks.FileSenderRequestCallback;
+import taras.clientwebsocketapp.network.callbacks.GetPermissionCallback;
+import taras.clientwebsocketapp.network.callbacks.ScanningNetworkCallback;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
@@ -61,7 +64,6 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         server.stopServer();
-        //PreferenceUtils.saveRunningServerState(false);
         EventBus.getDefault().unregister(this);
         NotificationsManager.removeServerStatusNotification();
         Log.d(LOG_TAG, "Service onDestroy");
@@ -83,7 +85,10 @@ public class BackgroundService extends Service {
                             requestServiceManager
                                     .getMessage(ebMessage)
                                     .setServer(server)
-                                    .takeRequest(requestServiceCallback);
+                                    .setScanningCallback(scanningNetworkCallback)
+                                    .setGetPermissionCallback(getPermissionCallback)
+                                    .setFileSenderCallback(fileSenderRequestCallback)
+                                    .takeRequest();
                         } catch (IOException e) {
                             e.printStackTrace();
                             Log.d(LOG_TAG, "RequestServiceManager, error: " + e.getMessage());
@@ -95,7 +100,7 @@ public class BackgroundService extends Service {
         EventBus.getDefault().removeStickyEvent(ebMessage);
     }
 
-    private RequestServiceInterface requestServiceCallback = new RequestServiceInterface() {
+    ScanningNetworkCallback scanningNetworkCallback = new ScanningNetworkCallback() {
         @Override
         public void successfulScanningResponse(ScannerPackage scannerPackage) {
             Log.d(LOG_TAG, "successfulResponse: " + scannerPackage);
@@ -108,6 +113,7 @@ public class BackgroundService extends Service {
                 }
             }
         }
+
         @Override
         public void scanningNetworkEnd() {
             Log.d(LOG_TAG, "scanningNetworkEnd");
@@ -121,26 +127,21 @@ public class BackgroundService extends Service {
             Log.d(ConstatsLogTag.Scanning, "Error: " + throwable.getMessage());
             throwable.printStackTrace();
         }
-
-        @Override
-        public void errorResponse(Throwable throwable) {
-
-        }
-
+    };
+    GetPermissionCallback getPermissionCallback = new GetPermissionCallback() {
         @Override
         public void successfulGetPermission(PermissionPackage permissionPackage) {
             Log.d(LOG_TAG, "Get permission, is allowed: " + permissionPackage.getIsAllowed());
             Log.d(LOG_TAG, "successfulGetPermission, permissionPackage.getIsAllowed(): " + permissionPackage.getIsAllowed());
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");
-                //PermissionManager.getPermissionManager().setAcceptPermission(permissionPackage, false);
                 PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, false);
             } else {
                 if (permissionPackage.getIsAllowed() == null){
                     try {
                         Thread.sleep(1000);
                         Log.d(ConstatsLogTag.CheckPermission, "Did not got permission");
-                        NetworkConnection.getConnectionRepository().getPermission(requestServiceCallback, permissionPackage);
+                        NetworkConnection.getConnectionRepository().getPermission(getPermissionCallback, permissionPackage);
                     } catch (IOException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
@@ -172,7 +173,18 @@ public class BackgroundService extends Service {
         }
 
         @Override
-        public void errorGetPermission(PermissionPackage permissionPackage) {
+        public void errorGetPermissionResponse(Throwable throwable) {
+
+        }
+    };
+    FileSenderRequestCallback fileSenderRequestCallback = new FileSenderRequestCallback() {
+        @Override
+        public void getFileSendResponse(FileSendStatePackage fileSendStatePackage) {
+
+        }
+
+        @Override
+        public void errorRequest(FileSendStatePackage fileSendStatePackage, Throwable throwable) {
 
         }
     };

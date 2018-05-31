@@ -2,7 +2,6 @@ package taras.clientwebsocketapp.managers.file_sender_manager;
 
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +10,7 @@ import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.network.NetworkConnection;
+import taras.clientwebsocketapp.network.callbacks.FileSenderRequestCallback;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 public class FileSenderManager {

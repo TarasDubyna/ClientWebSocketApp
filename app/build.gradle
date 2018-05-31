@@ -47,9 +47,15 @@ dependencies {
     //EventBus
     implementation 'org.greenrobot:eventbus:3.1.1'
 
+
+    implementation 'com.koushikdutta.async:androidasync:2.+'
+
     //ButterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //Expandable layout
+    implementation 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
 
 // Because RxAndroid releases are few and far between, it is recommended you also
 // explicitly depend on RxJava's latest version for bug fixes and new features.
