@@ -18,31 +18,25 @@ import static taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter.C
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_USUAL;
 
 public class DirectoryHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = DirectoryHolder.class.getSimpleName();
 
     @BindView(R.id.cvItem)
     CardView cvItem;
     @BindView(R.id.tvText)
     TextView tvText;
-    @BindView(R.id.ivImage)
-    ImageView ivImage;
 
-    private int type;
+    //private int type;
     private String directory;
 
-    public DirectoryHolder(View itemView, int type) {
+    public DirectoryHolder(View itemView) {
         super(itemView);
-        this.type = type;
         ButterKnife.bind(this, itemView);
     }
 
-    public void bind(int position, String directory){
+    public void bind(String directory){
         this.directory = directory;
-        if (position == 0){
-            initZeroPosition();
-        } else {
-            initOtherPositions(directory);
-        }
+        tvText.setVisibility(View.VISIBLE);
+        tvText.setText(cutDirectory(directory));
     }
 
     public void onRowClicked(DirectoryInterface listener){
@@ -56,22 +50,7 @@ public class DirectoryHolder extends RecyclerView.ViewHolder implements View.OnC
         return array[array.length - 1];
     }
 
-    private void initZeroPosition(){
-        switch (type){
-            case CONTENT_USUAL:
-                tvText.setVisibility(View.GONE);
-                ivImage.setVisibility(View.VISIBLE);
-                ivImage.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.ic_mobile_phone));
-                break;
-            case CONTENT_FAVORITE:
-                tvText.setVisibility(View.GONE);
-                ivImage.setVisibility(View.VISIBLE);
-                ivImage.setImageDrawable(itemView.getContext().getResources().getDrawable(R.drawable.ic_star));
-                break;
-        }
-    }
     private void initOtherPositions(String directory){
-        ivImage.setVisibility(View.GONE);
         tvText.setVisibility(View.VISIBLE);
         tvText.setText(cutDirectory(directory));
     }

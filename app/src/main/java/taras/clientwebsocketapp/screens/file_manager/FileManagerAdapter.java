@@ -1,6 +1,7 @@
 package taras.clientwebsocketapp.screens.file_manager;
 
 import android.content.Context;
+import android.os.Environment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,10 +68,7 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         if (type == CONTENT_FAVORITE){
             this.fileList.clear();
-            List<String> favoriteDirectories = FavoriteFilesManager.getInstance().getAllStringFavorites();
-            for (String directory: favoriteDirectories){
-                this.fileList.add(new File(directory));
-            }
+            setFavorites();
         }
         notifyDataSetChanged();
     }
@@ -175,17 +173,25 @@ public class FileManagerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-
-    public void setFavoritesDirectory(List<String> favoritesDirectories){
-        for (int i = 0; i < favoritesDirectories.size(); i++){
-            this.fileList.add(new File(favoritesDirectories.get(i)));
+    private void setFavorites(){
+        List<String> favoriteDirectories = FavoriteFilesManager.getInstance().getAllStringFavorites();
+        for (String directory: favoriteDirectories){
+            this.fileList.add(new File(directory));
         }
-        notifyDataSetChanged();
     }
 
+
     public void setNewDirectory(String newDirectory){
-        this.directoryFile = new File(newDirectory);
-        this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
+        if (newDirectory.equals("favorite")){
+            this.fileList.clear();
+            setFavorites();
+        } else {
+            this.directoryFile = new File(newDirectory);
+            System.out.println("this.directoryFile.getPath(): " + this.directoryFile.getPath());
+            File extStore = Environment.getExternalStorageDirectory();
+            System.out.println("extStore.getPath(): " + extStore.getPath());
+            this.fileList = new ArrayList<File>(Arrays.asList(directoryFile.listFiles()));
+        }
         notifyDataSetChanged();
     }
     public void updateRecycler(){

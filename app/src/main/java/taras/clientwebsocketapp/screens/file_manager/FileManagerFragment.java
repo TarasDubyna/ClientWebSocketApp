@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
-import java.util.PrimitiveIterator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,14 +23,9 @@ import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
 import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
-import taras.clientwebsocketapp.screens.manager.FileManager;
-import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
-import taras.clientwebsocketapp.screens.view_holders.FileManagerHolder;
-import taras.clientwebsocketapp.utils.FileUtils;
+import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialog;
+import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialogInterface;
 
-import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
 
 /**
@@ -39,7 +33,7 @@ import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
  */
 
 public class FileManagerFragment extends Fragment {
-    private static final String LOG_TAG = "myLogs";
+    private static final String LOG_TAG = FileManagerFragment.class.getSimpleName();
 
 
     @BindView(R.id.rvFiles)
@@ -75,6 +69,7 @@ public class FileManagerFragment extends Fragment {
         adapterDirectories = new DirectoryAdapter(new DirectoryInterface() {
             @Override
             public void moveToDirectory(String directory) {
+                Log.d(LOG_TAG, "moveToDirectory: " + directory);
                 if (directory != null){
                     adapterFiles.setNewDirectory(directory);
                 } else {
@@ -82,6 +77,16 @@ public class FileManagerFragment extends Fragment {
                 }
                 rvFiles.setVisibility(View.VISIBLE);
                 tvEmptyFolder.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void goToZeroPosition(String directory) {
+
+            }
+
+            @Override
+            public void changeTypeMemory(String directory, int memoryType) {
+
             }
         });
         adapterFiles = new FileManagerAdapter(getContext(), fileManagerHolderClickCallback);
@@ -126,6 +131,7 @@ public class FileManagerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
+        adapterFiles.setNewDirectory(adapterDirectories.getItem(adapterDirectories.getItemCount() - 1));
     }
 
     private void initFileManagerRecyclers(){

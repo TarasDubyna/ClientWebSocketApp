@@ -3,6 +3,8 @@ package taras.clientwebsocketapp.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
+
 import taras.clientwebsocketapp.model.FileSendPackage;
 import taras.clientwebsocketapp.model.FileSendStatePackage;
 import taras.clientwebsocketapp.model.PermissionPackage;
@@ -35,7 +37,15 @@ public class GsonUtils {
 
     public static FileSendPackage parseFileSendPackage(String json){
         Gson gson = new Gson();
-        FileSendPackage fileSendPackage = gson.fromJson(json, FileSendPackage.class);
+
+        //FileSendPackage fileSendPackage = gson.fromJson(json, FileSendPackage.class);
+        FileSendPackage fileSendPackage = null;
+        try {
+            gson.getAdapter(FileSendPackage.class).fromJson(json);
+            fileSendPackage = gson.getAdapter(FileSendPackage.class).fromJson(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return fileSendPackage;
     }
 

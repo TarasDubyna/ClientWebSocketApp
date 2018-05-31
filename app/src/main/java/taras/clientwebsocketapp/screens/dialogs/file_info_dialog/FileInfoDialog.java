@@ -1,9 +1,8 @@
-package taras.clientwebsocketapp.screens.dialogs;
+package taras.clientwebsocketapp.screens.dialogs.file_info_dialog;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,29 +10,18 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
+
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileTime;
-import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.Realm;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.model.FileFolder;
-import taras.clientwebsocketapp.model.realm.FavoriteFile;
 import taras.clientwebsocketapp.utils.FileUtils;
 
 /**
@@ -42,8 +30,6 @@ import taras.clientwebsocketapp.utils.FileUtils;
 
 public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     private static final String LOG_TAG = "myLogs";
-
-
 
     @BindView(R.id.tvName)
     TextView tvName;
@@ -54,6 +40,10 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     @BindView(R.id.tvSize)
     TextView tvSize;
 
+    @BindView(R.id.llFileInfo)
+    LinearLayout llFileInfo;
+    @BindView(R.id.tvFileInfo)
+    TextView tvFileInfo;
 
     //clickable
     @BindView(R.id.tvRename)
@@ -81,11 +71,16 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     private FileInfoDialogInterface fileInfoDialogInterface;
 
     @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         mContext = getActivity();
         View dialogView = inflater.inflate(R.layout.dialog_info_fragment,container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-        getDialog().getWindow().setLayout(500, 1000);
+        //getDialog().getWindow().setLayout(600, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         ButterKnife.bind(this, dialogView);
         setInfo();
@@ -113,25 +108,40 @@ public class FileInfoDialog extends android.support.v4.app.DialogFragment {
     }
 
 
-    @OnClick({R.id.tvRename, R.id.tvDelete})
+    @OnClick({R.id.tvFileInfo, R.id.tvRename, R.id.tvDelete})
     void clickRenameText(View view){
-        switch (view.getId()){
-            case R.id.tvRename:
-                if (llRename.getVisibility() == View.VISIBLE){
-                    llRename.setVisibility(View.GONE);
-                } else {
-                    llRename.setVisibility(View.VISIBLE);
-                    llDelete.setVisibility(View.GONE);
-                }
-                break;
-            case R.id.tvDelete:
-                if (llDelete.getVisibility() == View.VISIBLE){
-                    llDelete.setVisibility(View.GONE);
-                } else {
-                    llDelete.setVisibility(View.VISIBLE);
-                    llRename.setVisibility(View.GONE);
-                }
-                break;
+        int id = view.getId();
+
+        if (id == R.id.tvFileInfo){
+            if (llFileInfo.getVisibility() == View.VISIBLE){
+                llFileInfo.setVisibility(View.GONE);
+            } else {
+                llFileInfo.setVisibility(View.VISIBLE);
+                llRename.setVisibility(View.GONE);
+                llDelete.setVisibility(View.GONE);
+            }
+        } else if (id == R.id.tvRename){
+            if (llRename.getVisibility() == View.VISIBLE){
+                llRename.setVisibility(View.GONE);
+            } else {
+                llRename.setVisibility(View.VISIBLE);
+                llFileInfo.setVisibility(View.GONE);
+                llDelete.setVisibility(View.GONE);
+            }
+        } else if (id == R.id.tvDelete){
+            if (llDelete.getVisibility() == View.VISIBLE){
+                llDelete.setVisibility(View.GONE);
+            } else {
+                llDelete.setVisibility(View.VISIBLE);
+                llFileInfo.setVisibility(View.GONE);
+                llRename.setVisibility(View.GONE);
+            }
+        }
+
+        if (llFileInfo.getVisibility() == View.GONE
+                && llDelete.getVisibility() == View.GONE
+                && llRename.getVisibility() == View.GONE) {
+            llFileInfo.setVisibility(View.VISIBLE);
         }
     }
 

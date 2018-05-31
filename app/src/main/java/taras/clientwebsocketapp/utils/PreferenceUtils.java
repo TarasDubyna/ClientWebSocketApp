@@ -13,7 +13,7 @@ public final class PreferenceUtils {
     private static final String DEVICE_NAME = "device_name";
     private static final String SAVING_FOLDER = "saving_folder";
     private static final String LOCAL_STORAGE_DIRECTION = "local_storage_direction";
-    //private static final String IS_SERVER_RUNNING = "IS_SERVER_RUNNING";
+    private static final String SD_STORAGE_DIRECTION = "sd_storage_direction";
 
 
     public static void saveDeviceName(@NonNull String daviceName) {
@@ -25,9 +25,11 @@ public final class PreferenceUtils {
     public static void saveLocalStorageDirection(@NonNull String path){
         Hawk.put(LOCAL_STORAGE_DIRECTION, path);
     }
-    /*public static void saveRunningServerState(boolean isRunning){
-        Hawk.put(IS_SERVER_RUNNING, isRunning);
-    }*/
+    public static void saveSDStorageDirection(@NonNull String path){
+        Hawk.put(SD_STORAGE_DIRECTION, path);
+    }
+
+
 
     //----------------------------------------------------------------------------------------------
 
@@ -52,7 +54,8 @@ public final class PreferenceUtils {
             return false;
         }
     }
-    /*public static boolean getRunningServerState() {
-        return Hawk.get(IS_SERVER_RUNNING, false);
-    }*/
+    @NonNull
+    public static String getSDStorageDirection() {
+        return Hawk.get(SD_STORAGE_DIRECTION, null);
+    }
 }

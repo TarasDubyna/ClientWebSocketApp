@@ -49,6 +49,7 @@ public class  ServerManager {
     }
 
     public String returnResponse(String requestJson){
+        Log.d("testtesttest", "server requestJson: " + requestJson);
         String packageType = getPackageType(requestJson);
         String response = createResponse(packageType, getPackageFromJson(packageType, requestJson));
         Log.d(ConstatsLogTag.Socket, "server returnResponse: " + response);
@@ -69,14 +70,19 @@ public class  ServerManager {
     }
     private Package getPackageFromJson(String packageType, String requestJson){
         Log.d(ConstatsLogTag.Server, "Parse request: " + packageType);
-        switch (packageType){
-            case Constants.PACKAGE_TYPE_PERMISSION:
-                return PermissionPackage.parse(requestJson);
-            case Constants.PACKAGE_TYPE_SCANNING:
-                return ScannerPackage.parse(requestJson);
-            case Constants.PACKAGE_FILE_SEND:
-                return FileSendPackage.parse(requestJson);
+        try {
+            switch (packageType){
+                case Constants.PACKAGE_TYPE_PERMISSION:
+                    return PermissionPackage.parse(requestJson);
+                case Constants.PACKAGE_TYPE_SCANNING:
+                    return ScannerPackage.parse(requestJson);
+                case Constants.PACKAGE_FILE_SEND:
+                    return FileSendPackage.parse(requestJson);
+            }
+        } catch (Exception ex){
+            Log.d("testtesttest", "Exception: " + ex.getMessage());
         }
+
         return null;
     }
 

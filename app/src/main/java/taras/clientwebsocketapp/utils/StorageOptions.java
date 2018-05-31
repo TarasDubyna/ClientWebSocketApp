@@ -1,201 +1,136 @@
 package taras.clientwebsocketapp.utils;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.os.EnvironmentCompat;
+import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Created by Taras on 04.03.2018.
  */
 
 public class StorageOptions {
-    private static ArrayList<String> mMounts = new ArrayList<String>();
-    private static ArrayList<String> mVold = new ArrayList<String>();
-    public static String[] labels;
-    public static String[] paths;
-    public static int count = 0;
-    private static final String TAG = StorageOptions.class.getSimpleName();
 
-    public static File determineStorageOptions() {
-        readMountsFile();
+    private static final String LOG_TAG = StorageOptions.class.getSimpleName();
 
-        readVoldFile();
-
-        compareMountsWithVold();
-
-        testAndCleanMountsList();
-
-        return setProperties();
-    }
-
-    private static void readMountsFile() {
-        /*
-         * Scan the /proc/mounts file and look for lines like this:
-         * /dev/block/vold/179:1 /mnt/sdcard vfat
-         * rw,dirsync,nosuid,nodev,noexec,
-         * relatime,uid=1000,gid=1015,fmask=0602,dmask
-         * =0602,allow_utime=0020,codepage
-         * =cp437,iocharset=iso8859-1,shortname=mixed,utf8,errors=remount-ro 0 0
-         *
-         * When one is found, split it into its elements and then pull out the
-         * path to the that mount point and add it to the arraylist
-         */
-
-        // some mount files don't list the default
-        // path first, so we add it here to
-        // ensure that it is first in our list
-        mMounts.add("/mnt/sdcard");
-
+    public static HashSet<String> getExternalMounts() {
+        final HashSet<String> out = new HashSet<String>();
+        String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
+        String s = "";
         try {
-            Scanner scanner = new Scanner(new File("/proc/mounts"));
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("/dev/block/vold/")) {
-                    String[] lineElements = line.split(" ");
-                    String element = lineElements[1];
-
-                    // don't add the default mount path
-                    // it's already in the list.
-                    if (!element.equals("/mnt/sdcard"))
-                        mMounts.add(element);
-                }
+            final Process process = new ProcessBuilder().command("mount")
+                    .redirectErrorStream(true).start();
+            process.waitFor();
+            final InputStream is = process.getInputStream();
+            final byte[] buffer = new byte[1024];
+            while (is.read(buffer) != -1) {
+                s = s + new String(buffer);
             }
-        } catch (Exception e) {
-            // Auto-generated catch block
-
+            is.close();
+        } catch (final Exception e) {
             e.printStackTrace();
         }
-    }
 
-    private static void readVoldFile() {
-        /*
-         * Scan the /system/etc/vold.fstab file and look for lines like this:
-         * dev_mount sdcard /mnt/sdcard 1
-         * /devices/platform/s3c-sdhci.0/mmc_host/mmc0
-         *
-         * When one is found, split it into its elements and then pull out the
-         * path to the that mount point and add it to the arraylist
-         */
-
-        // some devices are missing the vold file entirely
-        // so we add a path here to make sure the list always
-        // includes the path to the first sdcard, whether real
-        // or emulated.
-        mVold.add("/mnt/sdcard");
-
-        try {
-            Scanner scanner = new Scanner(new File("/system/etc/vold.fstab"));
-            while (scanner.hasNext()) {
-                String line = scanner.nextLine();
-                if (line.startsWith("dev_mount")) {
-                    String[] lineElements = line.split(" ");
-                    String element = lineElements[2];
-
-                    if (element.contains(":"))
-                        element = element.substring(0, element.indexOf(":"));
-
-                    // don't add the default vold path
-                    // it's already in the list.
-                    if (!element.equals("/mnt/sdcard"))
-                        mVold.add(element);
+        // parse output
+        final String[] lines = s.split("\n");
+        for (String line : lines) {
+            if (!line.toLowerCase(Locale.US).contains("asec")) {
+                if (line.matches(reg)) {
+                    String[] parts = line.split(" ");
+                    for (String part : parts) {
+                        if (part.startsWith("/"))
+                            if (!part.toLowerCase(Locale.US).contains("vold")){
+                                System.out.println("part: " + part);
+                                out.add(part);
+                            }
+                    }
                 }
             }
-        } catch (Exception e) {
-            // Auto-generated catch block
-
-            e.printStackTrace();
         }
+        return out;
     }
 
-    private static void compareMountsWithVold() {
-        /*
-         * Sometimes the two lists of mount points will be different. We only
-         * want those mount points that are in both list.
-         *
-         * Compare the two lists together and remove items that are not in both
-         * lists.
-         */
+    public static String[] getExternalStorageDirectories(Context context) {
 
-        for (int i = 0; i < mMounts.size(); i++) {
-            String mount = mMounts.get(i);
-            if (!mVold.contains(mount))
-                mMounts.remove(i--);
-        }
+        List<String> results = new ArrayList<>();
 
-        // don't need this anymore, clear the vold list to reduce memory
-        // use and to prepare it for the next time it's needed.
-        mVold.clear();
-    }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) { //Method 1 for KitKat & above
+            File[] externalDirs = context.getExternalFilesDirs(null);
 
-    private static void testAndCleanMountsList() {
-        /*
-         * Now that we have a cleaned list of mount paths Test each one to make
-         * sure it's a valid and available path. If it is not, remove it from
-         * the list.
-         */
+            for (File file : externalDirs) {
+                String path = file.getPath().split("/Android")[0];
 
-        for (int i = 0; i < mMounts.size(); i++) {
-            String mount = mMounts.get(i);
-            File root = new File(mount);
-            if (!root.exists() || !root.isDirectory() || !root.canWrite())
-                mMounts.remove(i--);
-        }
-    }
+                boolean addPath = false;
 
-    @SuppressWarnings("unchecked")
-    private static File setProperties() {
-        /*
-         * At this point all the paths in the list should be valid. Build the
-         * public properties.
-         */
-        ArrayList<String> mounts = new ArrayList<String>();
-        ArrayList<String> lables = new ArrayList<String>();
-
-
-        ArrayList<String> mLabels = new ArrayList<String>();
-
-        int j = 0;
-        if (mMounts.size() > 0) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD)
-                mLabels.add("Auto");
-            else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-                if (Environment.isExternalStorageRemovable()) {
-                    mLabels.add("External SD Card 1");
-                    j = 1;
-                } else
-                    mLabels.add("Internal Storage");
-            } else {
-                if (!Environment.isExternalStorageRemovable()
-                        || Environment.isExternalStorageEmulated())
-                    mLabels.add("Internal Storage");
-                else {
-                    mLabels.add("External SD Card 1");
-                    j = 1;
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    addPath = Environment.isExternalStorageRemovable(file);
                 }
-            }
+                else{
+                    addPath = Environment.MEDIA_MOUNTED.equals(EnvironmentCompat.getStorageState(file));
+                }
 
-            if (mMounts.size() > 1) {
-                for (int i = 1; i < mMounts.size(); i++) {
-                    mLabels.add("External SD Card " + (i + j));
+                if(addPath){
+                    results.add(path);
                 }
             }
         }
 
-        labels = new String[mLabels.size()];
-        mLabels.toArray(labels);
+        if(results.isEmpty()) { //Method 2 for all versions
+            // better variation of: http://stackoverflow.com/a/40123073/5002496
+            String output = "";
+            try {
+                final Process process = new ProcessBuilder().command("mount | grep /dev/block/vold")
+                        .redirectErrorStream(true).start();
+                process.waitFor();
+                final InputStream is = process.getInputStream();
+                final byte[] buffer = new byte[1024];
+                while (is.read(buffer) != -1) {
+                    output = output + new String(buffer);
+                }
+                is.close();
+            } catch (final Exception e) {
+                e.printStackTrace();
+            }
+            if(!output.trim().isEmpty()) {
+                String devicePoints[] = output.split("\n");
+                for(String voldPoint: devicePoints) {
+                    results.add(voldPoint.split(" ")[2]);
+                }
+            }
+        }
 
-        paths = new String[mMounts.size()];
-        mMounts.toArray(paths);
-        mounts = (ArrayList<String>) mMounts.clone();
-        lables = (ArrayList<String>) mLabels.clone();
-        count = Math.min(labels.length, paths.length);
+        //Below few lines is to remove paths which may not be external memory card, like OTG (feel free to comment them out)
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (int i = 0; i < results.size(); i++) {
+                if (!results.get(i).toLowerCase().matches(".*[0-9a-f]{4}[-][0-9a-f]{4}")) {
+                    Log.d(LOG_TAG, results.get(i) + " might not be extSDcard");
+                    results.remove(i--);
+                }
+            }
+        } else {
+            for (int i = 0; i < results.size(); i++) {
+                if (!results.get(i).toLowerCase().contains("ext") && !results.get(i).toLowerCase().contains("sdcard")) {
+                    Log.d(LOG_TAG, results.get(i)+" might not be extSDcard");
+                    results.remove(i--);
+                }
+            }
+        }
 
-        // don't need this anymore, clear the mounts list to reduce memory
-        // use and to prepare it for the next time it's needed.
-        mMounts.clear();
-        return new File(mounts.get(mounts.size() - 1));
+        String[] storageDirectories = new String[results.size()];
+        for(int i=0; i<results.size(); ++i) storageDirectories[i] = results.get(i);
+
+        return storageDirectories;
     }
 }

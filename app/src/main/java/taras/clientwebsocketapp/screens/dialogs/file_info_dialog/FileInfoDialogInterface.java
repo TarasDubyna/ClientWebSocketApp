@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.screens.dialogs;
+package taras.clientwebsocketapp.screens.dialogs.file_info_dialog;
 
 /**
  * Created by Taras on 01.03.2018.

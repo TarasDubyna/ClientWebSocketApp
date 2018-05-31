@@ -59,7 +59,7 @@ public class FilePreparator {
         List<FileSendPackage> list = new ArrayList<>();
         for (int i = 0; i < this.fileSplitedInByteList.size(); i++){
             FileSendPackage fileSendPackage = new FileSendPackage();
-            fileSendPackage.setType(Constants.PACKAGE_FILE_SEND_STATE);
+            fileSendPackage.setType(Constants.PACKAGE_FILE_SEND);
             fileSendPackage.fillAfterPermission(permissionPackage);
             fileSendPackage.setFileName(fileName);
             fileSendPackage.setData(this.fileSplitedInByteList.get(i));

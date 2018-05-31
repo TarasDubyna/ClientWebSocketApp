@@ -1,30 +1,6 @@
 package taras.clientwebsocketapp.screens.favorite;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import java.io.File;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import taras.clientwebsocketapp.R;
-import taras.clientwebsocketapp.managers.FavoriteFilesManager;
-import taras.clientwebsocketapp.managers.SelectedFileManager;
-import taras.clientwebsocketapp.screens.MainActivity;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialog;
-import taras.clientwebsocketapp.screens.dialogs.FileInfoDialogInterface;
-import taras.clientwebsocketapp.screens.file_manager.DirectoryAdapter;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerAdapter;
-import taras.clientwebsocketapp.screens.file_manager.FileManagerInterface;
 
 /**
  * Created by Taras on 04.03.2018.
