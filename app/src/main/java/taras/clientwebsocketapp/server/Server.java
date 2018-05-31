@@ -28,6 +28,9 @@ public class Server {
     private Context context;
 
 
+
+
+
     public Server(Handler mainHandler) {
         this.mainHandler = mainHandler;
     }
@@ -84,7 +87,9 @@ public class Server {
                                 ServerManager serverManager = new ServerManager(mainHandler, context);
 
                                 String stringRequest = getRequestFromClient(inputStreamReader);
+                                Log.d(ConstatsLogTag.Server, "Request from client: " + stringRequest);
                                 String stringResponse = serverManager.returnResponse(stringRequest);
+                                Log.d(ConstatsLogTag.Server, "Response to client: " + stringResponse);
 
                                 sendResponse(outputStreamWriter, stringResponse);
                             } catch (IOException e) {
@@ -101,8 +106,8 @@ public class Server {
 
         private String getRequestFromClient(InputStreamReader inputStreamReader) throws IOException {
             StringBuilder stringBuilder = new StringBuilder();
-            //char[] buffer = new char[4096];
-            //stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
+            char[] buffer = new char[4096];
+            stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
             stringBuilder.append(inputStreamReader.read());
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             return stringBuilder.toString();

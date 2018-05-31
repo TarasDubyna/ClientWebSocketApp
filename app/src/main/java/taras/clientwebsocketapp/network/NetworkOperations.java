@@ -40,16 +40,19 @@ public class NetworkOperations {
                 try {
                     Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    out.println(new ScannerPackage().toJson());
+                    ScannerPackage scannerPackage = new ScannerPackage();
+                    Log.d(LOG_TAG, "Scanning network request: " + scannerPackage.toJson());
+                    out.println(scannerPackage.toJson());
                 } catch (Exception e) {}
 
                 // Следим за потоком, принимающим сообщения
+
                 stringBuilder = new StringBuilder();
                 while (true) {
                     InputStreamReader inputStreamReader = new InputStreamReader(socket.getInputStream());
-
+                    char[] buffer = new char[4096];
                     try {
-                        stringBuilder.append(inputStreamReader.read());
+                        stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
                     } catch (Exception ex){
                         Log.d(LOG_TAG, "Exception: " + ex.getMessage());
                     }

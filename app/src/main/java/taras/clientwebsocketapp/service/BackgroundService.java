@@ -64,7 +64,6 @@ public class BackgroundService extends Service {
     public void onDestroy() {
         super.onDestroy();
         server.stopServer();
-        //PreferenceUtils.saveRunningServerState(false);
         EventBus.getDefault().unregister(this);
         NotificationsManager.removeServerStatusNotification();
         Log.d(LOG_TAG, "Service onDestroy");

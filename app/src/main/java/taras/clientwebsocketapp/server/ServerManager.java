@@ -42,13 +42,8 @@ public class  ServerManager {
         this.context = context;
     }
 
-    public ServerManager getRequest(String requestJson){
-        this.requestJson = requestJson;
-        Log.d(ConstatsLogTag.Socket, "server requestJson: " + requestJson);
-        return this;
-    }
-
     public String returnResponse(String requestJson){
+        Log.d(ConstatsLogTag.Socket, "server getRequest: " + requestJson);
         String packageType = getPackageType(requestJson);
         String response = createResponse(packageType, getPackageFromJson(packageType, requestJson));
         Log.d(ConstatsLogTag.Socket, "server returnResponse: " + response);
