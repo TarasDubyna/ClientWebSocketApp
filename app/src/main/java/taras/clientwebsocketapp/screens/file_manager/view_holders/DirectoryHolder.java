@@ -1,4 +1,4 @@
-package taras.clientwebsocketapp.screens.view_holders;
+package taras.clientwebsocketapp.screens.file_manager.view_holders;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;

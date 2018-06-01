@@ -33,6 +33,7 @@ import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.screens.dialogs.permission_dialog.CheckPermissionDialog;
+import taras.clientwebsocketapp.screens.dialogs.waiting_permission_dialog.WaitingPermissionDialog;
 import taras.clientwebsocketapp.service.BackgroundService;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.managers.FavoriteFilesManager;
@@ -62,6 +63,9 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private Switch serverSwitch;
     private TextView toolbarTitle;
+
+    WaitingPermissionDialog waitingPermissionDialog;
+
 
     MyReceiver myReceiver;
 
@@ -262,6 +266,17 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+    public void showWaitingPermissionDialog(PermissionPackage pack){
+        waitingPermissionDialog = new WaitingPermissionDialog();
+        waitingPermissionDialog.setPermissionPackage(pack);
+        waitingPermissionDialog.show(getSupportFragmentManager(), this.getClass().getSimpleName());
+    }
+
+    public void hideWaitingPermissionDialog(PermissionPackage pack){
+        if (waitingPermissionDialog != null && waitingPermissionDialog.getDialog().isShowing()){
+            waitingPermissionDialog.stop(pack);
+        }
+    }
 
 
 

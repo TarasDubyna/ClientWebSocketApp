@@ -76,7 +76,8 @@ public class NotificationsManager {
     public static void updateFileGetNotification(int id, int progress){
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
-        builder.setProgress(100, progress, true);
+        builder.setProgress(100, progress, true)
+                .setSmallIcon(R.drawable.ic_phone_network);
         notificationManager.notify(id, builder.build());
     }
     public static void finishFileGetNotification(int id){
@@ -87,48 +88,4 @@ public class NotificationsManager {
                 .setProgress(0,0,false);
         notificationManager.notify(id, builder.build());
     }
-
-
-
-
-
-/*
-    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-mBuilder.setContentTitle("Picture Download")
-        .setContentText("Download in progress")
-        .setSmallIcon(R.drawable.ic_notification)
-        .setPriority(NotificationCompat.PRIORITY_LOW);
-
-    // Issue the initial notification with zero progress
-    int PROGRESS_MAX = 100;
-    int PROGRESS_CURRENT = 0;
-mBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-notificationManager.notify(notificationId, mBuilder.build());
-
-// Do the job here that tracks the progress.
-// Usually, this should be in a worker thread
-// To show progress, update PROGRESS_CURRENT and update the notification with:
-// mBuilder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-// notificationManager.notify(notificationId, mBuilder.build());
-
-// When done, update the notification one more time to remove the progress bar
-mBuilder.setContentText("Download complete")
-        .setProgress(0,0,false);
-notificationManager.notify(notificationId, mBuilder.build());*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

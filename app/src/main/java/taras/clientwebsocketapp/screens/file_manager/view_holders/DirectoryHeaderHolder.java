@@ -33,14 +33,9 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
     @BindDrawable(R.drawable.ic_card_sd) Drawable cardSD;
     @BindDrawable(R.drawable.ic_star) Drawable favorite;
 
-    //private static final int MAIN_NORMAL_SIZE = 40;
-    //private static final int MAIN_SMALL_SIZE = 30;
 
     public static final int TYPE_PHONE = 0;
     public static final int TYPE_SD = 1;
-
-
-    //private String directory;
 
     private int type;
     private int memoryType = TYPE_PHONE;
@@ -63,9 +58,9 @@ public class DirectoryHeaderHolder extends RecyclerView.ViewHolder {
                 if (PreferenceUtils.getSDStorageDirection() != null){
                     if (directoriesSize == 1){
                         System.out.println("directoriesSize == 1, change memory type");
-                        listener.changeTypeMemory(changeMemoryType(), memoryType);
-                    }
-                    if (directoriesSize > 1){
+                        String zeroNewDirectory = changeMemoryType();
+                        listener.changeTypeMemory(zeroNewDirectory, memoryType);
+                    } else {
                         System.out.println("directoriesSize > " + directoriesSize + " , goToZeroPosition");
                         listener.goToZeroPosition(getDirectory());
                     }

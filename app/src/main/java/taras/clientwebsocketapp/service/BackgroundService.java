@@ -26,6 +26,7 @@ import taras.clientwebsocketapp.network.NetworkConnection;
 import taras.clientwebsocketapp.network.callbacks.FileSenderRequestCallback;
 import taras.clientwebsocketapp.network.callbacks.GetPermissionCallback;
 import taras.clientwebsocketapp.network.callbacks.ScanningNetworkCallback;
+import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.server.Server;
 import taras.clientwebsocketapp.utils.ConstatsLogTag;
 import taras.clientwebsocketapp.utils.EventBusMsg;
@@ -136,6 +137,9 @@ public class BackgroundService extends Service {
             if (permissionPackage.isPermissionTimeout()){
                 Log.d(LOG_TAG, "successful permission timeout");
                 PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, false);
+                EventBusMsg<PermissionPackage> message =
+                        new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
+                EventBus.getDefault().postSticky(message);
             } else {
                 if (permissionPackage.getIsAllowed() == null){
                     try {
@@ -155,19 +159,18 @@ public class BackgroundService extends Service {
                     //todo successful permission, start send file
 
                     FileSenderManager.getFileSenderManager().addFileToSend(permissionPackage);
-
-                    /*EventBusMsg<PermissionPackage> message =
+                    EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-                    EventBus.getDefault().postSticky(message);*/
+                    EventBus.getDefault().postSticky(message);
                 }
 
                 if (permissionPackage.getIsAllowed().equals("false")){
                     //todo not successful permission
                     Log.d(ConstatsLogTag.CheckPermission, "not successful permission for client");
                     PermissionManager.getPermissionManager().setAcceptPermission(PermissionManager.CLIENT, permissionPackage, false);
-                    /*EventBusMsg<PermissionPackage> message =
+                    EventBusMsg<PermissionPackage> message =
                             new EventBusMsg<PermissionPackage>(EventBusMsg.TO_APP, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-                    EventBus.getDefault().postSticky(message);*/
+                    EventBus.getDefault().postSticky(message);
                 }
             }
         }

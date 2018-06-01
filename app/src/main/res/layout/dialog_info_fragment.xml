@@ -42,6 +42,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:text="@string/name"
+                        android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
                     <TextView
@@ -63,6 +64,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:text="@string/creation_date"
+                        android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
                     <TextView
@@ -84,6 +86,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:text="@string/size"
+                        android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
                     <TextView
@@ -105,6 +108,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="start"
                         android:text="@string/directory"
+                        android:textStyle="bold"
                         android:textColor="@color/white"
                         android:textSize="16sp" />
                     <TextView
@@ -122,13 +126,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:text="@string/rename"
                 android:textColor="@color/blue_grey_500"
                 android:background="@color/white"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="@string/rename"/>
+                android:textStyle="bold" />
             <LinearLayout
                 android:visibility="gone"
                 android:id="@+id/llRename"
@@ -162,18 +166,19 @@
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/tvDelete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:text="@string/delete"
                 android:textColor="@color/blue_grey_500"
                 android:background="@color/white"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="@string/delete"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:id="@+id/llDelete"
@@ -204,18 +209,18 @@
                     android:textColor="@color/white"
                     android:textSize="12sp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/tvAddToFavorite"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:textColor="@color/blue_grey_500"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:textColor="@color/blue_grey_500"
                 android:background="@color/white"
                 android:paddingTop="5dp"
                 android:paddingBottom="5dp"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:layout_gravity="center_vertical"
                 tools:text="@string/favorites_add"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>

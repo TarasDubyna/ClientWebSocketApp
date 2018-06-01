@@ -12,6 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 
 import butterknife.BindView;
@@ -20,11 +24,17 @@ import butterknife.Unbinder;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileView;
 import taras.clientwebsocketapp.custom_views.selected_file_view.SelectedFileViewCallback;
+import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.FileManagerHolderClickCallback;
+import taras.clientwebsocketapp.model.PermissionPackage;
+import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialog;
 import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialog;
 import taras.clientwebsocketapp.screens.dialogs.file_info_dialog.FileInfoDialogInterface;
+import taras.clientwebsocketapp.screens.dialogs.scanning_for_sending.ScanningForSendingDialogCallback;
+import taras.clientwebsocketapp.utils.EventBusMsg;
 
 import static taras.clientwebsocketapp.utils.Constants.FILE_MANAGER_TYPE;
 
@@ -95,11 +105,19 @@ public class FileManagerFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        EventBus.getDefault().register(this);
+
         selectedFileView.setCallback(selectedFileViewCallback);
 
         adapterFiles.setType(fileManagerType);
         rvFiles.setVisibility(View.VISIBLE);
         tvEmptyFolder.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
 
@@ -133,6 +151,19 @@ public class FileManagerFragment extends Fragment {
         Log.d(LOG_TAG, "FileManagerFragment, onResume");
         adapterFiles.setNewDirectory(adapterDirectories.getItem(adapterDirectories.getItemCount() - 1));
     }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void getPermissionResult(EventBusMsg<Object> ebMessage) {
+        Log.d(LOG_TAG, "getPermissionResult");
+        if (ebMessage.getCodeDirection() == EventBusMsg.TO_APP
+                && ebMessage.getCodeType() == EventBusMsg.PACKAGE_PERMISSION){
+            ((MainActivity) getActivity()).hideWaitingPermissionDialog((PermissionPackage) ebMessage.getModel());
+        }
+        EventBus.getDefault().removeStickyEvent(ebMessage);
+    }
+
 
     private void initFileManagerRecyclers(){
         rvFiles.setHasFixedSize(true);
@@ -172,6 +203,17 @@ public class FileManagerFragment extends Fragment {
             Log.d(LOG_TAG, "SelectedFileViewCallback, clickShare");
             if (!SelectedFileManager.getSelectedFileManager().isSelectedFilesListEmpty()){
                 ScanningForSendingDialog dialog = new ScanningForSendingDialog();
+                dialog.setCallback(new ScanningForSendingDialogCallback() {
+                    @Override
+                    public void sendPermission(PermissionPackage pack) {
+                        PermissionManager.getPermissionManager().addToPermissionManager(PermissionManager.CLIENT, pack);
+                        EventBusMsg<PermissionPackage> message =
+                                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION, pack);
+                        EventBus.getDefault().postSticky(message);
+
+                        ((MainActivity) getActivity()).showWaitingPermissionDialog(pack);
+                    }
+                });
                 dialog.show(getFragmentManager(), ScanningForSendingDialog.class.getSimpleName());
             }
         }

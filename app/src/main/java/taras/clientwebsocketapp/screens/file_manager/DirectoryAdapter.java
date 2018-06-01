@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import taras.clientwebsocketapp.R;
 import taras.clientwebsocketapp.screens.file_manager.view_holders.DirectoryHeaderHolder;
-import taras.clientwebsocketapp.screens.view_holders.DirectoryHolder;
+import taras.clientwebsocketapp.screens.file_manager.view_holders.DirectoryHolder;
 import taras.clientwebsocketapp.utils.PreferenceUtils;
 
 import static taras.clientwebsocketapp.utils.Constants.CONTENT_FAVORITE;
@@ -92,7 +92,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             });
         } else if (holder instanceof DirectoryHeaderHolder){
-            ((DirectoryHeaderHolder) holder).onRowClicked(directoryList.size(), new DirectoryInterface() {
+            ((DirectoryHeaderHolder) holder).onRowClicked(getItemCount(), new DirectoryInterface() {
                 @Override
                 public void moveToDirectory(String directory) {
 
@@ -110,8 +110,9 @@ public class DirectoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 public void changeTypeMemory(String directory, int memType) {
                     if (type == CONTENT_USUAL){
                         Log.d(LOG_TAG, "directory, changeTypeMemory: " + directory);
-                        memoryType = memType;
+                        removeListToPosition(0);
                         notifyDataSetChanged();
+                        memoryType = memType;
                         directoryInterface.moveToDirectory(directory);
                     }
                 }

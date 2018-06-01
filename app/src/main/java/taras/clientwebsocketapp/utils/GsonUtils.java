@@ -1,5 +1,7 @@
 package taras.clientwebsocketapp.utils;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,6 +20,8 @@ import taras.clientwebsocketapp.model.ServerStatePackage;
 
 public class GsonUtils {
 
+    private static final String LOG_TAG = GsonUtils.class.getSimpleName();
+
 
     public static String convertToJson(Package pack){
         switch (pack.getType()){
@@ -31,7 +35,6 @@ public class GsonUtils {
                     return "";
         }
     }
-
 
     // json -> object
     public static ScannerPackage parseScannerPackage(String json){
@@ -53,14 +56,13 @@ public class GsonUtils {
 
     public static FileSendPackage parseFileSendPackage(String json){
         Gson gson = new Gson();
-
-        //FileSendPackage fileSendPackage = gson.fromJson(json, FileSendPackage.class);
         FileSendPackage fileSendPackage = null;
         try {
             gson.getAdapter(FileSendPackage.class).fromJson(json);
             fileSendPackage = gson.getAdapter(FileSendPackage.class).fromJson(json);
         } catch (IOException e) {
             e.printStackTrace();
+            Log.d(LOG_TAG, "IOException: " + e.getMessage());
         }
         return fileSendPackage;
     }

@@ -31,6 +31,7 @@ import taras.clientwebsocketapp.managers.PermissionManager;
 import taras.clientwebsocketapp.managers.SelectedFileManager;
 import taras.clientwebsocketapp.model.PermissionPackage;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.screens.MainActivity;
 import taras.clientwebsocketapp.screens.interfaces.RecyclerClickListener;
 import taras.clientwebsocketapp.screens.scann_network.ScanningDevicesRecyclerAdapter;
 import taras.clientwebsocketapp.utils.AnimationUtils;
@@ -47,6 +48,7 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     @BindView(R.id.llSend) LinearLayout llSend;
 
     private ScanningDevicesRecyclerAdapter adapter;
+    private ScanningForSendingDialogCallback listener;
 
     private Unbinder unbinder;
 
@@ -88,6 +90,10 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
     public void onDetach() {
         super.onDetach();
         unbinder.unbind();
+    }
+
+    public void setCallback(ScanningForSendingDialogCallback scanningForSendingDialogCallback){
+        this.listener = scanningForSendingDialogCallback;
     }
 
     private void initScanningRecycler(){
@@ -165,13 +171,8 @@ public class ScanningForSendingDialog extends DialogFragment implements Recycler
         permissionPackage.setServerIp(adapter.getSelectedDevices().get(0).getServerIp());
         permissionPackage.setFilesName(SelectedFileManager.getSelectedFileManager().getAllSelectedFilesNames());
         permissionPackage.setToken(GeneratorKey.generateToken());
-
-        PermissionManager.getPermissionManager().addToPermissionManager(PermissionManager.CLIENT, permissionPackage);
+        listener.sendPermission(permissionPackage);
         dismiss();
-
-        EventBusMsg<PermissionPackage> message =
-                new EventBusMsg<PermissionPackage>(EventBusMsg.TO_SERVICE, EventBusMsg.PACKAGE_PERMISSION, permissionPackage);
-        EventBus.getDefault().postSticky(message);
     }
 
 

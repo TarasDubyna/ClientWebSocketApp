@@ -58,5 +58,6 @@
     <string name="cancel">Cancel</string>
 
     <string name="txt_message_close_app">Double tap to exit!</string>
+    <string name="waiting_for_permission">We are waiting for permission to transfer data</string>
 
 </resources>

@@ -37,7 +37,6 @@ public class CheckPermissionDialog extends DialogFragment {
     @BindView(R.id.tvAccept) TextView tvAccept;
     @BindView(R.id.pbTimeout) ProgressBar pbTimeout;
     @BindView(R.id.tvDeny) TextView tvDeny;
-    //@BindView(R.id.tvTimer) TextView tvTimer;
 
     private CountDownTimer countDownTimer;
     private int progressCount = 0;
