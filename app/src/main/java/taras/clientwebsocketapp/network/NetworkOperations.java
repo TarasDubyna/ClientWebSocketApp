@@ -19,6 +19,7 @@ import taras.clientwebsocketapp.network.callbacks.NetworkCallback;
 import taras.clientwebsocketapp.network.callbacks.ScanningNetworkCallback;
 import taras.clientwebsocketapp.utils.Constants;
 import taras.clientwebsocketapp.model.ScannerPackage;
+import taras.clientwebsocketapp.utils.GsonUtils;
 
 /**
  * Created by Taras on 08.02.2018.
@@ -40,9 +41,11 @@ public class NetworkOperations {
                 try {
                     Log.d(LOG_TAG, "WatchSocket: send message - " + ip);
                     PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
-                    ScannerPackage scannerPackage = new ScannerPackage();
-                    Log.d(LOG_TAG, "Scanning network request: " + scannerPackage.toJson());
-                    out.println(scannerPackage.toJson());
+
+                    String jsonRequest = GsonUtils.convertToJson(pack);
+
+                    Log.d(LOG_TAG, "Scanning network request: " + jsonRequest);
+                    out.println(jsonRequest);
                 } catch (Exception e) {}
 
                 // Следим за потоком, принимающим сообщения
@@ -117,7 +120,6 @@ public class NetworkOperations {
                 ((GetPermissionCallback)callback).errorGetPermissionResponse(throwable);
                 break;
             case Constants.PACKAGE_FILE_SEND:
-
                 ((FileSenderRequestCallback)callback).errorRequest(FileSendStatePackage.parse(response == null ? "" : response.toString()),throwable);
                 break;
         }

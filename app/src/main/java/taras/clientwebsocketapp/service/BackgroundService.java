@@ -192,13 +192,6 @@ public class BackgroundService extends Service {
         }
     };
 
-    private boolean isServerRunning(){
-        if (server != null){
-            return server.isServerIsRun();
-        } else {
-            return false;
-        }
-    }
     public boolean applicationInForeground() {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> services = activityManager.getRunningAppProcesses();

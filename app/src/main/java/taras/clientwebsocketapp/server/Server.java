@@ -108,7 +108,7 @@ public class Server {
             StringBuilder stringBuilder = new StringBuilder();
             char[] buffer = new char[4096];
             stringBuilder.append(buffer, 0, inputStreamReader.read(buffer));
-            stringBuilder.append(inputStreamReader.read());
+            //stringBuilder.append(inputStreamReader.read());
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
             return stringBuilder.toString();
         }

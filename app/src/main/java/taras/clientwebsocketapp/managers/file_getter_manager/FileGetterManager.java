@@ -1,7 +1,11 @@
 package taras.clientwebsocketapp.managers.file_getter_manager;
 
 import android.app.NotificationManager;
+import android.icu.util.RangeValueIterator;
+import android.util.Log;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +16,8 @@ import taras.clientwebsocketapp.managers.NotificationsManager;
 import taras.clientwebsocketapp.model.FileSendPackage;
 
 public class FileGetterManager {
+
+    private static final String LOG_TAG = FileGetterManager.class.getSimpleName();
 
     private static FileGetterManager fileGetterManager;
 
@@ -33,12 +39,14 @@ public class FileGetterManager {
     }
 
     public void addGettedFileSandPackage(FileSendPackage fileSendPackage){
-        if (!isFileExist(fileSendPackage)){
-            createNewFileList(fileSendPackage);
-        } else {
-            for (List<FileSendPackage> fileList : gettedFileSendPackages){
-                if (compareFileSendPackagesByFileName(fileList.get(0), fileSendPackage)){
-                    addFilePackage(fileList, fileSendPackage);
+        synchronized (lock){
+            if (!isFileExist(fileSendPackage)){
+                createNewFileList(fileSendPackage);
+            } else {
+                for (List<FileSendPackage> fileList : gettedFileSendPackages){
+                    if (compareFileSendPackagesByFileName(fileList.get(0), fileSendPackage)){
+                        addFilePackage(fileList, fileSendPackage);
+                    }
                 }
             }
         }
@@ -60,17 +68,23 @@ public class FileGetterManager {
     }
     private void createNewFileList(FileSendPackage fileSendPackage){
         List<FileSendPackage> list = new ArrayList<FileSendPackage>(fileSendPackage.getAllPart() + 1);
-        //list.add(fileSendPackage.getCurrentPart(), fileSendPackage);
+
         list.add(fileSendPackage);
         this.gettedFileSendPackages.add(list);
+        Log.d(LOG_TAG, "FileGetterManager, createNewFileList, addFilePackage, current size: " + list.size() + " , all size: " + fileSendPackage.getAllPart());
 
         notificationMap.put(fileSendPackage.getFileName(), notificationMap.size() + 1);
         NotificationsManager.createFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), fileSendPackage.getFileName());
     }
     private void addFilePackage(List<FileSendPackage> fileList, FileSendPackage fileSendPackage){
-        //fileList.add(fileSendPackage.getCurrentPart(), fileSendPackage);
         fileList.add(fileSendPackage);
-        NotificationsManager.updateFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), getDownloadProgress(fileList));
+        Log.d(LOG_TAG, "FileGetterManager, addFilePackage, current size: " + fileList.size() + " , all size: " + fileSendPackage.getAllPart());
+        if (fileList.size() == fileSendPackage.getAllPart()){
+            String[] parts = fileSendPackage.getFileName().split("/");
+            NotificationsManager.finishFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), fileSendPackage.getClientName(), parts[parts.length - 1]);
+        } else {
+            NotificationsManager.updateFileGetNotification(notificationMap.get(fileSendPackage.getFileName()), getDownloadProgress(fileList));
+        }
     }
 
     private List<FileSendPackage> getFileList(FileSendPackage fileSendPackage){

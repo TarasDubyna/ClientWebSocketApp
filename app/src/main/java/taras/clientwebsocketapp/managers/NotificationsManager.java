@@ -80,11 +80,15 @@ public class NotificationsManager {
                 .setSmallIcon(R.drawable.ic_phone_network);
         notificationManager.notify(id, builder.build());
     }
-    public static void finishFileGetNotification(int id){
+    public static void finishFileGetNotification(int id, String deviceFromName, String fileName){
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(AppApplication.appContext);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(AppApplication.appContext, BackgroundService.class.getSimpleName());
         builder.setAutoCancel(true);
-        builder.setContentText("Download complete")
+        builder.setContentText("From: " + deviceFromName)
+                .setSubText(fileName + " downloaded")
+                .setSmallIcon(R.drawable.ic_phone_network)
+                .setDefaults(Notification.DEFAULT_VIBRATE)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setProgress(0,0,false);
         notificationManager.notify(id, builder.build());
     }
